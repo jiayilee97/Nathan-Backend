@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto8
+  pre_build:
+    commands:
+      - mvn clean compile test -T1C
+  build:
+    commands:
+      - mvn -T1C package
+artifacts:
+  files:
+    - target/nathan-0.1.jar
+    - appspec.yml
+    - buildspec-docker.yml
+    - Dockerfile
+  discard-paths: yes
+cache:
+  paths:
+    - '/root/.m2/**/*'
