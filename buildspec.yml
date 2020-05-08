@@ -13,7 +13,7 @@ phases:
   pre_build:
     commands:
       # Download application.properties file from S3
-      - aws s3 cp s3://$S3_BUCKET/nathan/dev/application.properties src/main/resources/application.properties
+      - aws s3 cp s3://$S3_BUCKET/application.properties src/main/resources/application.properties
       - echo "after download application file"
       - mvn clean compile test -T1C
   build:
