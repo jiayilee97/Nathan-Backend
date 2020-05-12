@@ -1,4 +1,4 @@
-package stacs.nathan.user.repository;
+package stacs.nathan.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
