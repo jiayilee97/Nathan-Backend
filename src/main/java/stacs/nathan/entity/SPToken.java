@@ -2,7 +2,7 @@ package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-import stacs.nathan.enums.SPTokenStatus;
+import stacs.nathan.Utils.enums.SPTokenStatus;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;

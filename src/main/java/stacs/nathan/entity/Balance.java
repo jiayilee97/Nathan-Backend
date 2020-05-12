@@ -1,7 +1,7 @@
 package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
-import stacs.nathan.enums.TokenType;
+import stacs.nathan.Utils.enums.TokenType;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;

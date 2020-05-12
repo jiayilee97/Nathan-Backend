@@ -2,8 +2,8 @@ package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-import stacs.nathan.enums.TokenType;
-import stacs.nathan.enums.TransactionStatus;
+import stacs.nathan.Utils.enums.TokenType;
+import stacs.nathan.Utils.enums.TransactionStatus;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;

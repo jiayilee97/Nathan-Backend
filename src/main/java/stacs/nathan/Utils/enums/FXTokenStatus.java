@@ -1,4 +1,4 @@
-package stacs.nathan.enums;
+package stacs.nathan.Utils.enums;
 
 public enum FXTokenStatus {
     OPEN("Open"), CLOSED("Closed");

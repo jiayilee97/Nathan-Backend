@@ -1,7 +1,7 @@
 package stacs.nathan.entity;
 
 import org.hibernate.annotations.CreationTimestamp;
-import stacs.nathan.enums.UserRole;
+import stacs.nathan.Utils.enums.UserRole;
 
 import javax.persistence.*;
 import java.util.Date;
