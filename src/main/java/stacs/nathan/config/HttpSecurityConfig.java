@@ -23,6 +23,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         .headers().frameOptions().sameOrigin()
         .and()
         .authorizeRequests()
+        .antMatchers("/public/**").permitAll()
         .anyRequest().authenticated();
 
     http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

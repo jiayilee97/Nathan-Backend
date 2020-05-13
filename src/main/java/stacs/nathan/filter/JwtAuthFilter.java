@@ -1,6 +1,7 @@
 package stacs.nathan.filter;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,6 +33,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 //    }
 
+//    httpServletResponse.setHeader("x-id-token", "adfweegevr eaerfever");
+//    httpServletResponse.setHeader("x-access-token", "aefelkj;divhselha;lek");
+//    httpServletResponse.setHeader("x-refresh-token", "ev;eaj'eka'l;kkdhfuheu");
     filterChain.doFilter(httpServletRequest, httpServletResponse);
   }
 }
