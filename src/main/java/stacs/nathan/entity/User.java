@@ -19,6 +19,9 @@ public class User {
     @Column(name = "user_name", length = 50)
     private String userName;
 
+    @Column(name = "private_key", length = 200)
+    private String privateKey;
+
     @Column(name = "wallet_address", length = 50)
     private String walletAddress;
 
@@ -49,6 +52,14 @@ public class User {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
     }
 
     public String getWalletAddress() {
