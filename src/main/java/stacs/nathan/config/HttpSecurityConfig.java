@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -28,7 +29,6 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http
         .csrf().disable()
-        .cors().configurationSource(configurationSource()).and()
         .formLogin().disable()
         .headers().frameOptions().sameOrigin()
         .and()
@@ -36,15 +36,24 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/public/**").permitAll()
         .anyRequest().authenticated();
 
+    CorsConfigurationSource corsConfigurationSource = configurationSource();
+
+    if (corsConfigurationSource != null) {
+      http.cors().configurationSource(configurationSource());
+    }
+
     http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
   }
 
   private CorsConfigurationSource configurationSource() {
-    CorsConfiguration trinityCors = new CorsConfiguration();
-    trinityCors.setAllowedOrigins(Arrays.asList(trinityCorsOrigin));
-    trinityCors.setAllowedMethods(Arrays.asList("GET","POST"));
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/trinity/**", trinityCors);
-    return source;
+    if (!StringUtils.isEmpty(trinityCorsOrigin)) {
+      CorsConfiguration trinityCors = new CorsConfiguration();
+      trinityCors.setAllowedOrigins(Arrays.asList(trinityCorsOrigin));
+      trinityCors.setAllowedMethods(Arrays.asList("GET","POST"));
+      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+      source.registerCorsConfiguration("/trinity/**", trinityCors);
+      return source;
+    }
+    return null;
   }
 }
