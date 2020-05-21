@@ -41,7 +41,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private CorsConfigurationSource configurationSource() {
     CorsConfiguration trinityCors = new CorsConfiguration();
-    trinityCors.setAllowedOrigins(Arrays.asList("https://example.com"));
+    trinityCors.setAllowedOrigins(Arrays.asList(trinityCorsOrigin));
     trinityCors.setAllowedMethods(Arrays.asList("GET","POST"));
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/trinity/**", trinityCors);
