@@ -2,7 +2,7 @@ package stacs.nathan.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import stacs.nathan.Utils.enums.UserRole;
+import stacs.nathan.utils.enums.UserRole;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.UserRepository;
 import java.util.List;

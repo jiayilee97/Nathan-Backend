@@ -1,4 +1,4 @@
-package stacs.nathan.Utils.response;
+package stacs.nathan.core.handler;
 
 import org.springframework.http.HttpStatus;
 

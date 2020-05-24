@@ -1,21 +1,14 @@
 package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-import stacs.nathan.Utils.enums.FXTokenStatus;
+import stacs.nathan.utils.enums.FXTokenStatus;
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
 @Table(name = "fx_token")
-public class FXToken{
+public class FXToken extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name = "token_id")
-    private long tokenId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sp_token_id", nullable = false)
@@ -52,19 +45,6 @@ public class FXToken{
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
     private FXTokenStatus status;
-
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
-    private Date createdDate;
-
-    public long getTokenId() {
-        return tokenId;
-    }
-
-    public void setTokenId(long tokenId) {
-        this.tokenId = tokenId;
-    }
 
     public SPToken getSpToken() {
         return spToken;
@@ -154,11 +134,4 @@ public class FXToken{
         this.status = status;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
 }

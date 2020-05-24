@@ -1,23 +1,14 @@
 package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Objects;
 
 @Entity
 @Table(name = "base_cash_token")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class BaseCashToken{
+public class BaseCashToken extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name = "token_id")
-    private long tokenId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -50,19 +41,6 @@ public class BaseCashToken{
 
     @Column(name = "issuer_address", length = 50)
     private String issuerAddress;
-
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
-    private Date createdDate;
-
-    public long getTokenId() {
-        return tokenId;
-    }
-
-    public void setTokenId(long tokenId) {
-        this.tokenId = tokenId;
-    }
 
     public User getUser() {
         return user;
@@ -144,35 +122,4 @@ public class BaseCashToken{
         this.issuerAddress = issuerAddress;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BaseCashToken that = (BaseCashToken) o;
-        return tokenId == that.tokenId &&
-                blockHeight == that.blockHeight &&
-                currencyCode == that.currencyCode &&
-                Objects.equals(user, that.user) &&
-                Objects.equals(tokenCode, that.tokenCode) &&
-                Objects.equals(ctxId, that.ctxId) &&
-                Objects.equals(tokenContractAddress, that.tokenContractAddress) &&
-                Objects.equals(underlyingCurrency, that.underlyingCurrency) &&
-                Objects.equals(amount, that.amount) &&
-                Objects.equals(issuerId, that.issuerId) &&
-                Objects.equals(issuerAddress, that.issuerAddress) &&
-                Objects.equals(createdDate, that.createdDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(tokenId, user, tokenCode, ctxId, blockHeight, tokenContractAddress, underlyingCurrency, currencyCode, amount, issuerId, issuerAddress, createdDate);
-    }
 }

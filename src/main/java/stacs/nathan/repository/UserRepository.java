@@ -2,7 +2,7 @@ package stacs.nathan.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import stacs.nathan.Utils.enums.UserRole;
+import stacs.nathan.utils.enums.UserRole;
 import stacs.nathan.entity.User;
 import java.util.List;
 

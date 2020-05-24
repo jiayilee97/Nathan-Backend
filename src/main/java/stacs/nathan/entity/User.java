@@ -1,18 +1,14 @@
 package stacs.nathan.entity;
 
-import org.hibernate.annotations.CreationTimestamp;
-import stacs.nathan.Utils.enums.UserRole;
-
+import stacs.nathan.utils.enums.UserRole;
 import javax.persistence.*;
-import java.util.Date;
-import java.util.Objects;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends BaseEntity{
     private static final long serialVersionUID = 1L;
 
-    @Id
     @Column(name = "user_id", length = 50)
     private String userId;
 
@@ -29,14 +25,14 @@ public class User {
     @Column(length = 10)
     private UserRole role;
 
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
-    private Date createdDate;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Balance> balances;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "last_updated_date")
-    private Date lastUpdatedDate;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BaseCashToken> baseCashTokens;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<SPToken> spTokens;
 
     public String getUserId() {
         return userId;
@@ -78,37 +74,27 @@ public class User {
         this.role = role;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
+    public List<Balance> getBalances() {
+        return balances;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+    public void setBalances(List<Balance> balances) {
+        this.balances = balances;
     }
 
-    public Date getLastUpdatedDate() {
-        return lastUpdatedDate;
+    public List<BaseCashToken> getBaseCashTokens() {
+        return baseCashTokens;
     }
 
-    public void setLastUpdatedDate(Date lastUpdatedDate) {
-        this.lastUpdatedDate = lastUpdatedDate;
+    public void setBaseCashTokens(List<BaseCashToken> baseCashTokens) {
+        this.baseCashTokens = baseCashTokens;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(userId, user.userId) &&
-                Objects.equals(userName, user.userName) &&
-                Objects.equals(walletAddress, user.walletAddress) &&
-                role == user.role &&
-                Objects.equals(createdDate, user.createdDate) &&
-                Objects.equals(lastUpdatedDate, user.lastUpdatedDate);
+    public List<SPToken> getSpTokens() {
+        return spTokens;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(userId, userName, walletAddress, role, createdDate, lastUpdatedDate);
+    public void setSpTokens(List<SPToken> spTokens) {
+        this.spTokens = spTokens;
     }
 }

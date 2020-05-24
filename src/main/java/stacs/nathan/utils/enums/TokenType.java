@@ -1,16 +1,16 @@
-package stacs.nathan.Utils.enums;
+package stacs.nathan.utils.enums;
 
-public enum NAVType {
-    SP("SP Token"), FX("FX Token"), ALL("All Clients"), CLI("Client");
+public enum TokenType {
+    SP_TOKEN("SP Token"), FX_TOKEN("FX Token"), BC_TOKEN("Base Cash Token");
 
     private String value;
 
-    NAVType(String value) {
+    TokenType(String value) {
         this.value = value;
     }
 
     public static String resolveValue(String value) {
-        for (NAVType type : values()) {
+        for (TokenType type : values()) {
             if (type.getValue().equalsIgnoreCase(value)) {
                 return type.name();
             }
@@ -18,8 +18,8 @@ public enum NAVType {
         return value;
     }
 
-    public static NAVType resolveCode(String code) {
-        for (NAVType type : values()) {
+    public static TokenType resolveCode(String code) {
+        for (TokenType type : values()) {
             if (type.getCode().equals(code)) {
                 return type;
             }

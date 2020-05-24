@@ -1,20 +1,14 @@
 package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
-import stacs.nathan.Utils.enums.TokenType;
+import stacs.nathan.utils.enums.TokenType;
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
 @Table(name = "balance")
-public class Balance {
+public class Balance extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name = "id")
-    private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -27,18 +21,6 @@ public class Balance {
     @Column(name = "balance_amount", precision = 15, scale = 2)
     @ColumnDefault("0.0")
     private BigDecimal balanceAmount;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "last_updated_date")
-    private Date lastUpdatedDate;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public User getUser() {
         return user;
@@ -64,11 +46,4 @@ public class Balance {
         this.balanceAmount = balanceAmount;
     }
 
-    public Date getLastUpdatedDate() {
-        return lastUpdatedDate;
-    }
-
-    public void setLastUpdatedDate(Date lastUpdatedDate) {
-        this.lastUpdatedDate = lastUpdatedDate;
-    }
 }

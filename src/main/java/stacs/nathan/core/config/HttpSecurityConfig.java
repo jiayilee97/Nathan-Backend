@@ -1,4 +1,4 @@
-package stacs.nathan.config;
+package stacs.nathan.core.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,8 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import stacs.nathan.filter.JwtAuthFilter;
-
+import stacs.nathan.core.filter.JwtAuthFilter;
 import java.util.Arrays;
 
 @EnableWebSecurity
@@ -22,8 +21,8 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
   @Autowired
   private JwtAuthFilter jwtAuthFilter;
 
-  @Value("${server.cors.for.trinity}")
-  private String trinityCorsOrigin;
+  @Value("${cors.origins.allowed}")
+  private String[] allowedCorsOrigins;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -46,12 +45,13 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   private CorsConfigurationSource configurationSource() {
-    if (!StringUtils.isEmpty(trinityCorsOrigin)) {
-      CorsConfiguration trinityCors = new CorsConfiguration();
-      trinityCors.setAllowedOrigins(Arrays.asList(trinityCorsOrigin));
-      trinityCors.setAllowedMethods(Arrays.asList("GET","POST"));
+    if (!StringUtils.isEmpty(allowedCorsOrigins)) {
+      CorsConfiguration config = new CorsConfiguration();
+      config.setAllowedOrigins(Arrays.asList(allowedCorsOrigins));
+      config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+      config.setAllowedHeaders(Arrays.asList("x-access-token", "x-id-token"));
       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-      source.registerCorsConfiguration("/trinity/**", trinityCors);
+      source.registerCorsConfiguration("/**", config);
       return source;
     }
     return null;

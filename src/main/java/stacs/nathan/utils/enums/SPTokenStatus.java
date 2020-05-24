@@ -1,4 +1,4 @@
-package stacs.nathan.Utils.enums;
+package stacs.nathan.utils.enums;
 
 public enum SPTokenStatus {
     ACTIVE("Active"), KO("Knock Out"), CM("Contract Maturity");

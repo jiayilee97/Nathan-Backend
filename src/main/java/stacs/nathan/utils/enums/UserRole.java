@@ -1,4 +1,4 @@
-package stacs.nathan.Utils.enums;
+package stacs.nathan.utils.enums;
 
 public enum UserRole {
     //code(value)

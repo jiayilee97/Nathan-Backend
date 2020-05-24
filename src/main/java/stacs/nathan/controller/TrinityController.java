@@ -1,15 +1,24 @@
 package stacs.nathan.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import stacs.nathan.dto.request.ClientRequestDto;
 
 @RestController
 @RequestMapping("/trinity")
 public class TrinityController {
 
   @PostMapping("/user/create")
-  public String createUser() {
-    return "Hello";
+  public void createUser(@RequestBody ClientRequestDto dto) {
+    System.out.println("RequestBody: " + dto);
+  }
+
+  @PostMapping("/user/update")
+  public void updateUser(@RequestBody ClientRequestDto dto) {
+    System.out.println("RequestBody: " + dto);
+  }
+
+  @PostMapping("/user/role/update")
+  public void updateUserRole(@RequestBody ClientRequestDto dto) {
+    System.out.println("RequestBody: " + dto);
   }
 }

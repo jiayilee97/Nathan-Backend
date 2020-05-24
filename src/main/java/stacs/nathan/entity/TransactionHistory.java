@@ -1,22 +1,15 @@
 package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-import stacs.nathan.Utils.enums.TokenType;
-import stacs.nathan.Utils.enums.TransactionStatus;
+import stacs.nathan.utils.enums.TokenType;
+import stacs.nathan.utils.enums.TransactionStatus;
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
 @Table(name = "tx_history")
-public class TransactionHistory {
+public class TransactionHistory extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name = "id")
-    private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trade_id", nullable = false)
@@ -45,23 +38,6 @@ public class TransactionHistory {
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
     private TransactionStatus status;
-
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
-    private Date createdDate;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "last_updated_date")
-    private Date lastUpdatedDate;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public TradeHistory getTradeHistory() {
         return tradeHistory;
@@ -127,19 +103,4 @@ public class TransactionHistory {
         this.status = status;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getLastUpdatedDate() {
-        return lastUpdatedDate;
-    }
-
-    public void setLastUpdatedDate(Date lastUpdatedDate) {
-        this.lastUpdatedDate = lastUpdatedDate;
-    }
 }

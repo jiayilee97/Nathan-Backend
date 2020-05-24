@@ -1,33 +1,36 @@
 package stacs.nathan.entity;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
-import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "trade_history")
-public class TradeHistory {
+public class TradeHistory extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name = "id")
-    private long id;
 
     @Column(nullable = false)
     private long tokenId;
 
-    //buy, sell
     @Column
-    private String type;
+    private String type; //buy, sell
 
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
-    private Date createdDate;
+    @OneToMany(mappedBy = "tradeHistory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TransactionHistory> transactionHistoryList;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "last_updated_date")
-    private Date lastUpdatedDate;
+    public long getTokenId() {
+        return tokenId;
+    }
+
+    public void setTokenId(long tokenId) {
+        this.tokenId = tokenId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
 }

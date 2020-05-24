@@ -1,25 +1,24 @@
 package stacs.nathan.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-import stacs.nathan.Utils.enums.SPTokenStatus;
+import stacs.nathan.utils.enums.SPTokenStatus;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
 @Table(name = "sp_token")
-public class SPToken{
+public class SPToken extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name = "token_id")
-    private long tokenId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "spToken", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private FXToken fxToken;
 
     @Column(name = "token_code", length = 50, nullable = false)
     private String tokenCode;
@@ -79,25 +78,20 @@ public class SPToken{
     @Column(length = 10)
     private SPTokenStatus status;
 
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
-    private Date createdDate;
-
-    public long getTokenId() {
-        return tokenId;
-    }
-
-    public void setTokenId(long tokenId) {
-        this.tokenId = tokenId;
-    }
-
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public FXToken getFxToken() {
+        return fxToken;
+    }
+
+    public void setFxToken(FXToken fxToken) {
+        this.fxToken = fxToken;
     }
 
     public String getTokenCode() {
@@ -236,11 +230,4 @@ public class SPToken{
         this.status = status;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
 }
