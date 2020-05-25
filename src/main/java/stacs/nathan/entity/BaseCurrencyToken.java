@@ -5,9 +5,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "base_cash_token")
+@Table(name = "base_currency_token")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class BaseCashToken extends BaseEntity {
+public class BaseCurrencyToken extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)

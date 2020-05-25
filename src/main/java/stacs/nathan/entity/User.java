@@ -29,7 +29,7 @@ public class User extends BaseEntity{
     private List<Balance> balances;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<BaseCashToken> baseCashTokens;
+    private List<BaseCurrencyToken> baseCurrencyTokens;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<SPToken> spTokens;
@@ -82,12 +82,12 @@ public class User extends BaseEntity{
         this.balances = balances;
     }
 
-    public List<BaseCashToken> getBaseCashTokens() {
-        return baseCashTokens;
+    public List<BaseCurrencyToken> getBaseCurrencyTokens() {
+        return baseCurrencyTokens;
     }
 
-    public void setBaseCashTokens(List<BaseCashToken> baseCashTokens) {
-        this.baseCashTokens = baseCashTokens;
+    public void setBaseCurrencyTokens(List<BaseCurrencyToken> baseCurrencyTokens) {
+        this.baseCurrencyTokens = baseCurrencyTokens;
     }
 
     public List<SPToken> getSpTokens() {
