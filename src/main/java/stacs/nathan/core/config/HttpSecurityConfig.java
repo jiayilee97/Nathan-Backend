@@ -31,6 +31,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         .formLogin().disable()
         .headers().frameOptions().sameOrigin()
         .and()
+        .cors().disable()
         .authorizeRequests()
         .antMatchers("/public/**").permitAll()
         .anyRequest().authenticated();
