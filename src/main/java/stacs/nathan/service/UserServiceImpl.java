@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stacs.nathan.dto.request.ClientRequestDto;
+import stacs.nathan.utils.CommonUtils;
 import stacs.nathan.utils.enums.UserRole;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.UserRepository;
@@ -26,9 +27,9 @@ public class UserServiceImpl implements UserService {
 
     public void createUser(ClientRequestDto dto){
         User user =  convertToUser(dto, false);
-        //create wallet if user is not CRO
+        user.setUuid(CommonUtils.generateRandomUUID());
         if(UserRole.CRO != user.getRole()){
-            user = blockchainService.createWallet(user);
+            blockchainService.createWallet(user);
         }
         repository.save(user);
     }

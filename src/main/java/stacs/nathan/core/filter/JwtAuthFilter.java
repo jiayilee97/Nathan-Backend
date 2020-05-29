@@ -58,7 +58,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     if (!StringUtils.isEmpty(idToken)) {
       JSONObject json = decode(idToken);
       String loggedInUserOrg = json.getString(AwsServiceConstants.ORGANIZATION);
-      if(this.organizationCode.equals(loggedInUserOrg) || trinityOrg){
+      if(this.organizationCode.equals(loggedInUserOrg) || (trinityOrg && issuerName.equals(loggedInUserOrg))){
         String loggedInUserName = json.getString(AwsServiceConstants.USERNAME);
         List<String> loggedInUserRoles = trinityOrg ? Arrays.asList(TRINITY_ADMIN) : Arrays.asList(json.getString(AwsServiceConstants.ROLES).split(","));
         LoggedInUser loggedInUser = new LoggedInUser(loggedInUserName, loggedInUserOrg, loggedInUserRoles);

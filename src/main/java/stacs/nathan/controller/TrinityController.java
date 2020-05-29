@@ -16,7 +16,6 @@ public class TrinityController {
 
   @PostMapping("/user/create")
   public void createUser(@RequestBody ClientRequestDto dto) {
-
     userService.createUser(dto);
   }
 

@@ -1,16 +1,19 @@
 package stacs.nathan.service;
 
-//import hashstacs.sdk.chain.ChainConnector;
+import hashstacs.sdk.util.ChainConnector;
+import io.stacs.nav.crypto.StacsECKey;
 import org.springframework.stereotype.Service;
 import stacs.nathan.entity.User;
 
 @Service
 public class BlockchainService {
 
-//  private static ChainConnector chainConnector;
+  private static ChainConnector chainConnector;
 
-  public User createWallet(User user){
-    return user;
+  public void createWallet(User user){
+    StacsECKey submitterKey = new StacsECKey();
+    user.setPrivateKey(submitterKey.getHexPriKey());
+    user.setWalletAddress(submitterKey.getHexAddress());
   }
 
 }
