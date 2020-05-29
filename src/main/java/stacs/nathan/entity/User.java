@@ -20,7 +20,7 @@ public class User extends BaseEntity{
     @NotNull
     @NotEmpty(message = "Username cannot be empty")
     @Column(name = "user_name", length = 50)
-    private String userName;
+    private String username;
 
     @NotNull
     @NotEmpty(message = "Display name cannot be empty")
@@ -32,22 +32,6 @@ public class User extends BaseEntity{
     @Size(min = 1, max = 100)
     @Column(length = 100, nullable = false)
     private String email;
-
-    //for client only
-    @Column(name = "client_id", length = 50)
-    private String clientId;
-
-    //for client only
-    @Column(name = "nationality", length = 50)
-    private String nationality;
-
-    //for client only
-    @Column(name = "accredited_status", length = 20)
-    private AccreditedStatus accreditedStatus;
-
-    //for client only
-    @Column(name = "risk_tolerance_rating")
-    private long riskToleranceRating;
 
     //for client, operation, counter party, market
     @Column(name = "private_key", length = 200)
@@ -78,12 +62,12 @@ public class User extends BaseEntity{
         this.uuid = uuid;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getDisplayName() {
@@ -100,38 +84,6 @@ public class User extends BaseEntity{
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
-
-    public String getNationality() {
-        return nationality;
-    }
-
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
-    }
-
-    public AccreditedStatus getAccreditedStatus() {
-        return accreditedStatus;
-    }
-
-    public void setAccreditedStatus(AccreditedStatus accreditedStatus) {
-        this.accreditedStatus = accreditedStatus;
-    }
-
-    public long getRiskToleranceRating() {
-        return riskToleranceRating;
-    }
-
-    public void setRiskToleranceRating(long riskToleranceRating) {
-        this.riskToleranceRating = riskToleranceRating;
     }
 
     public String getPrivateKey() {

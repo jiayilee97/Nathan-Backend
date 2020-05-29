@@ -1,5 +1,7 @@
 package stacs.nathan.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stacs.nathan.dto.request.ClientRequestDto;
@@ -10,29 +12,42 @@ import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserRepository repository;
+
+    @Autowired
+    private BlockchainService blockchainService;
 
     public List<User> fetchAllClients(){
         return repository.findByRole(UserRole.CLIENT);
     }
 
     public void createUser(ClientRequestDto dto){
-        repository.save(convertToUser(dto));
+        User user =  convertToUser(dto, false);
+        //create wallet if user is not CRO
+        if(UserRole.CRO != user.getRole()){
+            user = blockchainService.createWallet(user);
+        }
+        repository.save(user);
     }
 
     public void updateUser(ClientRequestDto dto){
-        repository.save(convertToUser(dto));
+        repository.save(convertToUser(dto, true));
     }
 
     public void updateUserRole(ClientRequestDto dto){
-        repository.save(convertToUser(dto));
+        repository.save(convertToUser(dto, true));
     }
 
-    private User convertToUser(ClientRequestDto dto){
+    private User convertToUser(ClientRequestDto dto, boolean existingUser){
         User user = new User();
-        user.setUserName(dto.getUsername());
+        if(existingUser){
+            user = repository.findByUsername(dto.getUsername());
+        }else{
+            user.setUsername(dto.getUsername());
+        }
         user.setDisplayName(dto.getDisplayName());
         user.setEmail(dto.getEmail());
         List<String> roles = dto.getRoles();

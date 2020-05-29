@@ -7,7 +7,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -45,11 +44,11 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   private CorsConfigurationSource configurationSource() {
-    if (!StringUtils.isEmpty(allowedCorsOrigins)) {
+    if (allowedCorsOrigins.length > 0) {
       CorsConfiguration config = new CorsConfiguration();
       config.setAllowedOrigins(Arrays.asList(allowedCorsOrigins));
-      config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-      config.setAllowedHeaders(Arrays.asList("x-access-token", "x-id-token"));
+      config.addAllowedMethod(CorsConfiguration.ALL);
+      config.addAllowedHeader(CorsConfiguration.ALL);
       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
       source.registerCorsConfiguration("/**", config);
       return source;
