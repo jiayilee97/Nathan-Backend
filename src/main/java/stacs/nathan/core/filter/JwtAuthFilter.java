@@ -42,6 +42,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
   private static String ID_TOKEN_HEADER = "x-id-token";
   private static String ACCESS_TOKEN_HEADER = "x-access-token";
+  private static String TRINITY_ADMIN = "TRINITY_ADMIN";
 
   @Override
   protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
@@ -59,7 +60,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       String loggedInUserOrg = json.getString(AwsServiceConstants.ORGANIZATION);
       if(this.organizationCode.equals(loggedInUserOrg) || trinityOrg){
         String loggedInUserName = json.getString(AwsServiceConstants.USERNAME);
-        List<String> loggedInUserRoles = Arrays.asList(json.getString(AwsServiceConstants.ROLES).split(","));
+        List<String> loggedInUserRoles = trinityOrg ? Arrays.asList(TRINITY_ADMIN) : Arrays.asList(json.getString(AwsServiceConstants.ROLES).split(","));
         LoggedInUser loggedInUser = new LoggedInUser(loggedInUserName, loggedInUserOrg, loggedInUserRoles);
         List<SimpleGrantedAuthority> roles = new ArrayList<>();
         for(String role: loggedInUserRoles){

@@ -8,7 +8,7 @@ import stacs.nathan.service.UserService;
 
 @RestController
 @RequestMapping("/trinity")
-@PreAuthorize("hasAuthority('ADMIN')")
+@PreAuthorize("hasAuthority('TRINITY_ADMIN')")
 public class TrinityController {
 
   @Autowired
