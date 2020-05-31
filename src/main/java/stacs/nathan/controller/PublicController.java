@@ -10,6 +10,6 @@ public class PublicController {
 
   @GetMapping("/health")
   public String getHealthCheck() {
-    return "OK";
+    return "Health check is ok for Nathan service";
   }
 }

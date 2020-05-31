@@ -15,24 +15,25 @@ import stacs.nathan.core.exception.ServerErrorException;
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(RestExceptionHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestExceptionHandler.class);
 
-    @ExceptionHandler({org.springframework.security.access.AccessDeniedException.class})
+    @ExceptionHandler({AccessDeniedException.class})
     protected ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
-        logger.error("Access Denied exception {}", ex);
+        LOGGER.error("Access Denied exception {}", ex);
         return new ResponseEntity<>(new RestErrorResponse("Access is Denied", HttpStatus.FORBIDDEN), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler({BadRequestException.class})
     protected ResponseEntity<Object> handleBadRequestException(BadRequestException ex, WebRequest request) {
-        logger.error("BadRequestException: {}", ex);
+        LOGGER.error("BadRequestException: {}", ex);
         return new ResponseEntity<>(new RestErrorResponse("Error: " + ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({ServerErrorException.class, Exception.class})
     protected ResponseEntity<Object> handleServerErrorException(Exception ex) {
-        logger.error("Exception {}", ex);
+        LOGGER.error("Exception {}", ex);
         return new ResponseEntity<>(new RestErrorResponse("Something went wrong!", HttpStatus.INTERNAL_SERVER_ERROR),
             HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 }

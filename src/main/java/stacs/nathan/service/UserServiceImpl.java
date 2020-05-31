@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.ClientRequestDto;
 import stacs.nathan.utils.CommonUtils;
 import stacs.nathan.utils.enums.UserRole;
@@ -25,21 +26,29 @@ public class UserServiceImpl implements UserService {
         return repository.findByRole(UserRole.CLIENT);
     }
 
-    public void createUser(ClientRequestDto dto){
-        User user =  convertToUser(dto, false);
-        user.setUuid(CommonUtils.generateRandomUUID());
-        if(UserRole.CRO != user.getRole()){
-            blockchainService.createWallet(user);
+    public void createUser(ClientRequestDto dto) throws ServerErrorException {
+        LOGGER.debug("Entering createUser().");
+        try{
+            User user =  convertToUser(dto, false);
+            user.setUuid(CommonUtils.generateRandomUUID());
+            if(UserRole.CRO != user.getRole()){
+                blockchainService.createWallet(user);
+            }
+            repository.save(user);
+        }catch (Exception e){
+            LOGGER.error("Exception in createUser().", e);
+            throw new ServerErrorException("Exception in createUser().", e);
         }
-        repository.save(user);
     }
 
-    public void updateUser(ClientRequestDto dto){
-        repository.save(convertToUser(dto, true));
-    }
-
-    public void updateUserRole(ClientRequestDto dto){
-        repository.save(convertToUser(dto, true));
+    public void updateUser(ClientRequestDto dto) throws ServerErrorException {
+        LOGGER.debug("Entering updateUser().");
+        try{
+            repository.save(convertToUser(dto, true));
+        }catch (Exception e){
+            LOGGER.error("Exception in updateUser().", e);
+            throw new ServerErrorException("Exception in updateUser().", e);
+        }
     }
 
     private User convertToUser(ClientRequestDto dto, boolean existingUser){

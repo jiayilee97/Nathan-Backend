@@ -4,6 +4,8 @@ import hashstacs.sdk.dto.Token;
 import hashstacs.sdk.request.blockchain.IssueTokenReqBO;
 import hashstacs.sdk.util.ChainConnector;
 import io.stacs.nav.crypto.StacsECKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongycastle.util.encoders.Hex;
 import org.springframework.stereotype.Service;
 import stacs.nathan.entity.BaseCurrencyToken;
@@ -11,9 +13,9 @@ import stacs.nathan.entity.User;
 import stacs.nathan.utils.enums.TokenType;
 import java.math.BigInteger;
 
-
 @Service
 public class BlockchainService {
+  private static final Logger LOGGER = LoggerFactory.getLogger(BlockchainService.class);
 
   private static String DEFAULT_BD_CODE = "NATHAN";
   private static String DEFAULT_POLICY = "DEFAULT_SYNC_POLICY";
@@ -21,6 +23,7 @@ public class BlockchainService {
   private static ChainConnector chainConnector;
 
   public void createWallet(User user){
+    LOGGER.debug("Entering createWallet().");
     StacsECKey submitterKey = new StacsECKey();
     user.setPrivateKey(submitterKey.getHexPriKey());
     user.setWalletAddress(submitterKey.getHexAddress());
@@ -28,6 +31,7 @@ public class BlockchainService {
   }
 
   public void createBaseCurrencyToken(User user, BaseCurrencyToken bcToken){
+    LOGGER.debug("Entering createBaseCurrencyToken().");
     Token token = new Token(DEFAULT_BD_CODE);
     token.setTokenCode(TokenType.SP_TOKEN.getCode());
     token.setTokenName(TokenType.SP_TOKEN.getValue());
