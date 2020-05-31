@@ -1,6 +1,5 @@
 package stacs.nathan.entity;
 
-import stacs.nathan.utils.enums.AccreditedStatus;
 import stacs.nathan.utils.enums.UserRole;
 import javax.persistence.*;
 import javax.validation.constraints.Email;

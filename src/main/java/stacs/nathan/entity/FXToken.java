@@ -7,24 +7,13 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "fx_token")
-public class FXToken extends BaseEntity {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public class FXToken extends BaseTokenEntity {
     private static final long serialVersionUID = 1L;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sp_token_id", nullable = false)
     private SPToken spToken;
-
-    @Column(name = "token_code", length = 50, nullable = false)
-    private String tokenCode;
-
-    @Column(name = "c_tx_id", length = 50, unique = true)
-    private String ctxId;
-
-    @Column(name = "block_height", length = 50)
-    private int blockHeight;
-
-    @Column(name = "token_contract_address", length = 50)
-    private String tokenContractAddress;
 
     @Column(name = "fx_currency", length = 10)
     private String fxCurrency;
@@ -52,38 +41,6 @@ public class FXToken extends BaseEntity {
 
     public void setSpToken(SPToken spToken) {
         this.spToken = spToken;
-    }
-
-    public String getTokenCode() {
-        return tokenCode;
-    }
-
-    public void setTokenCode(String tokenCode) {
-        this.tokenCode = tokenCode;
-    }
-
-    public String getCtxId() {
-        return ctxId;
-    }
-
-    public void setCtxId(String ctxId) {
-        this.ctxId = ctxId;
-    }
-
-    public int getBlockHeight() {
-        return blockHeight;
-    }
-
-    public void setBlockHeight(int blockHeight) {
-        this.blockHeight = blockHeight;
-    }
-
-    public String getTokenContractAddress() {
-        return tokenContractAddress;
-    }
-
-    public void setTokenContractAddress(String tokenContractAddress) {
-        this.tokenContractAddress = tokenContractAddress;
     }
 
     public String getFxCurrency() {

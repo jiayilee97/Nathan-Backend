@@ -9,7 +9,8 @@ import java.util.Date;
 
 @Entity
 @Table(name = "sp_token")
-public class SPToken extends BaseEntity {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public class SPToken extends BaseTokenEntity {
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -19,18 +20,6 @@ public class SPToken extends BaseEntity {
     @JsonIgnore
     @OneToOne(mappedBy = "spToken", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private FXToken fxToken;
-
-    @Column(name = "token_code", length = 50, nullable = false)
-    private String tokenCode;
-
-    @Column(name = "c_tx_id", length = 50, unique = true)
-    private String ctxId;
-
-    @Column(name = "block_height", length = 50)
-    private int blockHeight;
-
-    @Column(name = "token_contract_address", length = 50)
-    private String tokenContractAddress;
 
     @Column(name = "product_type", length = 50)
     private String productType;
@@ -92,38 +81,6 @@ public class SPToken extends BaseEntity {
 
     public void setFxToken(FXToken fxToken) {
         this.fxToken = fxToken;
-    }
-
-    public String getTokenCode() {
-        return tokenCode;
-    }
-
-    public void setTokenCode(String tokenCode) {
-        this.tokenCode = tokenCode;
-    }
-
-    public String getCtxId() {
-        return ctxId;
-    }
-
-    public void setCtxId(String ctxId) {
-        this.ctxId = ctxId;
-    }
-
-    public int getBlockHeight() {
-        return blockHeight;
-    }
-
-    public void setBlockHeight(int blockHeight) {
-        this.blockHeight = blockHeight;
-    }
-
-    public String getTokenContractAddress() {
-        return tokenContractAddress;
-    }
-
-    public void setTokenContractAddress(String tokenContractAddress) {
-        this.tokenContractAddress = tokenContractAddress;
     }
 
     public String getProductType() {

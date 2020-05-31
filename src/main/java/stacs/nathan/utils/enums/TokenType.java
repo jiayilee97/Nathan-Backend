@@ -1,7 +1,7 @@
 package stacs.nathan.utils.enums;
 
 public enum TokenType {
-    SP_TOKEN("SP Token"), FX_TOKEN("FX Token"), BC_TOKEN("Base Cash Token");
+    SP_TOKEN("SP Token"), FX_TOKEN("FX Token"), BC_TOKEN("Base Currency Token");
 
     private String value;
 

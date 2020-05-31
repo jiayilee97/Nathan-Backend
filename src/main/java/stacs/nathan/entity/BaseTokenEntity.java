@@ -1,12 +1,10 @@
 package stacs.nathan.entity;
 
-import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import java.util.Date;
+import javax.persistence.MappedSuperclass;
 
-public class Token {
+@MappedSuperclass
+public class BaseTokenEntity extends BaseEntity {
 
     @Column(name = "token_code", length = 50, nullable = false)
     private String tokenCode;
@@ -19,11 +17,6 @@ public class Token {
 
     @Column(name = "token_contract_address", length = 50)
     private String tokenContractAddress;
-
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
-    private Date createdDate;
 
     public String getTokenCode() {
         return tokenCode;
@@ -57,11 +50,4 @@ public class Token {
         this.tokenContractAddress = tokenContractAddress;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
 }

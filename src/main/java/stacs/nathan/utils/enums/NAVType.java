@@ -1,7 +1,7 @@
 package stacs.nathan.utils.enums;
 
 public enum NAVType {
-    SP("SP Token"), FX("FX Token"), ALL("All Clients"), CLI("Client");
+    SP("SP Token"), FX("FX Token"), ALL("All Clients"), CLIENT("Client");
 
     private String value;
 
