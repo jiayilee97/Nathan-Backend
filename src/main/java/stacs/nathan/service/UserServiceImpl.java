@@ -31,9 +31,6 @@ public class UserServiceImpl implements UserService {
         try{
             User user =  convertToUser(dto, false);
             user.setUuid(CommonUtils.generateRandomUUID());
-            if(UserRole.CRO != user.getRole()){
-                blockchainService.createWallet(user);
-            }
             repository.save(user);
         }catch (Exception e){
             LOGGER.error("Exception in createUser().", e);
@@ -44,7 +41,11 @@ public class UserServiceImpl implements UserService {
     public void updateUser(ClientRequestDto dto) throws ServerErrorException {
         LOGGER.debug("Entering updateUser().");
         try{
-            repository.save(convertToUser(dto, true));
+            User user =  convertToUser(dto, true);
+            if(user.getRole() != null && UserRole.CRO != user.getRole()){
+                blockchainService.createWallet(user);
+            }
+            repository.save(user);
         }catch (Exception e){
             LOGGER.error("Exception in updateUser().", e);
             throw new ServerErrorException("Exception in updateUser().", e);
