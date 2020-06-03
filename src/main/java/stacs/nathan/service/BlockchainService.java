@@ -11,9 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.encryption.CryptoCipher;
 import stacs.nathan.core.exception.ServerErrorException;
-import stacs.nathan.entity.BaseCurrencyToken;
 import stacs.nathan.entity.User;
 import stacs.nathan.utils.enums.TokenType;
+
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 @Service
@@ -37,7 +38,7 @@ public class BlockchainService {
     }
   }
 
-  public String createToken(User user, TokenType tokenType, int currency) throws ServerErrorException {
+  public String createToken(User user, TokenType tokenType, int currency, BigDecimal quantity) throws ServerErrorException {
     LOGGER.debug("Entering createToken().");
     String ctxId;
     Token token = new Token(DEFAULT_BD_CODE);
@@ -45,7 +46,7 @@ public class BlockchainService {
     token.setTokenName(tokenType.getValue());
     token.setPolicyName(DEFAULT_POLICY);
     token.setFeeCurrency(Integer.toString(currency));
-    token.setTotalQuantity(new BigInteger(String.valueOf(100000)));
+    token.setTotalQuantity(new BigInteger(String.valueOf(quantity)));
 
     IssueTokenReqBO issueToken = new IssueTokenReqBO(token);
     ctxId = issueToken.generateTxId();
