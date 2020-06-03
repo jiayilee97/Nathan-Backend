@@ -31,22 +31,23 @@ public class BlockchainService {
       StacsECKey submitterKey = new StacsECKey();
       user.setPrivateKey(cipher.encrypt(submitterKey.getHexPriKey()));
       user.setWalletAddress(submitterKey.getHexAddress());
-      createBaseCurrencyToken(user, new BaseCurrencyToken());
     }catch (Exception e){
       LOGGER.error("Exception in createWallet().", e);
     }
   }
 
-  public void createBaseCurrencyToken(User user, BaseCurrencyToken bcToken){
+  public String createToken(User user, TokenType tokenType, int currency){
     LOGGER.debug("Entering createBaseCurrencyToken().");
+    String ctxId;
     Token token = new Token(DEFAULT_BD_CODE);
-    token.setTokenCode(TokenType.SP_TOKEN.getCode());
-    token.setTokenName(TokenType.SP_TOKEN.getValue());
+    token.setTokenCode(tokenType.getCode());
+    token.setTokenName(tokenType.getValue());
     token.setPolicyName(DEFAULT_POLICY);
+    token.setFeeCurrency(Integer.toString(currency));
     token.setTotalQuantity(new BigInteger(String.valueOf(100000)));
 
     IssueTokenReqBO issueToken = new IssueTokenReqBO(token);
-    bcToken.setCtxId(issueToken.generateTxId());
+    ctxId = issueToken.generateTxId();
 
     StringBuilder signaturePayload = new StringBuilder();
     signaturePayload.append(issueToken.generateOfflinePayloadForSigning());
@@ -59,6 +60,9 @@ public class BlockchainService {
     Token afterSignToken = new Token(token.getReqObj());
     afterSignToken.setSubmitterSignature(signature);
     chainConnector.issueToken(afterSignToken);
+    return ctxId;
   }
+
+
 
 }
