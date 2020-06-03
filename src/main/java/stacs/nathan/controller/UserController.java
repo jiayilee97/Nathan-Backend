@@ -20,5 +20,10 @@ public class UserController {
     return userService.fetchAllClients();
   }
 
+  @GetMapping("/fetch/loginuser")
+  public User fetchLoginUser(){
+    return userService.fetchLoginUser();
+  }
+
 
 }

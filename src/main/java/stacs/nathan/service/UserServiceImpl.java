@@ -3,9 +3,11 @@ package stacs.nathan.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.ClientRequestDto;
+import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.utils.CommonUtils;
 import stacs.nathan.utils.enums.UserRole;
 import stacs.nathan.entity.User;
@@ -22,8 +24,17 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BlockchainService blockchainService;
 
-    public List<User> fetchAllClients(){
+    public List<User> fetchAllClients() {
         return repository.findByRole(UserRole.CLIENT);
+    }
+
+    public User fetchLoginUser() {
+        String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        return fetchByUsername(username);
+    }
+
+    public User fetchByUsername(String username) {
+        return repository.findByUsername(username);
     }
 
     public void createUser(ClientRequestDto dto) throws ServerErrorException {
@@ -52,7 +63,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private User convertToUser(ClientRequestDto dto, boolean existingUser){
+    private User convertToUser(ClientRequestDto dto, boolean existingUser) {
         User user = new User();
         if(existingUser){
             user = repository.findByUsername(dto.getUsername());

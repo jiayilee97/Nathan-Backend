@@ -9,6 +9,10 @@ public interface UserService {
 
     List<User> fetchAllClients();
 
+    User fetchLoginUser();
+
+    User fetchByUsername(String username);
+
     void createUser(ClientRequestDto dto) throws ServerErrorException;
 
     void updateUser(ClientRequestDto dto) throws ServerErrorException;
