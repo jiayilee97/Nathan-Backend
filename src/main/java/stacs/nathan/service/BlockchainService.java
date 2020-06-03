@@ -10,6 +10,7 @@ import org.spongycastle.util.encoders.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.encryption.CryptoCipher;
+import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.entity.BaseCurrencyToken;
 import stacs.nathan.entity.User;
 import stacs.nathan.utils.enums.TokenType;
@@ -36,8 +37,8 @@ public class BlockchainService {
     }
   }
 
-  public String createToken(User user, TokenType tokenType, int currency){
-    LOGGER.debug("Entering createBaseCurrencyToken().");
+  public String createToken(User user, TokenType tokenType, int currency) throws ServerErrorException {
+    LOGGER.debug("Entering createToken().");
     String ctxId;
     Token token = new Token(DEFAULT_BD_CODE);
     token.setTokenCode(tokenType.getCode());
@@ -53,7 +54,7 @@ public class BlockchainService {
     signaturePayload.append(issueToken.generateOfflinePayloadForSigning());
 
     //signing
-    String signature = StacsECKey.fromPrivate(Hex.decode(user.getPrivateKey().trim())).signMessage(signaturePayload.toString());
+    String signature = StacsECKey.fromPrivate(Hex.decode(cipher.decrypt(user.getPrivateKey().trim()))).signMessage(signaturePayload.toString());
     StacsECKey.verify(signaturePayload.toString(), signature, user.getWalletAddress());
 
     //after signing
