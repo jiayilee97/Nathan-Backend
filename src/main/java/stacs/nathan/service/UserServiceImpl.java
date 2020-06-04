@@ -7,8 +7,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.ClientRequestDto;
+import stacs.nathan.dto.request.CreateClientRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.utils.CommonUtils;
+import stacs.nathan.utils.enums.AccreditedStatus;
 import stacs.nathan.utils.enums.UserRole;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.UserRepository;
@@ -35,6 +37,27 @@ public class UserServiceImpl implements UserService {
 
     public User fetchByUsername(String username) {
         return repository.findByUsername(username);
+    }
+
+    public void createClient(CreateClientRequestDto dto) throws ServerErrorException {
+        LOGGER.debug("Entering createClient().");
+        try{
+            String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+            User user = new User();
+            user.setUuid(CommonUtils.generateRandomUUID());
+            user.setRole(UserRole.CLIENT);
+            user.setClientId(dto.getClientId());
+            user.setDisplayName(dto.getDisplayName());
+            user.setNationality(dto.getNationality());
+            user.setAccreditedStatus(AccreditedStatus.resolveCode(dto.getAccreditedStatus()));
+            user.setRiskToleranceRating(dto.getRiskToleranceRating());
+            user.setCreatedBy(username);
+            blockchainService.createWallet(user);
+            repository.save(user);
+        }catch (Exception e){
+            LOGGER.error("Exception in createClient().", e);
+            throw new ServerErrorException("Exception in createClient().", e);
+        }
     }
 
     public void createUser(ClientRequestDto dto) throws ServerErrorException {

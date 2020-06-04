@@ -1,5 +1,6 @@
 package stacs.nathan.entity;
 
+import stacs.nathan.utils.enums.AccreditedStatus;
 import stacs.nathan.utils.enums.UserRole;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -16,8 +17,6 @@ public class User extends BaseEntity{
     @Column(name = "uuid", length = 50, nullable = false)
     private String uuid;
 
-    @NotNull
-    @NotEmpty(message = "Username cannot be empty")
     @Column(name = "user_name", length = 50)
     private String username;
 
@@ -25,6 +24,19 @@ public class User extends BaseEntity{
     @NotEmpty(message = "Display name cannot be empty")
     @Column(name = "display_name", length = 50)
     private String displayName;
+
+    @Column(name = "client_id", length = 50)
+    private String clientId;
+
+    @Column(name = "nationality", length = 50)
+    private String nationality;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "accredited_status", length = 10)
+    private AccreditedStatus accreditedStatus;
+
+    @Column(name = "risk_tolerance_rating", length = 10)
+    private int riskToleranceRating;
 
     @Email
     @NotEmpty(message = "Email cannot be empty")
@@ -75,6 +87,38 @@ public class User extends BaseEntity{
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
+    }
+
+    public AccreditedStatus getAccreditedStatus() {
+        return accreditedStatus;
+    }
+
+    public void setAccreditedStatus(AccreditedStatus accreditedStatus) {
+        this.accreditedStatus = accreditedStatus;
+    }
+
+    public int getRiskToleranceRating() {
+        return riskToleranceRating;
+    }
+
+    public void setRiskToleranceRating(int riskToleranceRating) {
+        this.riskToleranceRating = riskToleranceRating;
     }
 
     public String getEmail() {
