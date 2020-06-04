@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.BCTokenRequestDto;
+import stacs.nathan.dto.response.BCTokenResponseDto;
 import stacs.nathan.service.BCTokenService;
+import java.util.List;
 
 @RestController
 @RequestMapping("/bctoken")
@@ -23,5 +25,9 @@ public class BCTokenController {
     bcTokenService.createBCToken(token);
   }
 
+  @GetMapping("/fetch-all")
+  public List<BCTokenResponseDto> fetchAllBCTokens() throws ServerErrorException {
+    return bcTokenService.fetchAllBCTokens();
+  }
 
 }

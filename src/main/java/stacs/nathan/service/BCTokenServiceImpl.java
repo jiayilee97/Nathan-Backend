@@ -10,10 +10,13 @@ import org.springframework.stereotype.Service;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.BCTokenRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
+import stacs.nathan.dto.response.BCTokenResponseDto;
 import stacs.nathan.entity.BaseCurrencyToken;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.BCTokenRepository;
 import stacs.nathan.utils.enums.TokenType;
+
+import java.util.List;
 
 @Service
 public class BCTokenServiceImpl implements BCTokenService {
@@ -43,6 +46,18 @@ public class BCTokenServiceImpl implements BCTokenService {
     }catch (Exception e){
       LOGGER.error("Exception in createBCToken().", e);
       throw new ServerErrorException("Exception in createBCToken().", e);
+    }
+  }
+
+  public List<BCTokenResponseDto> fetchAllBCTokens() throws ServerErrorException {
+    LOGGER.debug("Entering fetchAllBCTokens().");
+    try{
+      String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+      User loggedInUser = userService.fetchByUsername(username);
+      return repository.fetchAllByIssuerAddress(loggedInUser.getWalletAddress());
+    }catch (Exception e){
+      LOGGER.error("Exception in fetchAllBCTokens().", e);
+      throw new ServerErrorException("Exception in fetchAllBCTokens().", e);
     }
   }
 
