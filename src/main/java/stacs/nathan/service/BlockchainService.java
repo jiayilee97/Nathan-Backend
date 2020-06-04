@@ -2,6 +2,8 @@ package stacs.nathan.service;
 
 import hashstacs.sdk.dto.Token;
 import hashstacs.sdk.request.blockchain.IssueTokenReqBO;
+import hashstacs.sdk.response.base.JsonRespBO;
+import hashstacs.sdk.response.blockchain.TxDetailRespBO;
 import hashstacs.sdk.util.ChainConnector;
 import io.stacs.nav.crypto.StacsECKey;
 import org.slf4j.Logger;
@@ -13,7 +15,6 @@ import stacs.nathan.core.encryption.CryptoCipher;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.entity.User;
 import stacs.nathan.utils.enums.TokenType;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -38,18 +39,17 @@ public class BlockchainService {
     }
   }
 
-  public String createToken(User user, TokenType tokenType, int currency, BigDecimal quantity) throws ServerErrorException {
+  public JsonRespBO createToken(User user, TokenType tokenType, String currency, BigDecimal quantity) throws ServerErrorException {
     LOGGER.debug("Entering createToken().");
-    String ctxId;
     Token token = new Token(DEFAULT_BD_CODE);
     token.setTokenCode(tokenType.getCode());
     token.setTokenName(tokenType.getValue());
     token.setPolicyName(DEFAULT_POLICY);
-    token.setFeeCurrency(Integer.toString(currency));
+    token.setFeeCurrency(currency);
     token.setTotalQuantity(new BigInteger(String.valueOf(quantity)));
 
     IssueTokenReqBO issueToken = new IssueTokenReqBO(token);
-    ctxId = issueToken.generateTxId();
+    issueToken.generateTxId();
 
     StringBuilder signaturePayload = new StringBuilder();
     signaturePayload.append(issueToken.generateOfflinePayloadForSigning());
@@ -61,8 +61,11 @@ public class BlockchainService {
     //after signing
     Token afterSignToken = new Token(token.getReqObj());
     afterSignToken.setSubmitterSignature(signature);
-    chainConnector.issueToken(afterSignToken);
-    return ctxId;
+    return chainConnector.issueToken(afterSignToken);
+  }
+
+  public TxDetailRespBO getTxDetails(String txId){
+    return chainConnector.queryDetailsByTxId(txId);
   }
 
 

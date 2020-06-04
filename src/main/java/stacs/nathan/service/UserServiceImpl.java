@@ -40,8 +40,10 @@ public class UserServiceImpl implements UserService {
     public void createUser(ClientRequestDto dto) throws ServerErrorException {
         LOGGER.debug("Entering createUser().");
         try{
+            String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
             User user =  convertToUser(dto, false);
             user.setUuid(CommonUtils.generateRandomUUID());
+            user.setCreatedBy(username);
             repository.save(user);
         }catch (Exception e){
             LOGGER.error("Exception in createUser().", e);
@@ -52,7 +54,9 @@ public class UserServiceImpl implements UserService {
     public void updateUser(ClientRequestDto dto) throws ServerErrorException {
         LOGGER.debug("Entering updateUser().");
         try{
+            String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
             User user =  convertToUser(dto, true);
+            user.setUpdatedBy(username);
             if(user.getRole() != null && UserRole.CRO != user.getRole()){
                 blockchainService.createWallet(user);
             }

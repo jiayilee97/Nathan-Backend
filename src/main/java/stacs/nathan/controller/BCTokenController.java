@@ -7,19 +7,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import stacs.nathan.core.exception.ServerErrorException;
-import stacs.nathan.entity.BaseCurrencyToken;
+import stacs.nathan.dto.request.BCTokenRequestDto;
 import stacs.nathan.service.BCTokenService;
 
 @RestController
 @RequestMapping("/bctoken")
-@PreAuthorize("hasAuthority('OPS')")
+//@PreAuthorize("hasAuthority('OPS')")
 public class BCTokenController {
 
   @Autowired
   private BCTokenService bcTokenService;
 
   @GetMapping("/create")
-  public void createBCToken(@RequestBody BaseCurrencyToken token) throws ServerErrorException {
+  public void createBCToken(@RequestBody BCTokenRequestDto token) throws ServerErrorException {
     bcTokenService.createBCToken(token);
   }
 

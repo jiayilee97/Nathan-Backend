@@ -13,7 +13,7 @@ public class BaseTokenEntity extends BaseEntity {
     private String ctxId;
 
     @Column(name = "block_height", length = 50)
-    private int blockHeight;
+    private String blockHeight;
 
     @Column(name = "token_contract_address", length = 50)
     private String tokenContractAddress;
@@ -34,11 +34,11 @@ public class BaseTokenEntity extends BaseEntity {
         this.ctxId = ctxId;
     }
 
-    public int getBlockHeight() {
+    public String getBlockHeight() {
         return blockHeight;
     }
 
-    public void setBlockHeight(int blockHeight) {
+    public void setBlockHeight(String blockHeight) {
         this.blockHeight = blockHeight;
     }
 

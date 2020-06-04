@@ -1,10 +1,10 @@
 package stacs.nathan.service;
 
 import stacs.nathan.core.exception.ServerErrorException;
-import stacs.nathan.entity.BaseCurrencyToken;
+import stacs.nathan.dto.request.BCTokenRequestDto;
 
 public interface BCTokenService {
 
-  void createBCToken(BaseCurrencyToken token) throws ServerErrorException;
+  void createBCToken(BCTokenRequestDto token) throws ServerErrorException;
 
 }
