@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.CreateClientRequestDto;
+import stacs.nathan.dto.response.ClientResponseDto;
 import stacs.nathan.dto.response.ClientSPPositionResponseDto;
 import stacs.nathan.entity.User;
 import stacs.nathan.service.UserService;
@@ -30,6 +31,11 @@ public class UserController {
   @PostMapping("/create/client")
   public void createClient(@RequestBody CreateClientRequestDto dto) throws ServerErrorException {
     userService.createClient(dto);
+  }
+
+  @GetMapping("/fetch/clients")
+  public List<ClientResponseDto> fetchAllClients(){
+    return userService.fetchAllClients();
   }
 
 }

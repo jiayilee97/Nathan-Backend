@@ -9,6 +9,7 @@ import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.ClientRequestDto;
 import stacs.nathan.dto.request.CreateClientRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
+import stacs.nathan.dto.response.ClientResponseDto;
 import stacs.nathan.dto.response.ClientSPPositionResponseDto;
 import stacs.nathan.utils.CommonUtils;
 import stacs.nathan.utils.enums.AccreditedStatus;
@@ -52,6 +53,10 @@ public class UserServiceImpl implements UserService {
 
     public User fetchByUsername(String username) {
         return repository.findByUsername(username);
+    }
+
+    public List<ClientResponseDto> fetchAllClients(){
+        return repository.fetchAllClients(UserRole.CLIENT);
     }
 
     public void createClient(CreateClientRequestDto dto) throws ServerErrorException {
