@@ -15,7 +15,6 @@ import stacs.nathan.entity.BaseCurrencyToken;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.BCTokenRepository;
 import stacs.nathan.utils.enums.TokenType;
-
 import java.util.List;
 
 @Service

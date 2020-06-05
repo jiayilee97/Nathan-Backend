@@ -68,6 +68,4 @@ public class BlockchainService {
     return chainConnector.queryDetailsByTxId(txId);
   }
 
-
-
 }

@@ -1,6 +1,5 @@
 package stacs.nathan.entity;
 
-import stacs.nathan.utils.enums.UserRole;
 import javax.persistence.*;
 
 @Entity
@@ -8,9 +7,8 @@ import javax.persistence.*;
 public class RolePages extends BaseEntity {
   private static final long serialVersionUID = 1L;
 
-  @Enumerated(EnumType.STRING)
   @Column(length = 10)
-  private UserRole role;
+  private String role;
 
   @Column(name = "page_name", length = 200)
   private String pageName;
@@ -18,11 +16,11 @@ public class RolePages extends BaseEntity {
   @Column(name = "is_enabled", nullable = false)
   private boolean isVisible = true;
 
-  public UserRole getRole() {
+  public String getRole() {
     return role;
   }
 
-  public void setRole(UserRole role) {
+  public void setRole(String role) {
     this.role = role;
   }
 
