@@ -5,7 +5,9 @@ import java.util.List;
 public class LoggedInUser {
 
     private String username;
+
     private String organization;
+
     private List<String> roles;
 
     private LoggedInUser() {

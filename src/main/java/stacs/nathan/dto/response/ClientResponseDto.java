@@ -20,24 +20,48 @@ public class ClientResponseDto {
     setWalletAddress(walletAddress);
   }
 
+  public String getClientId() {
+    return clientId;
+  }
+
   public void setClientId(String clientId) {
     this.clientId = clientId;
+  }
+
+  public String getDisplayName() {
+    return displayName;
   }
 
   public void setDisplayName(String displayName) {
     this.displayName = displayName;
   }
 
+  public String getNationality() {
+    return nationality;
+  }
+
   public void setNationality(String nationality) {
     this.nationality = nationality;
+  }
+
+  public AccreditedStatus getAccreditedStatus() {
+    return accreditedStatus;
   }
 
   public void setAccreditedStatus(AccreditedStatus accreditedStatus) {
     this.accreditedStatus = accreditedStatus;
   }
 
+  public int getRiskToleranceRating() {
+    return riskToleranceRating;
+  }
+
   public void setRiskToleranceRating(int riskToleranceRating) {
     this.riskToleranceRating = riskToleranceRating;
+  }
+
+  public String getWalletAddress() {
+    return walletAddress;
   }
 
   public void setWalletAddress(String walletAddress) {

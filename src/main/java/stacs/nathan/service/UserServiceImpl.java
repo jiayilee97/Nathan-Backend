@@ -56,6 +56,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public List<ClientResponseDto> fetchAllClients(){
+        LOGGER.debug("Entering fetchAllClients().");
         return repository.fetchAllClients(UserRole.CLIENT);
     }
 
