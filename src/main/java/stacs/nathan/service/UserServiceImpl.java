@@ -9,11 +9,13 @@ import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.ClientRequestDto;
 import stacs.nathan.dto.request.CreateClientRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
+import stacs.nathan.dto.response.ClientResponseDto;
 import stacs.nathan.utils.CommonUtils;
 import stacs.nathan.utils.enums.AccreditedStatus;
 import stacs.nathan.utils.enums.UserRole;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.UserRepository;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,8 +28,21 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BlockchainService blockchainService;
 
-    public List<User> fetchAllClients() {
-        return repository.findByRole(UserRole.CLIENT);
+    @Autowired
+    private SPTokenService spTokenService;
+
+    public List<ClientResponseDto> fetchClientSPPositions() {
+        LOGGER.debug("Entering fetchClientSPPositions().");
+        List<ClientResponseDto> clientResponseDtos = new ArrayList<>();
+        List<User> users = repository.findByRole(UserRole.CLIENT);
+        for(User user : users) {
+            ClientResponseDto dto = new ClientResponseDto();
+            dto.setClientId(user.getClientId());
+            dto.setOpenPositions(spTokenService.fetchAllOpenPositions(user).size());
+            dto.setClosePositions(spTokenService.fetchAllClosedPositions(user).size());
+            clientResponseDtos.add(dto);
+        }
+        return clientResponseDtos;
     }
 
     public User fetchLoginUser() {

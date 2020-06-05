@@ -7,7 +7,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -55,15 +54,6 @@ public class User extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
     private UserRole role;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Balance> balances;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<BaseCurrencyToken> baseCurrencyTokens;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<SPToken> spTokens;
 
     public String getUuid() {
         return uuid;
@@ -153,27 +143,4 @@ public class User extends BaseEntity{
         this.role = role;
     }
 
-    public List<Balance> getBalances() {
-        return balances;
-    }
-
-    public void setBalances(List<Balance> balances) {
-        this.balances = balances;
-    }
-
-    public List<BaseCurrencyToken> getBaseCurrencyTokens() {
-        return baseCurrencyTokens;
-    }
-
-    public void setBaseCurrencyTokens(List<BaseCurrencyToken> baseCurrencyTokens) {
-        this.baseCurrencyTokens = baseCurrencyTokens;
-    }
-
-    public List<SPToken> getSpTokens() {
-        return spTokens;
-    }
-
-    public void setSpTokens(List<SPToken> spTokens) {
-        this.spTokens = spTokens;
-    }
 }

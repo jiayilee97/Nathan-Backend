@@ -5,6 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.CreateClientRequestDto;
+import stacs.nathan.dto.response.ClientResponseDto;
 import stacs.nathan.entity.User;
 import stacs.nathan.service.UserService;
 import java.util.List;
@@ -18,8 +19,8 @@ public class UserController {
   private UserService userService;
 
   @GetMapping("/fetch/clients")
-  public List<User> fetchAllClients() {
-    return userService.fetchAllClients();
+  public List<ClientResponseDto> fetchClientSPPositions() {
+    return userService.fetchClientSPPositions();
   }
 
   @GetMapping("/fetch/loginuser")
