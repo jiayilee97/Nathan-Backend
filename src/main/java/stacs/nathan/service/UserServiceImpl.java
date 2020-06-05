@@ -9,7 +9,7 @@ import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.ClientRequestDto;
 import stacs.nathan.dto.request.CreateClientRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
-import stacs.nathan.dto.response.ClientResponseDto;
+import stacs.nathan.dto.response.ClientSPPositionResponseDto;
 import stacs.nathan.utils.CommonUtils;
 import stacs.nathan.utils.enums.AccreditedStatus;
 import stacs.nathan.utils.enums.UserRole;
@@ -31,12 +31,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private SPTokenService spTokenService;
 
-    public List<ClientResponseDto> fetchClientSPPositions() {
+    public List<ClientSPPositionResponseDto> fetchClientSPPositions() {
         LOGGER.debug("Entering fetchClientSPPositions().");
-        List<ClientResponseDto> clientResponseDtos = new ArrayList<>();
+        List<ClientSPPositionResponseDto> clientResponseDtos = new ArrayList<>();
         List<User> users = repository.findByRole(UserRole.CLIENT);
         for(User user : users) {
-            ClientResponseDto dto = new ClientResponseDto();
+            ClientSPPositionResponseDto dto = new ClientSPPositionResponseDto();
             dto.setClientId(user.getClientId());
             dto.setOpenPositions(spTokenService.fetchAllOpenPositions(user).size());
             dto.setClosePositions(spTokenService.fetchAllClosedPositions(user).size());

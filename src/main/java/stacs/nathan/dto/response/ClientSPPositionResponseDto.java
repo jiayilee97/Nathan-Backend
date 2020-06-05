@@ -1,6 +1,6 @@
 package stacs.nathan.dto.response;
 
-public class ClientResponseDto {
+public class ClientSPPositionResponseDto {
 
   private String clientId;
   private int openPositions;

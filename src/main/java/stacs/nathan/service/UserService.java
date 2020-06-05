@@ -3,13 +3,13 @@ package stacs.nathan.service;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.ClientRequestDto;
 import stacs.nathan.dto.request.CreateClientRequestDto;
-import stacs.nathan.dto.response.ClientResponseDto;
+import stacs.nathan.dto.response.ClientSPPositionResponseDto;
 import stacs.nathan.entity.User;
 import java.util.List;
 
 public interface UserService {
 
-    List<ClientResponseDto> fetchClientSPPositions();
+    List<ClientSPPositionResponseDto> fetchClientSPPositions();
 
     User fetchLoginUser();
 
