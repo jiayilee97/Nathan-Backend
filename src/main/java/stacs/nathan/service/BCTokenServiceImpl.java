@@ -1,6 +1,9 @@
 package stacs.nathan.service;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import hashstacs.sdk.response.base.JsonRespBO;
+import hashstacs.sdk.response.blockchain.TokenQueryRespBO;
 import hashstacs.sdk.response.blockchain.TxDetailRespBO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +35,19 @@ public class BCTokenServiceImpl implements BCTokenService {
     LOGGER.debug("Entering createBCToken().");
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+      //String username = "username_test";
       User loggedInUser = userService.fetchByUsername(username);
       JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getTokenCode(), dto.getAmount());
-      TxDetailRespBO txDetail = blockchainService.getTxDetails(jsonRespBO.getTxId());
+
+      // jsonRespBO.getTxId() returns a json string. Need to parse it to extract the txid
+      JsonParser parser = new JsonParser();
+      JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
+      String txId = txResponse.get("txId").getAsString();
+      TokenQueryRespBO txDetail = blockchainService.getTxDetails(txId);
+      //System.out.println("Token name: " + txDetail.getTokenInfo().getTokenCode());
       BaseCurrencyToken token = convertToBCToken(dto);
       token.setCtxId(txDetail.getTxId());
       token.setBlockHeight(txDetail.getBlockHeight());
-//      token.setTokenContractAddress(jsonRespBO.);
       repository.save(token);
     }catch (Exception e){
       LOGGER.error("Exception in createBCToken().", e);

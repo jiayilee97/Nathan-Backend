@@ -1,0 +1,275 @@
+pragma solidity ^0.4.24;
+contract Common {
+    bytes32 constant STACS_ADDR = bytes32(0x5354414353000000000000000000000000000000000000000000000000000001);
+    bytes32 constant  POLICY_ID = bytes32(0x0000000000000000000000000000000000000000000000706f6c6963795f6964);
+    bytes32 constant TX_ID = bytes32(0x00000000000000000000000000000000000000000000000000000074785f6964);
+    bytes32 constant MSG_SENDER = bytes32(0x000000000000000000000000000000000000000000004d53475f53454e444552);
+    bytes32 constant STACS_KEY_ADDR = bytes32(0x5354414353000000000000000000000000000000000000000000000000000002);
+    event Bytes32(bytes32);
+    event UintLog(uint, uint);
+    event Bytes(bytes);
+    event Address(address);
+    event String(string);
+
+
+    function recovery(bytes sig, bytes32 hash) public pure returns (address) {
+        bytes32 r;
+        bytes32 s;
+        uint8 v;
+        //Check the signature length
+        require(sig.length == 65, "signature length not match");
+
+        // Divide the signature in r, s and v variables
+        assembly {
+            r := mload(add(sig, 32))
+            s := mload(add(sig, 64))
+            v := byte(0, mload(add(sig, 96)))
+        }
+        // Version of signature should be 27 or 28
+        if (v < 27) {
+            v += 27;
+        }
+        //check version
+        if (v != 27 && v != 28) {
+            return address(0);
+        }
+        return ecrecover(hash, v, r, s);
+    }
+
+    function hexStr2bytes(string data) public pure returns (bytes){
+        bytes memory a = bytes(data);
+        require(a.length > 0, "hex string to bytes error, hex string is empty");
+        uint[] memory b = new uint[](a.length);
+
+        for (uint i = 0; i < a.length; i++) {
+            uint _a = uint(a[i]);
+
+            if (_a > 96) {
+                b[i] = _a - 97 + 10;
+            }
+            else if (_a > 66) {
+                b[i] = _a - 65 + 10;
+            }
+            else {
+                b[i] = _a - 48;
+            }
+        }
+
+        bytes memory c = new bytes(b.length / 2);
+        for (uint _i = 0; _i < b.length; _i += 2) {
+            c[_i / 2] = byte(b[_i] * 16 + b[_i + 1]);
+        }
+        return c;
+    }
+
+    function getContextIdByKey(bytes32 key) internal returns (bytes32 contextPolicyId){
+        emit Bytes32(key);
+        bytes32 output = getContextParam(key, 32, STACS_ADDR);
+        require(output.length > 0, "output is empty");
+        return output;
+    }
+
+    function getContextParam(bytes32 input, uint outputSize, bytes32 precompliedContractAddr) internal returns (bytes32){
+        bytes32[1] memory inputs;
+        inputs[0] = input;
+        bytes32 stacs_addr = precompliedContractAddr;
+        bytes32[1] memory output;
+        assembly{
+            let success := call(//This is the critical change (Pop the top stack value)
+            0, //5k gas
+            stacs_addr, //To addr
+            0, //No value
+            inputs,
+            32,
+            output,
+            outputSize)
+        }
+        emit Bytes32(output[0]);
+        return output[0];
+    }
+
+    function stringToBytes32(string memory source) public pure returns (bytes32 result) {
+        bytes memory tempEmptyStringTest = bytes(source);
+        if (tempEmptyStringTest.length == 0) {
+            return 0x0;
+        }
+        assembly {
+            result := mload(add(source, 32))
+        }
+    }
+
+    function splitBytes(bytes strBytes, uint start, uint length) public pure returns (bytes){
+        require(strBytes.length > 0, "input bytes length is 0");
+        bytes memory b = new bytes(length);
+        for (uint i = 0; i < length; i++) {
+            b[i] = strBytes[start + i];
+        }
+        return b;
+    }
+
+    function bytesToAddress(bytes bys) internal pure returns (address addr) {
+        require(bys.length == 20, "bytes to address error. input bytes length is not 20");
+        assembly {
+            addr := mload(add(bys, 20))
+        }
+    }
+
+    function bytesToBytes32(bytes bytes_32) public pure returns (bytes32 result){
+        require(bytes_32.length == 32, "input bytes length must is 32");
+        assembly {
+            result := mload(add(bytes_32, 32))
+        }
+    }
+
+    function hexStringToBytes32(string hexString) public pure returns (bytes32 result){
+        bytes memory hexStringBytes = bytes(hexString);
+        require(hexStringBytes.length == 64, "hex String length must is 64");
+        return bytesToBytes32(hexStr2bytes(hexString));
+    }
+
+
+    //assemble the given address bytecode. If bytecode exists then the _addr is a contract.
+    function isContract(address _addr) public view returns (bool is_contract) {
+        uint length;
+        assembly {
+        //retrieve the size of the code on target address, this needs assembly
+            length := extcodesize(_addr)
+        }
+        return (length > 0);
+    }
+
+    function getContextParam2(bytes32 input, uint outputSize, bytes32 precompliedContractAddr) internal returns (bytes32){
+        bytes32[1] memory inputs;
+        inputs[0] = input;
+        bytes32 stacs_addr = precompliedContractAddr;
+        bytes32[1] memory output;
+        assembly{
+            let success := call(
+            0,
+            stacs_addr,
+            0,
+            inputs,
+            32,
+            output,
+            outputSize)
+        }
+        return output[0];
+    }
+
+    //get context sender
+    function getContextSender() internal returns (address){
+        //verify that the originalAddress is the sender of the original transaction via a precompiled contract
+        bytes32 output = getContextParam2(MSG_SENDER, 32, STACS_ADDR);
+        return address(output);
+    }
+}
+
+contract TransferDemo is Common{
+
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    address issuerAddress;
+    address ownerAddress;
+    string tokenName;
+    string tokenSymbol;
+    uint totalSupplyAmount;
+    uint8 decimalsDigit;
+
+    string kyc_expression = "eq(country,'China') && eq(residence,'China') && (eq(gender,'male') || eq(gender,'male female'))";
+
+    constructor (
+        address _ownerAddr,
+        string _tokenName,
+        string _tokenSymbol,
+        uint _totalSupply,
+        uint8 _decimals
+    ) public {
+        ownerAddress = _ownerAddr;
+        issuerAddress = msg.sender;
+        tokenName = _tokenName;
+        tokenSymbol = _tokenSymbol;
+        decimalsDigit = _decimals;
+        totalSupplyAmount = _totalSupply;
+        balance[ownerAddress].balance = totalSupplyAmount;
+        addresses.push(ownerAddress);
+        balance[ownerAddress].exists = true;
+    }
+
+    struct Balance {
+        uint balance;
+        bool exists;
+    }
+
+    mapping(address => Balance) balance;
+    address[] addresses;
+
+    function transfer(address _to, uint256 _value) public payable returns (bool success){
+        require(msg.sender != 0x0, "from address is 0x0");
+        if(msg.sender != ownerAddress){
+
+        }
+
+        return transferFrom(msg.sender, _to, _value);
+    }
+
+    function wholesaleTransfer(address _to, uint256 _value) public payable returns (bool success){
+        require(msg.sender != 0x0, "wholesale Transfer from address is 0x0");
+        if(msg.sender != ownerAddress){
+
+        }
+
+        return transferFrom(msg.sender, _to, _value);
+    }
+
+    function balanceOf(address _owner) public view returns (uint256 balanceAmount){
+        balanceAmount = balance[_owner].balance;
+        return (balanceAmount);
+    }
+
+    function transferFrom(address _from, address _to, uint256 _value) internal returns (bool){
+
+        require(_to != 0x0, "to address is 0x0");
+        require(_value > 0, "The value must be that is greater than zero.");
+        require(balance[_from].balance  >= _value, "from address balance not enough");
+        require(balance[_to].balance + _value > balance[_to].balance, "to address balance overflow");
+
+        uint previousBalance = balance[_from].balance + balance[_to].balance;
+        balance[_from].balance -= _value;
+        if (!balance[_to].exists) {
+            balance[_to].balance = _value;
+            balance[_to].exists = true;
+            addresses.push(_to);
+        }
+        else {
+            balance[_to].balance += _value;
+        }
+        emit Transfer(_from, _to, _value);
+        assert(balance[_from].balance + balance[_to].balance == previousBalance);
+
+        return true;
+    }
+
+    function checkKyc(address userAddress,string kyc) internal returns(bool){
+
+        bytes memory input =abi.encode(userAddress,kyc);
+        bytes32[1] memory output;
+        emit Bytes(input);
+        uint inputSize = input.length + 32;
+        bytes32 callAddress  = STACS_KEY_ADDR;
+        assembly{
+            let success := call(
+            0,
+            callAddress,
+            0,
+            input,
+            inputSize,
+            output,
+            32)
+        }
+        emit Bytes32(output[0]);
+        if(output[0] == bytes32(0x0000000000000000000000000000000000000000000000000000000000000001)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+}
