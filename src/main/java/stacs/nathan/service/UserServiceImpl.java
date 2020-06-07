@@ -7,11 +7,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.ClientRequestDto;
+import stacs.nathan.dto.request.CreateClientRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
+import stacs.nathan.dto.response.ClientResponseDto;
+import stacs.nathan.dto.response.ClientSPPositionResponseDto;
 import stacs.nathan.utils.CommonUtils;
+import stacs.nathan.utils.enums.AccreditedStatus;
 import stacs.nathan.utils.enums.UserRole;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.UserRepository;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,8 +29,21 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BlockchainService blockchainService;
 
-    public List<User> fetchAllClients() {
-        return repository.findByRole(UserRole.CLIENT);
+    @Autowired
+    private SPTokenService spTokenService;
+
+    public List<ClientSPPositionResponseDto> fetchClientSPPositions() {
+        LOGGER.debug("Entering fetchClientSPPositions().");
+        List<ClientSPPositionResponseDto> clientResponseDtos = new ArrayList<>();
+        List<User> users = repository.findByRole(UserRole.CLIENT);
+        for(User user : users) {
+            ClientSPPositionResponseDto dto = new ClientSPPositionResponseDto();
+            dto.setClientId(user.getClientId());
+            dto.setOpenPositions(spTokenService.fetchAllOpenPositions(user).size());
+            dto.setClosePositions(spTokenService.fetchAllClosedPositions(user).size());
+            clientResponseDtos.add(dto);
+        }
+        return clientResponseDtos;
     }
 
     public User fetchLoginUser() {
@@ -35,6 +53,32 @@ public class UserServiceImpl implements UserService {
 
     public User fetchByUsername(String username) {
         return repository.findByUsername(username);
+    }
+
+    public List<ClientResponseDto> fetchAllClients(){
+        LOGGER.debug("Entering fetchAllClients().");
+        return repository.fetchAllClients(UserRole.CLIENT);
+    }
+
+    public void createClient(CreateClientRequestDto dto) throws ServerErrorException {
+        LOGGER.debug("Entering createClient().");
+        try{
+            String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+            User user = new User();
+            user.setUuid(CommonUtils.generateRandomUUID());
+            user.setRole(UserRole.CLIENT);
+            user.setClientId(dto.getClientId());
+            user.setDisplayName(dto.getDisplayName());
+            user.setNationality(dto.getNationality());
+            user.setAccreditedStatus(AccreditedStatus.resolveCode(dto.getAccreditedStatus()));
+            user.setRiskToleranceRating(dto.getRiskToleranceRating());
+            user.setCreatedBy(username);
+            blockchainService.createWallet(user);
+            repository.save(user);
+        }catch (Exception e){
+            LOGGER.error("Exception in createClient().", e);
+            throw new ServerErrorException("Exception in createClient().", e);
+        }
     }
 
     public void createUser(ClientRequestDto dto) throws ServerErrorException {

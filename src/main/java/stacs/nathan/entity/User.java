@@ -1,12 +1,12 @@
 package stacs.nathan.entity;
 
+import stacs.nathan.utils.enums.AccreditedStatus;
 import stacs.nathan.utils.enums.UserRole;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -16,8 +16,6 @@ public class User extends BaseEntity{
     @Column(name = "uuid", length = 50, nullable = false)
     private String uuid;
 
-    @NotNull
-    @NotEmpty(message = "Username cannot be empty")
     @Column(name = "user_name", length = 50)
     private String username;
 
@@ -26,8 +24,20 @@ public class User extends BaseEntity{
     @Column(name = "display_name", length = 50)
     private String displayName;
 
+    @Column(name = "client_id", length = 50)
+    private String clientId;
+
+    @Column(name = "nationality", length = 50)
+    private String nationality;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "accredited_status", length = 10)
+    private AccreditedStatus accreditedStatus;
+
+    @Column(name = "risk_tolerance_rating", length = 10)
+    private int riskToleranceRating;
+
     @Email
-    @NotEmpty(message = "Email cannot be empty")
     @Size(min = 1, max = 100)
     @Column(length = 100, nullable = false)
     private String email;
@@ -43,15 +53,6 @@ public class User extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
     private UserRole role;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Balance> balances;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<BaseCurrencyToken> baseCurrencyTokens;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<SPToken> spTokens;
 
     public String getUuid() {
         return uuid;
@@ -75,6 +76,38 @@ public class User extends BaseEntity{
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
+    }
+
+    public AccreditedStatus getAccreditedStatus() {
+        return accreditedStatus;
+    }
+
+    public void setAccreditedStatus(AccreditedStatus accreditedStatus) {
+        this.accreditedStatus = accreditedStatus;
+    }
+
+    public int getRiskToleranceRating() {
+        return riskToleranceRating;
+    }
+
+    public void setRiskToleranceRating(int riskToleranceRating) {
+        this.riskToleranceRating = riskToleranceRating;
     }
 
     public String getEmail() {
@@ -109,27 +142,4 @@ public class User extends BaseEntity{
         this.role = role;
     }
 
-    public List<Balance> getBalances() {
-        return balances;
-    }
-
-    public void setBalances(List<Balance> balances) {
-        this.balances = balances;
-    }
-
-    public List<BaseCurrencyToken> getBaseCurrencyTokens() {
-        return baseCurrencyTokens;
-    }
-
-    public void setBaseCurrencyTokens(List<BaseCurrencyToken> baseCurrencyTokens) {
-        this.baseCurrencyTokens = baseCurrencyTokens;
-    }
-
-    public List<SPToken> getSpTokens() {
-        return spTokens;
-    }
-
-    public void setSpTokens(List<SPToken> spTokens) {
-        this.spTokens = spTokens;
-    }
 }

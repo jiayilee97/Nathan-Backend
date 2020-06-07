@@ -14,6 +14,8 @@ public class ClientRequestDto {
 
   private List<String> roles;
 
+  private String customAttributes;
+
   public String getUsername() {
     return username;
   }
@@ -28,5 +30,9 @@ public class ClientRequestDto {
 
   public List<String> getRoles() {
     return roles;
+  }
+
+  public String getCustomAttributes() {
+    return customAttributes;
   }
 }

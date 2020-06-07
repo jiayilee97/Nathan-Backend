@@ -101,6 +101,4 @@ public class BlockchainService {
     return (TokenQueryRespBO) chainConnector.queryDetailsByTxId(txId);
   }
 
-
-
 }
