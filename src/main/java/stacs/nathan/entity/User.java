@@ -47,7 +47,7 @@ public class User extends BaseEntity{
     private String privateKey;
 
     //for client, operation, counter party, market
-    @Column(name = "wallet_address", length = 50)
+    @Column(name = "wallet_address", length = 100)
     private String walletAddress;
 
     @Enumerated(EnumType.STRING)

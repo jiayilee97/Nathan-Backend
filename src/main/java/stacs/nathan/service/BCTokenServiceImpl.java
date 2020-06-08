@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import hashstacs.sdk.response.base.JsonRespBO;
 import hashstacs.sdk.response.blockchain.TokenQueryRespBO;
-import hashstacs.sdk.response.blockchain.TxDetailRespBO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,20 +36,23 @@ public class BCTokenServiceImpl implements BCTokenService {
     LOGGER.debug("Entering createBCToken().");
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-      //String username = "username_test";
       User loggedInUser = userService.fetchByUsername(username);
-      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getTokenCode(), dto.getAmount());
-
-      // jsonRespBO.getTxId() returns a json string. Need to parse it to extract the txid
+      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getAmount());
       JsonParser parser = new JsonParser();
       JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
       String txId = txResponse.get("txId").getAsString();
+      Thread.sleep(5000);
       TokenQueryRespBO txDetail = blockchainService.getTxDetails(txId);
-      //System.out.println("Token name: " + txDetail.getTokenInfo().getTokenCode());
-      BaseCurrencyToken token = convertToBCToken(dto);
-      token.setCtxId(txDetail.getTxId());
-      token.setBlockHeight(txDetail.getBlockHeight());
-      repository.save(token);
+      if(txDetail != null){
+        BaseCurrencyToken token = convertToBCToken(dto);
+        token.setUser(loggedInUser);
+        token.setCtxId(txDetail.getTxId());
+        token.setBlockHeight(txDetail.getBlockHeight());
+        token.setIssuerId(loggedInUser.getUuid());
+        token.setIssuerAddress(loggedInUser.getWalletAddress());
+        token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
+        repository.save(token);
+      }
     }catch (Exception e){
       LOGGER.error("Exception in createBCToken().", e);
       throw new ServerErrorException("Exception in createBCToken().", e);

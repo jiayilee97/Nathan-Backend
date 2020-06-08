@@ -9,13 +9,13 @@ public class BaseTokenEntity extends BaseEntity {
     @Column(name = "token_code", length = 50, nullable = false)
     private String tokenCode;
 
-    @Column(name = "c_tx_id", length = 50, unique = true)
+    @Column(name = "c_tx_id", length = 100, unique = true)
     private String ctxId;
 
     @Column(name = "block_height", length = 50)
     private String blockHeight;
 
-    @Column(name = "token_contract_address", length = 50)
+    @Column(name = "token_contract_address", length = 100)
     private String tokenContractAddress;
 
     public String getTokenCode() {
