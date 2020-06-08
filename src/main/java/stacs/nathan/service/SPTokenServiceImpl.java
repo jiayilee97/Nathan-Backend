@@ -10,17 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.exception.ServerErrorException;
-import stacs.nathan.dto.request.BCTokenRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.request.SPTokenRequestDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
-import stacs.nathan.entity.BaseCurrencyToken;
 import stacs.nathan.entity.SPToken;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.SPTokenRepository;
 import stacs.nathan.utils.enums.SPTokenStatus;
 import stacs.nathan.utils.enums.TokenType;
-
 import java.util.List;
 
 @Service
@@ -42,7 +39,7 @@ public class SPTokenServiceImpl implements SPTokenService {
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       //String username = "username_test";
       User loggedInUser = userService.fetchByUsername(username);
-      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getTokenCode(), dto.getNotionalAmount());
+      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getNotionalAmount());
 
       // jsonRespBO.getTxId() returns a json string. Need to parse it to extract the txid
       JsonParser parser = new JsonParser();
