@@ -20,20 +20,35 @@ public class BCTokenResponseDto {
     setBalance(balance);
   }
 
+  public String getUnderlyingCurrency() {
+    return underlyingCurrency;
+  }
+
   public void setUnderlyingCurrency(String underlyingCurrency) {
     this.underlyingCurrency = underlyingCurrency;
+  }
+
+  public String getTokenCode() {
+    return tokenCode;
   }
 
   public void setTokenCode(String tokenCode) {
     this.tokenCode = tokenCode;
   }
 
+  public int getCurrencyCode() {
+    return currencyCode;
+  }
+
   public void setCurrencyCode(int currencyCode) {
     this.currencyCode = currencyCode;
+  }
+
+  public BigDecimal getBalance() {
+    return balance;
   }
 
   public void setBalance(BigDecimal balance) {
     this.balance = balance;
   }
-
 }

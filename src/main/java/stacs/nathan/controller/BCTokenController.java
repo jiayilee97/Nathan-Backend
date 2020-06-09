@@ -22,9 +22,9 @@ public class BCTokenController {
     bcTokenService.createBCToken(token);
   }
 
-  @GetMapping("/fetch-all")
-  public List<BCTokenResponseDto> fetchAllBCTokens() throws ServerErrorException {
-    return bcTokenService.fetchAllBCTokens();
+  @GetMapping("/fetch/{issuerAddress}")
+  public List<BCTokenResponseDto> fetchAllByIssuerAddress(@PathVariable String issuerAddress) throws ServerErrorException {
+    return bcTokenService.fetchAllByIssuerAddress(issuerAddress);
   }
 
 }
