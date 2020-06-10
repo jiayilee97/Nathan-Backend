@@ -27,16 +27,20 @@ import java.util.Date;
 public class BlockchainService {
   private static final Logger LOGGER = LoggerFactory.getLogger(BlockchainService.class);
 
-  @Value("${DEFAULT_POLICY}")
+  @Value("${stacs.policy}")
   private String policy;
-  @Value("${DEFAULT_BD_CODE}")
+  @Value("${stacs.bdcode}")
   private String bdCode;
-  @Value("${DEFAULT_CONTRACT_METHOD}")
+  @Value("${stacs.contract.method}")
   private String contractMethod;
-  @Value("${CODE_LOCATION}")
+  @Value("${code.location}")
   private String codeLocation;
-  @Value("${CONFIG_PROPERTIES}")
+  @Value("${stacs.config.props}")
   private String configProps;
+  @Value("${stacs.chain-query.wait-time}")
+  private int queryWaitTime;
+  @Value("${stacs.chain-query.max-retries}")
+  private int queryMaxRetries;
 
   private static StringBuilder merchantAesKey = new StringBuilder();
   private static StringBuilder domainMerchantId = new StringBuilder();
@@ -95,11 +99,29 @@ public class BlockchainService {
     //after signing
     Token afterSignToken = new Token(token.getReqObj());
     afterSignToken.setSubmitterSignature(signature);
-    return chainConnector.issueToken(afterSignToken);
+    JsonRespBO jsonRespBO = chainConnector.issueToken(afterSignToken);
+    if(!jsonRespBO.getIsSuccessful()){
+      LOGGER.error("Issue token in blockchain is not successful");
+      throw new ServerErrorException("Exception in createToken().");
+    }
+    return jsonRespBO;
   }
 
   public TokenQueryRespBO getTxDetails(String txId){
-    return (TokenQueryRespBO) chainConnector.queryDetailsByTxId(txId);
+    String blockHeight = null;
+    for(int i = 0; i < queryMaxRetries; i++) {
+      try {
+        Thread.sleep(queryWaitTime);
+        TokenQueryRespBO txDetailRespBO = (TokenQueryRespBO) chainConnector.queryDetailsByTxId(txId);
+        blockHeight = txDetailRespBO.getBlockHeight();
+        if(blockHeight != null) {
+          return txDetailRespBO;
+        }
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+    return null;
   }
 
 }

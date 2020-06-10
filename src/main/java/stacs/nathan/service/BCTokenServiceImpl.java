@@ -16,6 +16,7 @@ import stacs.nathan.dto.response.BCTokenResponseDto;
 import stacs.nathan.entity.BaseCurrencyToken;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.BCTokenRepository;
+import stacs.nathan.utils.enums.BCTokenStatus;
 import stacs.nathan.utils.enums.TokenType;
 import java.util.List;
 
@@ -46,13 +47,16 @@ public class BCTokenServiceImpl implements BCTokenService {
       token.setCtxId(txId);
       token.setIssuerId(loggedInUser.getUuid());
       token.setIssuerAddress(loggedInUser.getWalletAddress());
+      token.setCreatedBy(username);
+      token.setStatus(BCTokenStatus.UNCONFIRMED_IN_CHAIN);
       repository.save(token);
-      Thread.sleep(5000);
       TokenQueryRespBO txDetail = blockchainService.getTxDetails(txId);
-      // retry if not success
-      token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
-      token.setBlockHeight(txDetail.getBlockHeight());
-      repository.save(token);
+      if(txDetail != null) {
+        token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
+        token.setBlockHeight(txDetail.getBlockHeight());
+        token.setStatus(BCTokenStatus.CONFIRMED_IN_CHAIN);
+        repository.save(token);
+      }
     }catch (Exception e){
       LOGGER.error("Exception in createBCToken().", e);
       throw new ServerErrorException("Exception in createBCToken().", e);

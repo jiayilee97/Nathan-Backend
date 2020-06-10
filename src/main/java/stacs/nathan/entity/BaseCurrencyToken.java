@@ -1,6 +1,7 @@
 package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
+import stacs.nathan.utils.enums.BCTokenStatus;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -29,6 +30,9 @@ public class BaseCurrencyToken extends BaseTokenEntity {
 
     @Column(name = "issuer_address", length = 50)
     private String issuerAddress;
+
+    @Enumerated(EnumType.STRING)
+    private BCTokenStatus status;
 
     public User getUser() {
         return user;
@@ -79,4 +83,11 @@ public class BaseCurrencyToken extends BaseTokenEntity {
         this.issuerAddress = issuerAddress;
     }
 
+    public BCTokenStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BCTokenStatus status) {
+        this.status = status;
+    }
 }
