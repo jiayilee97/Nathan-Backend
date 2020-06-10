@@ -75,6 +75,19 @@ public class BCTokenServiceImpl implements BCTokenService {
     }
   }
 
+  public void execute(){
+    List<BaseCurrencyToken> tokens = repository.fetchAllUnconfirmedChain(BCTokenStatus.UNCONFIRMED_IN_CHAIN);
+    for(BaseCurrencyToken token : tokens){
+      TokenQueryRespBO txDetail = blockchainService.getTxDetails(token.getCtxId());
+      if(txDetail != null) {
+        token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
+        token.setBlockHeight(txDetail.getBlockHeight());
+        token.setStatus(BCTokenStatus.CONFIRMED_IN_CHAIN);
+        repository.save(token);
+      }blockchainService.getTxDetails(token.getCtxId());
+    }
+  }
+
   public BaseCurrencyToken convertToBCToken(BCTokenRequestDto dto){
     BaseCurrencyToken token = new BaseCurrencyToken();
     token.setUnderlyingCurrency(dto.getUnderlyingCurrency());

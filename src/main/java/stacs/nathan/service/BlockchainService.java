@@ -109,12 +109,12 @@ public class BlockchainService {
 
   public TokenQueryRespBO getTxDetails(String txId){
     String blockHeight = null;
+    chainConnector = ChainConnector.initConn(merchantAesKey.toString(), domainMerchantId.toString(), domainGateway.toString());
     for(int i = 0; i < queryMaxRetries; i++) {
       try {
         Thread.sleep(queryWaitTime);
         TokenQueryRespBO txDetailRespBO = (TokenQueryRespBO) chainConnector.queryDetailsByTxId(txId);
-        blockHeight = txDetailRespBO.getBlockHeight();
-        if(blockHeight != null) {
+        if(txDetailRespBO != null && txDetailRespBO.getBlockHeight() != null) {
           return txDetailRespBO;
         }
       } catch (InterruptedException e) {
