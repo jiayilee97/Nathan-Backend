@@ -41,30 +41,30 @@ public class BCTokenServiceImpl implements BCTokenService {
       JsonParser parser = new JsonParser();
       JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
       String txId = txResponse.get("txId").getAsString();
+      BaseCurrencyToken token = convertToBCToken(dto);
+      token.setUser(loggedInUser);
+      token.setCtxId(txId);
+      token.setIssuerId(loggedInUser.getUuid());
+      token.setIssuerAddress(loggedInUser.getWalletAddress());
+      repository.save(token);
       Thread.sleep(5000);
       TokenQueryRespBO txDetail = blockchainService.getTxDetails(txId);
-      if(txDetail != null){
-        BaseCurrencyToken token = convertToBCToken(dto);
-        token.setUser(loggedInUser);
-        token.setCtxId(txDetail.getTxId());
-        token.setBlockHeight(txDetail.getBlockHeight());
-        token.setIssuerId(loggedInUser.getUuid());
-        token.setIssuerAddress(loggedInUser.getWalletAddress());
-        token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
-        repository.save(token);
-      }
+      // retry if not success
+      token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
+      token.setBlockHeight(txDetail.getBlockHeight());
+      repository.save(token);
     }catch (Exception e){
       LOGGER.error("Exception in createBCToken().", e);
       throw new ServerErrorException("Exception in createBCToken().", e);
     }
   }
 
-  public List<BCTokenResponseDto> fetchAllBCTokens() throws ServerErrorException {
+  public List<BCTokenResponseDto> fetchAllByIssuerAddress(String issuerAddress) throws ServerErrorException {
     LOGGER.debug("Entering fetchAllBCTokens().");
     try{
-      String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-      User loggedInUser = userService.fetchByUsername(username);
-      return repository.fetchAllByIssuerAddress(loggedInUser.getWalletAddress());
+//      String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+//      User loggedInUser = userService.fetchByUsername(username);
+      return repository.fetchAllByIssuerAddress(issuerAddress);
     }catch (Exception e){
       LOGGER.error("Exception in fetchAllBCTokens().", e);
       throw new ServerErrorException("Exception in fetchAllBCTokens().", e);

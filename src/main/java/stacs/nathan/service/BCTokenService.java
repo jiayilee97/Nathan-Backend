@@ -10,6 +10,6 @@ public interface BCTokenService {
 
   void createBCToken(BCTokenRequestDto token) throws ServerErrorException;
 
-  List<BCTokenResponseDto> fetchAllBCTokens() throws ServerErrorException;
+  List<BCTokenResponseDto> fetchAllByIssuerAddress(String issuerAddress) throws ServerErrorException;
 
 }
