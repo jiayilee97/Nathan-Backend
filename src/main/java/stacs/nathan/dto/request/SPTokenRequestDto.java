@@ -1,7 +1,7 @@
 package stacs.nathan.dto.request;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.util.Date;
 
 public class SPTokenRequestDto {
 
@@ -9,7 +9,7 @@ public class SPTokenRequestDto {
 
     private String productType;
 
-    private Timestamp contractInceptionDate;
+    private Date contractInceptionDate;
 
     private String underlyingCurrency;
 
@@ -23,7 +23,7 @@ public class SPTokenRequestDto {
 
     private BigDecimal knockoutPrice;
 
-    private Timestamp maturityDate;
+    private Date maturityDate;
 
     private String fixingPage;
 
@@ -51,11 +51,11 @@ public class SPTokenRequestDto {
         this.productType = productType;
     }
 
-    public Timestamp getContractInceptionDate() {
+    public Date getContractInceptionDate() {
         return contractInceptionDate;
     }
 
-    public void setContractInceptionDate(Timestamp contractInceptionDate) {
+    public void setContractInceptionDate(Date contractInceptionDate) {
         this.contractInceptionDate = contractInceptionDate;
     }
 
@@ -107,15 +107,13 @@ public class SPTokenRequestDto {
         this.knockoutPrice = knockoutPrice;
     }
 
-    public Timestamp getMaturityDate() {
+    public Date getMaturityDate() {
         return maturityDate;
     }
 
-    public void setMaturityDate(Timestamp maturityDate) {
+    public void setMaturityDate(Date maturityDate) {
         this.maturityDate = maturityDate;
     }
-
-
 
     public String getFixingPage() {
         return fixingPage;

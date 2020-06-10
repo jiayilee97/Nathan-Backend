@@ -84,7 +84,7 @@ public class BlockchainService {
     token.setTokenCode(tokenType.getCode() + "_" + new Date().getTime());
     token.setTokenName(tokenType.getValue());
     token.setPolicyName(policy);
-    token.setTotalQuantity(new BigInteger(String.valueOf(quantity)));
+    token.setTotalQuantity(quantity.toBigInteger());
 
     IssueTokenReqBO issueToken = new IssueTokenReqBO(token);
     issueToken.generateTxId();

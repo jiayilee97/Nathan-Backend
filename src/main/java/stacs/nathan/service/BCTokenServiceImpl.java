@@ -68,7 +68,7 @@ public class BCTokenServiceImpl implements BCTokenService {
     try{
 //      String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 //      User loggedInUser = userService.fetchByUsername(username);
-      return repository.fetchAllByIssuerAddress(issuerAddress);
+      return repository.fetchAllByIssuerAddress(issuerAddress, BCTokenStatus.CONFIRMED_IN_CHAIN);
     }catch (Exception e){
       LOGGER.error("Exception in fetchAllBCTokens().", e);
       throw new ServerErrorException("Exception in fetchAllBCTokens().", e);

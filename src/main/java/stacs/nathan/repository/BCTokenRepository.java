@@ -12,8 +12,9 @@ import java.util.List;
 @Repository
 public interface BCTokenRepository extends JpaRepository<BaseCurrencyToken, Long> {
 
-  @Query("SELECT NEW stacs.nathan.dto.response.BCTokenResponseDto(bc.underlyingCurrency, bc.tokenCode, bc.currencyCode, bc.amount) FROM BaseCurrencyToken bc where bc.issuerAddress = :issuerAddress")
-  List<BCTokenResponseDto> fetchAllByIssuerAddress(@Param("issuerAddress") String issuerAddress);
+  @Query("SELECT NEW stacs.nathan.dto.response.BCTokenResponseDto(bc.underlyingCurrency, bc.tokenCode, bc.currencyCode, bc.amount) " +
+      "FROM BaseCurrencyToken bc WHERE bc.issuerAddress = :issuerAddress AND bc.status = :status")
+  List<BCTokenResponseDto> fetchAllByIssuerAddress(@Param("issuerAddress") String issuerAddress, @Param("status")BCTokenStatus status);
 
   @Query("SELECT bc FROM BaseCurrencyToken bc WHERE bc.status = :status")
   List<BaseCurrencyToken> fetchAllUnconfirmedChain(@Param("status")BCTokenStatus status);
