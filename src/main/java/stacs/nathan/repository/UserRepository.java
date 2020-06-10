@@ -16,6 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByUsername(String username);
 
+    User findByClientId(String clientId);
+
     @Query("SELECT NEW stacs.nathan.dto.response.ClientResponseDto(u.clientId, u.displayName, u.nationality, u.accreditedStatus, u.riskToleranceRating, u.walletAddress) FROM User u where u.role = :role")
     List<ClientResponseDto> fetchAllClients(@Param("role") UserRole role);
 }

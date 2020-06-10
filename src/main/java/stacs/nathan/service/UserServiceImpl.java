@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.ClientRequestDto;
 import stacs.nathan.dto.request.CreateClientRequestDto;
@@ -64,7 +65,10 @@ public class UserServiceImpl implements UserService {
         LOGGER.debug("Entering createClient().");
         try{
             String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-            User user = new User();
+            User user = repository.findByClientId(dto.getClientId());
+            if(user != null){
+                throw new BadRequestException("Client ID already exists.");
+            }
             user.setUuid(CommonUtils.generateRandomUUID());
             user.setRole(UserRole.CLIENT);
             user.setClientId(dto.getClientId());
