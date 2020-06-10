@@ -37,7 +37,6 @@ public class SPTokenServiceImpl implements SPTokenService {
     LOGGER.debug("Entering createSPToken().");
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-      //String username = "username_test";
       User loggedInUser = userService.fetchByUsername(username);
       JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getNotionalAmount());
 
@@ -45,15 +44,19 @@ public class SPTokenServiceImpl implements SPTokenService {
       JsonParser parser = new JsonParser();
       JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
       String txId = txResponse.get("txId").getAsString();
+      Thread.sleep(5000);
       TokenQueryRespBO txDetail = blockchainService.getTxDetails(txId);
-      //System.out.println("Token name: " + txDetail.getTokenInfo().getTokenCode());
-      SPToken token = convertToSPToken(dto);
-      token.setCtxId(txDetail.getTxId());
-      token.setBlockHeight(txDetail.getBlockHeight());
-      repository.save(token);
+      if (txDetail != null) {
+        SPToken token = convertToSPToken(dto);
+        token.setUser(loggedInUser);
+        token.setCtxId(txDetail.getTxId());
+        token.setBlockHeight(txDetail.getBlockHeight());
+        token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
+        repository.save(token);
+      }
     }catch (Exception e){
-      LOGGER.error("Exception in createBCToken().", e);
-      throw new ServerErrorException("Exception in createBCToken().", e);
+      LOGGER.error("Exception in createSPToken().", e);
+      throw new ServerErrorException("Exception in createSPToken().", e);
     }
   }
 
@@ -61,6 +64,18 @@ public class SPTokenServiceImpl implements SPTokenService {
     SPToken token = new SPToken();
     token.setUnderlyingCurrency(dto.getUnderlyingCurrency());
     token.setTokenCode(dto.getTokenCode());
+    token.setCpId(dto.getCounterPartyId());
+    token.setOpsId(dto.getOpsId());
+    token.setMaturityDate(dto.getMaturityDate());
+    token.setFixingPage(dto.getFixingPage());
+    token.setFixingAmount(dto.getAmountPerFixing());
+    token.setNumberOfFixing(dto.getNumFixing());
+    token.setKnockOutPrice(dto.getKnockoutPrice());
+    token.setProductType(dto.getProductType());
+    token.setSpotPrice(dto.getIndicativeSpotPrice());
+    token.setStrikeRate(dto.getStrikeRate());
+    token.setNotionalAmount(dto.getNotionalAmount());
+    token.setStatus(SPTokenStatus.ACTIVE);
     return token;
   }
 
