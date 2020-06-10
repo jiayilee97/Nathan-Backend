@@ -1,8 +1,7 @@
 package stacs.nathan.dto.request;
 
 import java.math.BigDecimal;
-import java.sql.Time;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class SPTokenRequestDto {
 
@@ -10,7 +9,7 @@ public class SPTokenRequestDto {
 
     private String productType;
 
-    private Date contractInceptionDate;
+    private Timestamp contractInceptionDate;
 
     private String underlyingCurrency;
 
@@ -24,13 +23,17 @@ public class SPTokenRequestDto {
 
     private BigDecimal knockoutPrice;
 
-    private Date maturityDate;
-
-    private Time maturityTime;
+    private Timestamp maturityDate;
 
     private String fixingPage;
 
     private int numFixing;
+
+    private String counterPartyId;
+
+    private String opsId;
+
+    private String issuingAddress;
 
     public String getTokenCode() {
         return tokenCode;
@@ -48,11 +51,11 @@ public class SPTokenRequestDto {
         this.productType = productType;
     }
 
-    public Date getContractInceptionDate() {
+    public Timestamp getContractInceptionDate() {
         return contractInceptionDate;
     }
 
-    public void setContractInceptionDate(Date contractInceptionDate) {
+    public void setContractInceptionDate(Timestamp contractInceptionDate) {
         this.contractInceptionDate = contractInceptionDate;
     }
 
@@ -104,21 +107,15 @@ public class SPTokenRequestDto {
         this.knockoutPrice = knockoutPrice;
     }
 
-    public Date getMaturityDate() {
+    public Timestamp getMaturityDate() {
         return maturityDate;
     }
 
-    public void setMaturityDate(Date maturityDate) {
+    public void setMaturityDate(Timestamp maturityDate) {
         this.maturityDate = maturityDate;
     }
 
-    public Time getMaturityTime() {
-        return maturityTime;
-    }
 
-    public void setMaturityTime(Time maturityTime) {
-        this.maturityTime = maturityTime;
-    }
 
     public String getFixingPage() {
         return fixingPage;
@@ -134,5 +131,29 @@ public class SPTokenRequestDto {
 
     public void setNumFixing(int numFixing) {
         this.numFixing = numFixing;
+    }
+
+    public String getCounterPartyId() {
+        return counterPartyId;
+    }
+
+    public void setCounterPartyId(String counterPartyId) {
+        this.counterPartyId = counterPartyId;
+    }
+
+    public String getOpsId() {
+        return opsId;
+    }
+
+    public void setOpsId(String opsId) {
+        this.opsId = opsId;
+    }
+
+    public String getIssuingAddress() {
+        return issuingAddress;
+    }
+
+    public void setIssuingAddress(String issuingAddress) {
+        this.issuingAddress = issuingAddress;
     }
 }
