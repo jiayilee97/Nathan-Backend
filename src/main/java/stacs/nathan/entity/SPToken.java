@@ -24,8 +24,15 @@ public class SPToken extends BaseTokenEntity {
     @Column(name = "product_type", length = 50)
     private String productType;
 
+    @Column(name= "issuing_address", length = 50)
+    private String issuingAddress;
+
     @Column(name = "underlying_currency", length = 10)
     private String underlyingCurrency;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "contract_inception_date")
+    private Date contractInceptionDate;
 
     @Column(name = "notional_amount", precision = 15, scale = 2)
     @ColumnDefault("0.0")
@@ -187,4 +194,19 @@ public class SPToken extends BaseTokenEntity {
         this.status = status;
     }
 
+    public String getIssuingAddress() {
+        return issuingAddress;
+    }
+
+    public void setIssuingAddress(String issuingAddress) {
+        this.issuingAddress = issuingAddress;
+    }
+
+    public Date getContractInceptionDate() {
+        return contractInceptionDate;
+    }
+
+    public void setContractInceptionDate(Date contractInceptionDate) {
+        this.contractInceptionDate = contractInceptionDate;
+    }
 }

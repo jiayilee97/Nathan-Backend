@@ -36,7 +36,8 @@ public class SPTokenServiceImpl implements SPTokenService {
   public void createSPToken(SPTokenRequestDto dto) throws ServerErrorException {
     LOGGER.debug("Entering createSPToken().");
     try{
-      String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+      //String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+      String username = "usernamew_test";
       User loggedInUser = userService.fetchByUsername(username);
       JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getNotionalAmount());
 
@@ -52,6 +53,7 @@ public class SPTokenServiceImpl implements SPTokenService {
         token.setCtxId(txDetail.getTxId());
         token.setBlockHeight(txDetail.getBlockHeight());
         token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
+        token.setIssuingAddress(loggedInUser.getWalletAddress());
         repository.save(token);
       }
     }catch (Exception e){
@@ -64,6 +66,7 @@ public class SPTokenServiceImpl implements SPTokenService {
     SPToken token = new SPToken();
     token.setUnderlyingCurrency(dto.getUnderlyingCurrency());
     token.setTokenCode(dto.getTokenCode());
+    token.setContractInceptionDate(dto.getContractInceptionDate());
     token.setCpId(dto.getCounterPartyId());
     token.setOpsId(dto.getOpsId());
     token.setMaturityDate(dto.getMaturityDate());
