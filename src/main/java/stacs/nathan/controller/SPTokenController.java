@@ -7,7 +7,6 @@ import stacs.nathan.dto.request.SPTokenRequestDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.service.SPTokenService;
 import stacs.nathan.service.UserService;
-
 import java.util.List;
 
 @RestController
