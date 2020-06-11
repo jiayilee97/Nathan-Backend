@@ -20,7 +20,6 @@ import stacs.nathan.entity.User;
 import stacs.nathan.utils.enums.TokenType;
 import java.io.File;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 @Service
@@ -100,7 +99,7 @@ public class BlockchainService {
     Token afterSignToken = new Token(token.getReqObj());
     afterSignToken.setSubmitterSignature(signature);
     JsonRespBO jsonRespBO = chainConnector.issueToken(afterSignToken);
-    if(!jsonRespBO.getIsSuccessful()){
+    if(jsonRespBO == null || !jsonRespBO.getIsSuccessful()){
       LOGGER.error("Issue token in blockchain is not successful");
       throw new ServerErrorException("Exception in createToken().");
     }
