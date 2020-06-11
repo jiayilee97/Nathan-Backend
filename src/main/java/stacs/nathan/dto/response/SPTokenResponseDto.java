@@ -1,7 +1,8 @@
 package stacs.nathan.dto.response;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
+import java.sql.Timestamp;
 
 public class SPTokenResponseDto {
     private String tokenCode;
@@ -35,21 +36,21 @@ public class SPTokenResponseDto {
     private String issuingAddress;
 
     public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress) {
-        this.tokenCode = tokenCode;
-        this.productType = productType;
-        this.contractInceptionDate = contractInceptionDate;
-        this.underlyingCurrency = underlyingCurrency;
-        this.notionalAmount = notionalAmount;
-        this.amountPerFixing = amountPerFixing;
-        this.indicativeSpotPrice = indicativeSpotPrice;
-        this.strikeRate = strikeRate;
-        this.knockoutPrice = knockoutPrice;
-        this.maturityDate = maturityDate;
-        this.fixingPage = fixingPage;
-        this.numFixing = numFixing;
-        this.counterPartyId = counterPartyId;
-        this.opsId = opsId;
-        this.issuingAddress = issuingAddress;
+        setTokenCode(tokenCode);
+        setProductType(productType);
+        setContractInceptionDate(contractInceptionDate);
+        setUnderlyingCurrency(underlyingCurrency);
+        setNotionalAmount(notionalAmount);
+        setAmountPerFixing(amountPerFixing);
+        setIndicativeSpotPrice(indicativeSpotPrice);
+        setStrikeRate(strikeRate);
+        setKnockoutPrice(knockoutPrice);
+        setMaturityDate(maturityDate);
+        setFixingPage(fixingPage);
+        setNumFixing(numFixing);
+        setCounterPartyId(counterPartyId);
+        setOpsId(opsId);
+        setIssuingAddress(issuingAddress);
     }
 
     public String getTokenCode() {

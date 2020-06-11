@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.SPTokenRequestDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
+import stacs.nathan.entity.User;
 import stacs.nathan.service.SPTokenService;
 import stacs.nathan.service.UserService;
 import java.util.List;

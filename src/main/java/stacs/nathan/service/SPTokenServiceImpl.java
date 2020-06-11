@@ -7,8 +7,10 @@ import hashstacs.sdk.response.blockchain.TokenQueryRespBO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.exception.ServerErrorException;
+import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.request.SPTokenRequestDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.SPToken;
@@ -35,7 +37,6 @@ public class SPTokenServiceImpl implements SPTokenService {
     LOGGER.debug("Entering createSPToken().");
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-      //String username = "usernamew_test";
       User loggedInUser = userService.fetchByUsername(username);
       JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getNotionalAmount());
 
@@ -83,7 +84,9 @@ public class SPTokenServiceImpl implements SPTokenService {
   }
 
   public List<SPTokenResponseDto> fetchAllOpenPositions(User user){
-    return repository.fetchAllOpenPositions(user, SPTokenStatus.ACTIVE);
+    String username = "usernamew_test";
+    User loggedInUser = userService.fetchByUsername(username);
+    return repository.fetchAllOpenPositions(loggedInUser, SPTokenStatus.ACTIVE);
   }
 
   public List<SPTokenResponseDto> fetchAllClosedPositions(User user){
