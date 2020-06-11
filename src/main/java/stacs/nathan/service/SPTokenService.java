@@ -14,4 +14,6 @@ public interface SPTokenService {
 
   List<SPTokenResponseDto> fetchAllClosedPositions(User user);
 
+  SPTokenResponseDto fetchById(Long id);
+
 }

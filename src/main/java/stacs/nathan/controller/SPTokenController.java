@@ -29,4 +29,9 @@ public class SPTokenController {
     public List<SPTokenResponseDto> fetchAllSPTokens() throws ServerErrorException {
         return spTokenService.fetchAllOpenPositions(userService.fetchLoginUser());
     }
+
+    @GetMapping("/fetch/{id}")
+    public SPTokenResponseDto fetchSPTokenById(@PathVariable Long id) throws ServerErrorException {
+        return spTokenService.fetchById(id);
+    }
 }

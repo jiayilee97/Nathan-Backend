@@ -40,7 +40,6 @@ public class SPTokenServiceImpl implements SPTokenService {
       User loggedInUser = userService.fetchByUsername(username);
       JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getNotionalAmount());
 
-      // jsonRespBO.getTxId() returns a json string. Need to parse it to extract the txid
       JsonParser parser = new JsonParser();
       JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
       String txId = txResponse.get("txId").getAsString();
@@ -84,13 +83,15 @@ public class SPTokenServiceImpl implements SPTokenService {
   }
 
   public List<SPTokenResponseDto> fetchAllOpenPositions(User user){
-    String username = "usernamew_test";
-    User loggedInUser = userService.fetchByUsername(username);
-    return repository.fetchAllOpenPositions(loggedInUser, SPTokenStatus.ACTIVE);
+    return repository.fetchAllOpenPositions(user, SPTokenStatus.ACTIVE);
   }
 
   public List<SPTokenResponseDto> fetchAllClosedPositions(User user){
     return repository.fetchAllClosedPositions(user, SPTokenStatus.ACTIVE);
+  }
+
+  public SPTokenResponseDto fetchById(Long id) {
+    return repository.findSPTokenById(id);
   }
 
   public void execute(){
