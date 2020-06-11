@@ -45,15 +45,17 @@ public class SPTokenServiceImpl implements SPTokenService {
       JsonParser parser = new JsonParser();
       JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
       String txId = txResponse.get("txId").getAsString();
-      Thread.sleep(5000);
+      SPToken token = convertToSPToken(dto);
+      token.setUser(loggedInUser);
+      token.setCtxId(txId);
+      token.setIssuingAddress(loggedInUser.getWalletAddress());
+      token.setCreatedBy(username);
+      token.setStatus(SPTokenStatus.UNCONFIRMED_IN_CHAIN);
       TokenQueryRespBO txDetail = blockchainService.getTxDetails(txId);
       if (txDetail != null) {
-        SPToken token = convertToSPToken(dto);
-        token.setUser(loggedInUser);
-        token.setCtxId(txDetail.getTxId());
         token.setBlockHeight(txDetail.getBlockHeight());
         token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
-        token.setIssuingAddress(loggedInUser.getWalletAddress());
+        token.setStatus(SPTokenStatus.ACTIVE);
         repository.save(token);
       }
     }catch (Exception e){
@@ -88,6 +90,19 @@ public class SPTokenServiceImpl implements SPTokenService {
 
   public List<SPTokenResponseDto> fetchAllClosedPositions(User user){
     return repository.fetchAllClosedPositions(user, SPTokenStatus.ACTIVE);
+  }
+
+  public void execute(){
+    List<SPToken> tokens = repository.fetchAllUnconfirmedChain(SPTokenStatus.UNCONFIRMED_IN_CHAIN);
+    for(SPToken token : tokens){
+      TokenQueryRespBO txDetail = blockchainService.getTxDetails(token.getCtxId());
+      if(txDetail != null) {
+        token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
+        token.setBlockHeight(txDetail.getBlockHeight());
+        token.setStatus(SPTokenStatus.ACTIVE);
+        repository.save(token);
+      }blockchainService.getTxDetails(token.getCtxId());
+    }
   }
 
 }

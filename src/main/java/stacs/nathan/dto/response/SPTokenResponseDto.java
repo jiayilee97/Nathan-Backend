@@ -2,7 +2,6 @@ package stacs.nathan.dto.response;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.sql.Timestamp;
 
 public class SPTokenResponseDto {
     private String tokenCode;

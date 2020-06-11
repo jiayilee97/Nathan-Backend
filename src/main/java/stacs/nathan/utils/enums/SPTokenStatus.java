@@ -1,7 +1,7 @@
 package stacs.nathan.utils.enums;
 
 public enum SPTokenStatus {
-    ACTIVE("Active"), KNOCK_OUT("Knock Out"), CONTRACT_MATURITY("Contract Maturity");
+    ACTIVE("Active"), KNOCK_OUT("Knock Out"), CONTRACT_MATURITY("Contract Maturity"), UNCONFIRMED_IN_CHAIN("Unconfirmed in chain");
 
     private String value;
 
