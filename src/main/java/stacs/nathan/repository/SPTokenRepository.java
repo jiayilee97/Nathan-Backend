@@ -21,6 +21,9 @@ public interface SPTokenRepository extends JpaRepository<SPToken, Long> {
 //          "FROM SPToken sp WHERE sp.user = :user AND sp.status = :status")
 //  List<SPTokenResponseDto> fetchAllOpenPositions(@Param("user") User user, @Param("status") SPTokenStatus status);
 
+  @Query("SELECT sp FROM SPToken sp WHERE sp.status = :status")
+  List<SPToken> fetchAllUnconfirmedChain(@Param("status") SPTokenStatus status);
+
   @Query("SELECT sp FROM SPToken sp WHERE sp.user = :user AND sp.status != :status")
   List<SPTokenResponseDto> fetchAllClosedPositions(@Param("user") User user, @Param("status") SPTokenStatus status);
 
