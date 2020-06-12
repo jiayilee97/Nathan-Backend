@@ -2,7 +2,6 @@ package stacs.nathan.dto.response;
 
 import stacs.nathan.dto.Select;
 import stacs.nathan.entity.CodeValue;
-
 import java.util.List;
 
 public class CreateSPTokenInitDto {

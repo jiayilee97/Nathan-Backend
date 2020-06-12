@@ -8,8 +8,6 @@ import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.SPToken;
 import stacs.nathan.entity.User;
 import stacs.nathan.utils.enums.SPTokenStatus;
-
-import java.math.BigInteger;
 import java.util.List;
 
 @Repository

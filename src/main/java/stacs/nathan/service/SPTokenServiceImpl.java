@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.exception.ServerErrorException;
-import stacs.nathan.dto.Select;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.request.SPTokenRequestDto;
 import stacs.nathan.dto.response.CreateSPTokenInitDto;
@@ -71,6 +70,7 @@ public class SPTokenServiceImpl implements SPTokenService {
 
   public SPToken convertToSPToken(SPTokenRequestDto dto){
     SPToken token = new SPToken();
+    token.setClientId(dto.getClientId());
     token.setUnderlyingCurrency(dto.getUnderlyingCurrency());
     token.setTokenCode(dto.getTokenCode());
     token.setContractInceptionDate(dto.getContractInceptionDate());

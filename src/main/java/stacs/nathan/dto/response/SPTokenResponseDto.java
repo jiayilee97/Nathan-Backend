@@ -1,9 +1,6 @@
 package stacs.nathan.dto.response;
 
-import stacs.nathan.entity.SPToken;
-import stacs.nathan.entity.User;
 import stacs.nathan.utils.enums.SPTokenStatus;
-
 import java.math.BigDecimal;
 import java.util.Date;
 

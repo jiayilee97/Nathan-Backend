@@ -17,6 +17,9 @@ public class SPToken extends BaseTokenEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "client_id", length = 50)
+    private String clientId;
+
     @JsonIgnore
     @OneToOne(mappedBy = "spToken", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private FXToken fxToken;
@@ -80,6 +83,14 @@ public class SPToken extends BaseTokenEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     public FXToken getFxToken() {
