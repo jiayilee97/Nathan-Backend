@@ -18,6 +18,8 @@ public interface UserService {
 
     List<ClientResponseDto> fetchAllClients();
 
+    List<String> fetchAllClientIds();
+
     void createClient(CreateClientRequestDto dto) throws ServerErrorException;
 
     void createUser(ClientRequestDto dto) throws ServerErrorException;

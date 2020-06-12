@@ -61,6 +61,11 @@ public class UserServiceImpl implements UserService {
         return repository.fetchAllClients(UserRole.CLIENT);
     }
 
+    public List<String> fetchAllClientIds(){
+        LOGGER.debug("Entering fetchAllClientIds().");
+        return repository.fetchAllClientIds(UserRole.CLIENT);
+    }
+
     public void createClient(CreateClientRequestDto dto) throws ServerErrorException {
         LOGGER.debug("Entering createClient().");
         try{

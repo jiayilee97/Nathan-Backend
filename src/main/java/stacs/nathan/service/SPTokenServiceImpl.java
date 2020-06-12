@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.exception.ServerErrorException;
+import stacs.nathan.dto.Select;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.request.SPTokenRequestDto;
 import stacs.nathan.dto.response.CreateSPTokenInitDto;
@@ -17,6 +18,8 @@ import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.SPToken;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.SPTokenRepository;
+import stacs.nathan.utils.enums.CodeType;
+import stacs.nathan.utils.enums.ProductType;
 import stacs.nathan.utils.enums.SPTokenStatus;
 import stacs.nathan.utils.enums.TokenType;
 import java.util.List;
@@ -33,6 +36,9 @@ public class SPTokenServiceImpl implements SPTokenService {
 
   @Autowired
   BlockchainService blockchainService;
+
+  @Autowired
+  CodeValueService codeValueService;
 
   public void createSPToken(SPTokenRequestDto dto) throws ServerErrorException {
     LOGGER.debug("Entering createSPToken().");
@@ -75,7 +81,7 @@ public class SPTokenServiceImpl implements SPTokenService {
     token.setFixingAmount(dto.getAmountPerFixing());
     token.setNumberOfFixing(dto.getNumFixing());
     token.setKnockOutPrice(dto.getKnockoutPrice());
-    token.setProductType(dto.getProductType());
+    token.setProductType(ProductType.resolveValue(dto.getProductType()));
     token.setSpotPrice(dto.getIndicativeSpotPrice());
     token.setStrikeRate(dto.getStrikeRate());
     token.setNotionalAmount(dto.getNotionalAmount());
@@ -92,8 +98,13 @@ public class SPTokenServiceImpl implements SPTokenService {
   }
 
   public CreateSPTokenInitDto fetchInitForm(){
+    String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    User loggedInUser = userService.fetchByUsername(username);
     CreateSPTokenInitDto dto = new CreateSPTokenInitDto();
-
+    dto.setClientIds(userService.fetchAllClientIds());
+    dto.setProductType(ProductType.getValuesSelection());
+    dto.setUnderlying(codeValueService.findByType(CodeType.UNDERLYING));
+    dto.setIssuingAddress(loggedInUser.getWalletAddress());
     return dto;
   }
 
