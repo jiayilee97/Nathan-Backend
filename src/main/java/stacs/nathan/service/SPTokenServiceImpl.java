@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.request.SPTokenRequestDto;
+import stacs.nathan.dto.response.CreateSPTokenInitDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.SPToken;
 import stacs.nathan.entity.User;
@@ -84,13 +85,19 @@ public class SPTokenServiceImpl implements SPTokenService {
   }
 
   public List<SPTokenResponseDto> fetchAllOpenPositions(User user){
-    String username = "usernamew_test";
-    User loggedInUser = userService.fetchByUsername(username);
+//    String username = "usernamew_test";
+    User loggedInUser = userService.fetchByUsername(user.getUsername());
     return repository.fetchAllOpenPositions(loggedInUser, SPTokenStatus.ACTIVE);
   }
 
   public List<SPTokenResponseDto> fetchAllClosedPositions(User user){
     return repository.fetchAllClosedPositions(user, SPTokenStatus.ACTIVE);
+  }
+
+  public CreateSPTokenInitDto fetchInitForm(){
+    CreateSPTokenInitDto dto = new CreateSPTokenInitDto();
+
+    return dto;
   }
 
   public void execute(){
