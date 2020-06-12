@@ -5,6 +5,8 @@ import java.util.Date;
 
 public class SPTokenRequestDto {
 
+    private String clientId;
+
     private String tokenCode;
 
     private String productType;
@@ -34,6 +36,14 @@ public class SPTokenRequestDto {
     private String opsId;
 
     private String issuingAddress;
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
     public String getTokenCode() {
         return tokenCode;

@@ -33,6 +33,8 @@ public class SPTokenResponseDto {
 
     private String opsId;
 
+    private String issuer; //ops display name
+
     private String issuingAddress;
 
     public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress) {
