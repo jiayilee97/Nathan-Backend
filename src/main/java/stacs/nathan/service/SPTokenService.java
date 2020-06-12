@@ -17,4 +17,6 @@ public interface SPTokenService {
 
   CreateSPTokenInitDto fetchInitForm();
 
+  SPTokenResponseDto fetchById(Long id);
+
 }
