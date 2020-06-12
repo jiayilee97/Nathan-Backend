@@ -87,6 +87,10 @@ public class SPTokenServiceImpl implements SPTokenService {
     return repository.fetchAllOpenPositions(user, SPTokenStatus.ACTIVE);
   }
 
+  public List <SPTokenResponseDto> fetchAllTokens(User user) {
+    return repository.fetchAllTokens(user);
+  }
+
   public List<SPTokenResponseDto> fetchAllClosedPositions(User user){
     return repository.fetchAllClosedPositions(user, SPTokenStatus.ACTIVE);
   }

@@ -1,8 +1,11 @@
 package stacs.nathan.dto.response;
 
+import stacs.nathan.entity.SPToken;
+import stacs.nathan.entity.User;
+import stacs.nathan.utils.enums.SPTokenStatus;
+
 import java.math.BigDecimal;
 import java.util.Date;
-import java.sql.Timestamp;
 
 public class SPTokenResponseDto {
     private String tokenCode;
@@ -35,9 +38,13 @@ public class SPTokenResponseDto {
 
     private String issuer; //ops display name
 
+    private String clientId;
+
+    private SPTokenStatus status;
+
     private String issuingAddress;
 
-    public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress) {
+    public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress, SPTokenStatus status, String issuer, String clientId) {
         setTokenCode(tokenCode);
         setProductType(productType);
         setContractInceptionDate(contractInceptionDate);
@@ -53,6 +60,9 @@ public class SPTokenResponseDto {
         setCounterPartyId(counterPartyId);
         setOpsId(opsId);
         setIssuingAddress(issuingAddress);
+        setIssuer(issuer);
+        setClientId(clientId);
+        setStatus(status);
     }
 
     public String getTokenCode() {
@@ -173,5 +183,29 @@ public class SPTokenResponseDto {
 
     public void setIssuingAddress(String issuingAddress) {
         this.issuingAddress = issuingAddress;
+    }
+
+    public String getIssuer() {
+        return issuer;
+    }
+
+    public void setIssuer(String issuer) {
+        this.issuer = issuer;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public SPTokenStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(SPTokenStatus status) {
+        this.status = status;
     }
 }

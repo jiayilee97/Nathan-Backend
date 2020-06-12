@@ -32,7 +32,7 @@ public class SPTokenController {
 
     @GetMapping("/fetch-all")
     public List<SPTokenResponseDto> fetchAllSPTokens() throws ServerErrorException {
-        return spTokenService.fetchAllOpenPositions(userService.fetchLoginUser());
+        return spTokenService.fetchAllTokens(userService.fetchLoginUser());
     }
 
     @GetMapping("/fetch/{id}")
