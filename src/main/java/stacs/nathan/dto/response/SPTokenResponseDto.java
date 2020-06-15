@@ -1,5 +1,6 @@
 package stacs.nathan.dto.response;
 
+import stacs.nathan.entity.FXToken;
 import stacs.nathan.utils.enums.SPTokenStatus;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -41,6 +42,8 @@ public class SPTokenResponseDto {
 
     private String issuingAddress;
 
+    private FXToken fxToken;
+
     public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress, SPTokenStatus status, String issuer, String clientId) {
         setTokenCode(tokenCode);
         setProductType(productType);
@@ -60,6 +63,28 @@ public class SPTokenResponseDto {
         setIssuer(issuer);
         setClientId(clientId);
         setStatus(status);
+    }
+
+    public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress, SPTokenStatus status, String issuer, String clientId, FXToken fxToken) {
+        setTokenCode(tokenCode);
+        setProductType(productType);
+        setContractInceptionDate(contractInceptionDate);
+        setUnderlyingCurrency(underlyingCurrency);
+        setNotionalAmount(notionalAmount);
+        setAmountPerFixing(amountPerFixing);
+        setIndicativeSpotPrice(indicativeSpotPrice);
+        setStrikeRate(strikeRate);
+        setKnockoutPrice(knockoutPrice);
+        setMaturityDate(maturityDate);
+        setFixingPage(fixingPage);
+        setNumFixing(numFixing);
+        setCounterPartyId(counterPartyId);
+        setOpsId(opsId);
+        setIssuingAddress(issuingAddress);
+        setIssuer(issuer);
+        setClientId(clientId);
+        setStatus(status);
+        setFxToken(fxToken);
     }
 
     public String getTokenCode() {
@@ -204,5 +229,13 @@ public class SPTokenResponseDto {
 
     public void setStatus(SPTokenStatus status) {
         this.status = status;
+    }
+
+    public FXToken getFxToken() {
+        return fxToken;
+    }
+
+    public void setFxToken(FXToken fxToken) {
+        this.fxToken = fxToken;
     }
 }

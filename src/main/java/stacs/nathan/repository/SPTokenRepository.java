@@ -32,4 +32,11 @@ public interface SPTokenRepository extends JpaRepository<SPToken, Long> {
   List<SPTokenResponseDto> fetchAllTokens(@Param("user") User user);
 
 
+  // Used by FXTokenService
+  @Query("SELECT NEW stacs.nathan.dto.response.SPTokenResponseDto(sp.tokenCode, sp.productType, sp.contractInceptionDate, sp.underlyingCurrency, sp.notionalAmount, sp.fixingAmount, sp.spotPrice, sp.strikeRate, sp.knockOutPrice, sp.maturityDate, sp.fixingPage, sp.numberOfFixing, sp.cpId, sp.opsId, sp.issuingAddress, sp.status, sp.user.displayName, sp.clientId, sp.fxToken)" +
+          "FROM SPToken sp WHERE sp.user = :user AND sp.fxToken = null")
+  List<SPTokenResponseDto> fetchAvailableTokens(@Param("user") User user);
+
+  @Query("SELECT sp FROM SPToken sp WHERE id =?1")
+  SPToken findAvailableSPTokenById(Long id);
 }

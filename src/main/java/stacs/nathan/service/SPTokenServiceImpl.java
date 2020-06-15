@@ -44,7 +44,7 @@ public class SPTokenServiceImpl implements SPTokenService {
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
-      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getNotionalAmount());
+      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.SP_TOKEN, dto.getNotionalAmount());
 
       JsonParser parser = new JsonParser();
       JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
