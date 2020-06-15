@@ -1,6 +1,7 @@
 package stacs.nathan.dto.response;
 
 import stacs.nathan.entity.FXToken;
+import stacs.nathan.utils.enums.ProductType;
 import stacs.nathan.utils.enums.SPTokenStatus;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -46,7 +47,7 @@ public class SPTokenResponseDto {
 
     public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress, SPTokenStatus status, String issuer, String clientId) {
         setTokenCode(tokenCode);
-        setProductType(productType);
+        setProductType(ProductType.resolveCode(productType).getValue());
         setContractInceptionDate(contractInceptionDate);
         setUnderlyingCurrency(underlyingCurrency);
         setNotionalAmount(notionalAmount);

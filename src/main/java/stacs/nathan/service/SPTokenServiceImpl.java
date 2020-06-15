@@ -50,6 +50,7 @@ public class SPTokenServiceImpl implements SPTokenService {
       JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
       String txId = txResponse.get("txId").getAsString();
       SPToken token = convertToSPToken(dto);
+      token.setOpsId(String.valueOf(loggedInUser.getId()));
       token.setUser(loggedInUser);
       token.setCtxId(txId);
       token.setIssuingAddress(loggedInUser.getWalletAddress());
@@ -75,13 +76,12 @@ public class SPTokenServiceImpl implements SPTokenService {
     token.setTokenCode(dto.getTokenCode());
     token.setContractInceptionDate(dto.getContractInceptionDate());
     token.setCpId(dto.getCounterPartyId());
-    token.setOpsId(dto.getOpsId());
     token.setMaturityDate(dto.getMaturityDate());
     token.setFixingPage(dto.getFixingPage());
     token.setFixingAmount(dto.getAmountPerFixing());
     token.setNumberOfFixing(dto.getNumFixing());
     token.setKnockOutPrice(dto.getKnockoutPrice());
-    token.setProductType(ProductType.resolveValue(dto.getProductType()));
+    token.setProductType(dto.getProductType());
     token.setSpotPrice(dto.getIndicativeSpotPrice());
     token.setStrikeRate(dto.getStrikeRate());
     token.setNotionalAmount(dto.getNotionalAmount());
