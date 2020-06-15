@@ -81,7 +81,7 @@ public class SPTokenServiceImpl implements SPTokenService {
     token.setFixingAmount(dto.getAmountPerFixing());
     token.setNumberOfFixing(dto.getNumFixing());
     token.setKnockOutPrice(dto.getKnockoutPrice());
-    token.setProductType(ProductType.resolveCode(dto.getProductType()).getCode());
+    token.setProductType(dto.getProductType());
     token.setSpotPrice(dto.getIndicativeSpotPrice());
     token.setStrikeRate(dto.getStrikeRate());
     token.setNotionalAmount(dto.getNotionalAmount());
