@@ -33,8 +33,6 @@ public class SPTokenRequestDto {
 
     private String counterPartyId;
 
-    private String opsId;
-
     private String issuingAddress;
 
     public String getClientId() {
@@ -147,14 +145,6 @@ public class SPTokenRequestDto {
 
     public void setCounterPartyId(String counterPartyId) {
         this.counterPartyId = counterPartyId;
-    }
-
-    public String getOpsId() {
-        return opsId;
-    }
-
-    public void setOpsId(String opsId) {
-        this.opsId = opsId;
     }
 
     public String getIssuingAddress() {
