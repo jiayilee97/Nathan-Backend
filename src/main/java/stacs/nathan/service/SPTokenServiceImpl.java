@@ -21,6 +21,8 @@ import stacs.nathan.utils.enums.CodeType;
 import stacs.nathan.utils.enums.ProductType;
 import stacs.nathan.utils.enums.SPTokenStatus;
 import stacs.nathan.utils.enums.TokenType;
+
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -126,6 +128,19 @@ public class SPTokenServiceImpl implements SPTokenService {
         token.setStatus(SPTokenStatus.ACTIVE);
         repository.save(token);
       }blockchainService.getTxDetails(token.getCtxId());
+    }
+  }
+
+  public void checkSPTokenMaturity() {
+    List<SPToken> tokens = repository.fetchAllActiveTokens(SPTokenStatus.ACTIVE);
+    for (SPToken token: tokens) {
+      Date tokenMaturityDate = token.getMaturityDate();
+      Date currentDate = new Date();
+      if (tokenMaturityDate.before(currentDate)) {
+        token.setStatus(SPTokenStatus.CONTRACT_MATURITY);
+        System.out.println("Contract maturity reached for token: " + token.getTokenCode());
+        repository.save(token);
+      }
     }
   }
 

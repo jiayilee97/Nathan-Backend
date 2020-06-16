@@ -21,4 +21,8 @@ public interface SPTokenService {
 
   SPTokenResponseDto fetchById(Long id);
 
+  void execute();
+
+  void checkSPTokenMaturity();
+
 }

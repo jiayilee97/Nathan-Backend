@@ -74,7 +74,7 @@ public class SPToken extends BaseTokenEntity {
     private String opsId;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 10)
+    @Column(length = 30)
     private SPTokenStatus status;
 
     public User getUser() {
