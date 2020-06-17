@@ -46,6 +46,10 @@ public class SPTokenServiceImpl implements SPTokenService {
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
+      SPTokenResponseDto responseDto = repository.findSPTokenByTokenCode(dto.getTokenCode());
+      if (responseDto != null) {
+        throw new Exception("Token code already exists");
+      }
       JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.SP_TOKEN, dto.getNotionalAmount());
 
       JsonParser parser = new JsonParser();
