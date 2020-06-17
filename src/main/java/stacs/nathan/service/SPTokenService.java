@@ -19,7 +19,7 @@ public interface SPTokenService {
 
   CreateSPTokenInitDto fetchInitForm();
 
-  SPTokenResponseDto fetchById(Long id);
+  SPTokenResponseDto fetchByTokenCode(String tokenCode);
 
   void execute();
 

@@ -35,8 +35,8 @@ public class SPTokenController {
         return spTokenService.fetchAllTokens(userService.fetchLoginUser());
     }
 
-    @GetMapping("/fetch/{id}")
-    public SPTokenResponseDto fetchSPTokenById(@PathVariable Long id) throws ServerErrorException {
-        return spTokenService.fetchById(id);
+    @GetMapping("/fetch/{tokenCode}")
+    public SPTokenResponseDto fetchSPTokenById(@PathVariable String tokenCode) throws ServerErrorException {
+        return spTokenService.fetchByTokenCode(tokenCode);
     }
 }

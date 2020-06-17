@@ -114,8 +114,8 @@ public class SPTokenServiceImpl implements SPTokenService {
     return dto;
   }
 
-  public SPTokenResponseDto fetchById(Long id) {
-    return repository.findSPTokenById(id);
+  public SPTokenResponseDto fetchByTokenCode(String tokenCode) {
+    return repository.findSPTokenByTokenCode(tokenCode);
   }
 
   public void execute(){
