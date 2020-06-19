@@ -16,7 +16,7 @@ public interface BCTokenRepository extends JpaRepository<BaseCurrencyToken, Long
       "FROM BaseCurrencyToken bc WHERE bc.issuerAddress = :issuerAddress AND bc.status = :status")
   List<BCTokenResponseDto> fetchAllByIssuerAddress(@Param("issuerAddress") String issuerAddress, @Param("status")BCTokenStatus status);
 
-  @Query("SELECT bc FROM BaseCurrencyToken bc WHERE bc.status = :status")
-  List<BaseCurrencyToken> fetchAllUnconfirmedChain(@Param("status")BCTokenStatus status);
+//  @Query("SELECT bc FROM BaseCurrencyToken bc WHERE bc.status = :status")
+  List<BaseCurrencyToken> findByStatus(@Param("status")BCTokenStatus status);
 
 }

@@ -11,6 +11,8 @@ public interface BCTokenService {
 
   List<BCTokenResponseDto> fetchAllByIssuerAddress(String issuerAddress) throws ServerErrorException;
 
-  void execute();
+  void executeUnconfirmedChain();
+
+  void executeUnavailableChain();
 
 }

@@ -38,57 +38,81 @@ public class BCTokenServiceImpl implements BCTokenService {
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
-      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getAmount());
-      JsonParser parser = new JsonParser();
-      JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
-      String txId = txResponse.get("txId").getAsString();
       BaseCurrencyToken token = convertToBCToken(dto);
       token.setUser(loggedInUser);
-      token.setCtxId(txId);
       token.setIssuerId(loggedInUser.getUuid());
       token.setIssuerAddress(loggedInUser.getWalletAddress());
       token.setCreatedBy(username);
-      token.setStatus(BCTokenStatus.UNCONFIRMED_IN_CHAIN);
-      repository.save(token);
-      TokenQueryRespBO txDetail = blockchainService.getTxDetails(txId);
-      if(txDetail != null) {
-        token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
-        token.setBlockHeight(txDetail.getBlockHeight());
-        token.setStatus(BCTokenStatus.CONFIRMED_IN_CHAIN);
+      JsonRespBO jsonRespBO = null;// blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getAmount());
+      if (jsonRespBO == null) {
+        token.setStatus(BCTokenStatus.CHAIN_UNAVAILABLE);
         repository.save(token);
+      } else {
+        processAvailableChain(token, jsonRespBO);
       }
-    }catch (Exception e){
+    } catch (Exception e) {
       LOGGER.error("Exception in createBCToken().", e);
       throw new ServerErrorException("Exception in createBCToken().", e);
     }
   }
 
+  public void processAvailableChain(BaseCurrencyToken token, JsonRespBO jsonRespBO) {
+    JsonParser parser = new JsonParser();
+    JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
+    String txId = txResponse.get("txId").getAsString();
+    token.setCtxId(txId);
+    token.setStatus(BCTokenStatus.UNCONFIRMED_IN_CHAIN);
+    repository.save(token);
+    TokenQueryRespBO txDetail = blockchainService.getTxDetails(txId);
+    if(txDetail != null) {
+      token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
+      token.setBlockHeight(txDetail.getBlockHeight());
+      token.setStatus(BCTokenStatus.CONFIRMED_IN_CHAIN);
+      repository.save(token);
+    }
+  }
+
   public List<BCTokenResponseDto> fetchAllByIssuerAddress(String issuerAddress) throws ServerErrorException {
     LOGGER.debug("Entering fetchAllBCTokens().");
-    try{
-//      String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-//      User loggedInUser = userService.fetchByUsername(username);
+    try {
       return repository.fetchAllByIssuerAddress(issuerAddress, BCTokenStatus.CONFIRMED_IN_CHAIN);
-    }catch (Exception e){
+    } catch (Exception e) {
       LOGGER.error("Exception in fetchAllBCTokens().", e);
       throw new ServerErrorException("Exception in fetchAllBCTokens().", e);
     }
   }
 
-  public void execute(){
-    List<BaseCurrencyToken> tokens = repository.fetchAllUnconfirmedChain(BCTokenStatus.UNCONFIRMED_IN_CHAIN);
-    for(BaseCurrencyToken token : tokens){
+  public void executeUnconfirmedChain() {
+    LOGGER.debug("Entering executeUnconfirmedChain().");
+    List<BaseCurrencyToken> tokens = repository.findByStatus(BCTokenStatus.UNCONFIRMED_IN_CHAIN);
+    for (BaseCurrencyToken token : tokens) {
       TokenQueryRespBO txDetail = blockchainService.getTxDetails(token.getCtxId());
-      if(txDetail != null) {
+      if (txDetail != null) {
         token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
         token.setBlockHeight(txDetail.getBlockHeight());
         token.setStatus(BCTokenStatus.CONFIRMED_IN_CHAIN);
         repository.save(token);
-      }blockchainService.getTxDetails(token.getCtxId());
+      }
+      blockchainService.getTxDetails(token.getCtxId());
     }
   }
 
-  public BaseCurrencyToken convertToBCToken(BCTokenRequestDto dto){
+  public void executeUnavailableChain() {
+    LOGGER.debug("Entering executeUnavailableChain().");
+    try {
+      List<BaseCurrencyToken> tokens = repository.findByStatus(BCTokenStatus.CHAIN_UNAVAILABLE);
+      for (BaseCurrencyToken token : tokens) {
+        JsonRespBO jsonRespBO = blockchainService.createToken(token.getUser(), TokenType.BC_TOKEN, token.getAmount());
+        if (jsonRespBO != null) {
+          processAvailableChain(token, jsonRespBO);
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.error("Exception in executeUnavailableChain().", e);
+    }
+  }
+
+  public BaseCurrencyToken convertToBCToken(BCTokenRequestDto dto) {
     BaseCurrencyToken token = new BaseCurrencyToken();
     token.setUnderlyingCurrency(dto.getUnderlyingCurrency());
     token.setTokenCode(dto.getTokenCode());

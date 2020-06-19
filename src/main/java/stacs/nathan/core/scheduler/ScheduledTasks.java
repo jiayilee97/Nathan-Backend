@@ -24,9 +24,15 @@ public class ScheduledTasks {
    * Blockchain confirmation Task for BCToken which runs every hour
    */
   @Scheduled(fixedRate=60*60*1000)
-  public void confirmBCToken() {
+  public void executeUnconfirmedChain() {
     LOGGER.debug("Entering confirmBCToken() method. {}", new Date());
-    bcTokenService.execute();
+    bcTokenService.executeUnconfirmedChain();
+  }
+
+  @Scheduled(fixedRate=60*60*1000)
+  public void executeUnavailableChain() {
+    LOGGER.debug("Entering executeUnavailableChain() method. {}", new Date());
+    bcTokenService.executeUnavailableChain();
   }
 
   /**

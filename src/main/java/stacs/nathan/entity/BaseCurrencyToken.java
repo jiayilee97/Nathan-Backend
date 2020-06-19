@@ -32,6 +32,7 @@ public class BaseCurrencyToken extends BaseTokenEntity {
     private String issuerAddress;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 30)
     private BCTokenStatus status;
 
     public User getUser() {

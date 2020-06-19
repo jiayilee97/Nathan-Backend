@@ -98,10 +98,15 @@ public class BlockchainService {
     //after signing
     Token afterSignToken = new Token(token.getReqObj());
     afterSignToken.setSubmitterSignature(signature);
-    JsonRespBO jsonRespBO = chainConnector.issueToken(afterSignToken);
-    if(jsonRespBO == null || !jsonRespBO.getIsSuccessful()){
+    JsonRespBO jsonRespBO = null;
+    try {
+      jsonRespBO = chainConnector.issueToken(afterSignToken);
+      if(jsonRespBO == null || !jsonRespBO.getIsSuccessful()){
+        return jsonRespBO;
+      }
+    } catch (Exception e) {
       LOGGER.error("Issue token in blockchain is not successful");
-      throw new ServerErrorException("Exception in createToken().");
+      return jsonRespBO;
     }
     return jsonRespBO;
   }

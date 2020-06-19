@@ -1,7 +1,10 @@
 package stacs.nathan.utils.enums;
 
 public enum BCTokenStatus {
-  FAILED_IN_CHAIN("Failed in chain"), UNCONFIRMED_IN_CHAIN("Unconfirmed in chain"), CONFIRMED_IN_CHAIN("Confirmed in chain");
+  FAILED_IN_CHAIN("Failed in chain"),
+  UNCONFIRMED_IN_CHAIN("Unconfirmed in chain"),
+  CONFIRMED_IN_CHAIN("Confirmed in chain"),
+  CHAIN_UNAVAILABLE("Chain unavailable");;
 
   private String value;
 

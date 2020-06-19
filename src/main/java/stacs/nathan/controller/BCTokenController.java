@@ -27,4 +27,9 @@ public class BCTokenController {
     return bcTokenService.fetchAllByIssuerAddress(issuerAddress);
   }
 
+  @GetMapping("/executeUnavailableChain")
+  public void executeUnavailableChain() {
+    bcTokenService.executeUnavailableChain();
+  }
+
 }
