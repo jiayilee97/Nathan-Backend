@@ -42,7 +42,13 @@ public class FXTokenServiceImpl implements FXTokenService {
   BlockchainService blockchainService;
 
   public List<SPTokenResponseDto> fetchAvailableTokens(User user) {
-    return spTokenRepository.fetchAvailableTokens(user);
+    List<SPTokenResponseDto> response = spTokenRepository.fetchAvailableTokens(user);
+    for (SPTokenResponseDto dto: response) {
+        if (dto.getAvailability() == false) {
+          response.remove(dto);
+        }
+    }
+    return response;
   }
 
   public void createFXToken(FXTokenRequestDto dto) throws ServerErrorException {
@@ -78,6 +84,7 @@ public class FXTokenServiceImpl implements FXTokenService {
     FXToken token = new FXToken();
     SPToken availableToken = spTokenRepository.findAvailableSPTokenById(dto.getSpTokenId());
     if (availableToken.getFxToken() == null) {
+      spTokenRepository.updateSPTokenAvailabilityById(dto.getSpTokenId());
       token.setSpToken(availableToken);
       token.setCurrencyCode(dto.getCurrencyCode());
       token.setAmount(dto.getAmount());

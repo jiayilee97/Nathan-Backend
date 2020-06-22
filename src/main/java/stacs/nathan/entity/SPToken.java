@@ -77,6 +77,17 @@ public class SPToken extends BaseTokenEntity {
     @Column(length = 30)
     private SPTokenStatus status;
 
+    @Column(name = "availability")
+    private Boolean availability;
+
+    public Boolean getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(Boolean availability) {
+        this.availability = availability;
+    }
+
     public User getUser() {
         return user;
     }

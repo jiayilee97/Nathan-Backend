@@ -45,6 +45,8 @@ public class SPTokenResponseDto {
 
     private FXToken fxToken;
 
+    private Boolean availability;
+
     public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress, SPTokenStatus status, String issuer, String clientId) {
         setTokenCode(tokenCode);
         setProductType(ProductType.resolveCode(productType).getValue());
@@ -64,9 +66,10 @@ public class SPTokenResponseDto {
         setIssuer(issuer);
         setClientId(clientId);
         setStatus(status);
+        setAvailability(availability);
     }
 
-    public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress, SPTokenStatus status, String issuer, String clientId, FXToken fxToken) {
+    public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress, SPTokenStatus status, String issuer, String clientId, Boolean availability) {
         setTokenCode(tokenCode);
         setProductType(productType);
         setContractInceptionDate(contractInceptionDate);
@@ -85,7 +88,8 @@ public class SPTokenResponseDto {
         setIssuer(issuer);
         setClientId(clientId);
         setStatus(status);
-        setFxToken(fxToken);
+        //setFxToken(fxToken);
+        setAvailability(availability);
     }
 
     public String getTokenCode() {
@@ -238,5 +242,13 @@ public class SPTokenResponseDto {
 
     public void setFxToken(FXToken fxToken) {
         this.fxToken = fxToken;
+    }
+
+    public Boolean getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(Boolean availability) {
+        this.availability = availability;
     }
 }
