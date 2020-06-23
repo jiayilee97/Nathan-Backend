@@ -12,8 +12,10 @@ import stacs.nathan.dto.request.CreateClientRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.response.ClientResponseDto;
 import stacs.nathan.dto.response.ClientSPPositionResponseDto;
+import stacs.nathan.dto.response.CreateClientInitDto;
 import stacs.nathan.utils.CommonUtils;
 import stacs.nathan.utils.enums.AccreditedStatus;
+import stacs.nathan.utils.enums.CodeType;
 import stacs.nathan.utils.enums.UserRole;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.UserRepository;
@@ -32,6 +34,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private SPTokenService spTokenService;
+
+    @Autowired
+    private CodeValueService codeValueService;
 
     public List<ClientSPPositionResponseDto> fetchClientSPPositions() {
         LOGGER.debug("Entering fetchClientSPPositions().");
@@ -61,6 +66,19 @@ public class UserServiceImpl implements UserService {
         return repository.fetchAllClients(UserRole.CLIENT);
     }
 
+    public ClientResponseDto fetchByClientId(String clientId){
+        LOGGER.debug("Entering fetchByClientId().");
+        return repository.findClientById(clientId);
+    }
+
+    public CreateClientInitDto fetchInitForm(){
+        LOGGER.debug("Entering fetchInitForm().");
+        CreateClientInitDto dto = new CreateClientInitDto();
+        dto.setNationalities(codeValueService.findByType(CodeType.NATIONALITY));
+        dto.setAccreditedStatus(AccreditedStatus.getValuesSelection());
+        return dto;
+    }
+
     public List<String> fetchAllClientIds(){
         LOGGER.debug("Entering fetchAllClientIds().");
         return repository.fetchAllClientIds(UserRole.CLIENT);
@@ -74,6 +92,7 @@ public class UserServiceImpl implements UserService {
             if(user != null){
                 throw new BadRequestException("Client ID already exists.");
             }
+            user = new User();
             user.setUuid(CommonUtils.generateRandomUUID());
             user.setRole(UserRole.CLIENT);
             user.setClientId(dto.getClientId());

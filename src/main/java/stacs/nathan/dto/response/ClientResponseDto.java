@@ -7,7 +7,7 @@ public class ClientResponseDto {
   private String clientId;
   private String displayName;
   private String nationality;
-  private AccreditedStatus accreditedStatus;
+  private String accreditedStatus;
   private int riskToleranceRating;
   private String walletAddress;
 
@@ -15,7 +15,7 @@ public class ClientResponseDto {
     setClientId(clientId);
     setDisplayName(displayName);
     setNationality(nationality);
-    setAccreditedStatus(accreditedStatus);
+    setAccreditedStatus(accreditedStatus.getValue());
     setRiskToleranceRating(riskToleranceRating);
     setWalletAddress(walletAddress);
   }
@@ -44,11 +44,11 @@ public class ClientResponseDto {
     this.nationality = nationality;
   }
 
-  public AccreditedStatus getAccreditedStatus() {
+  public String getAccreditedStatus() {
     return accreditedStatus;
   }
 
-  public void setAccreditedStatus(AccreditedStatus accreditedStatus) {
+  public void setAccreditedStatus(String accreditedStatus) {
     this.accreditedStatus = accreditedStatus;
   }
 
