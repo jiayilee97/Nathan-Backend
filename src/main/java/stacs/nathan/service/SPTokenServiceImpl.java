@@ -17,14 +17,12 @@ import stacs.nathan.dto.request.SPTokenRequestDto;
 import stacs.nathan.dto.response.CreateSPTokenInitDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.SPToken;
-import stacs.nathan.entity.TransactionHistory;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.SPTokenRepository;
 import stacs.nathan.utils.enums.CodeType;
 import stacs.nathan.utils.enums.ProductType;
 import stacs.nathan.utils.enums.SPTokenStatus;
 import stacs.nathan.utils.enums.TokenType;
-
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;

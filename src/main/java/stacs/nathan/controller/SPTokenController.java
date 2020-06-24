@@ -36,7 +36,7 @@ public class SPTokenController {
     }
 
     @GetMapping("/fetch/{tokenCode}")
-    public SPTokenResponseDto fetchSPTokenById(@PathVariable String tokenCode) throws ServerErrorException {
+    public SPTokenResponseDto fetchSPTokenByTokenCode(@PathVariable String tokenCode) throws ServerErrorException {
         return spTokenService.fetchByTokenCode(tokenCode);
     }
 
