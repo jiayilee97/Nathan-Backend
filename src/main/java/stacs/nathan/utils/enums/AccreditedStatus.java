@@ -1,5 +1,7 @@
 package stacs.nathan.utils.enums;
 
+import stacs.nathan.dto.Select;
+
 public enum AccreditedStatus {
   RETAIL("Retail"), ACCREDITED("Accredited");
 
@@ -37,6 +39,14 @@ public enum AccreditedStatus {
 
   public String getCode() {
     return name();
+  }
+
+  public static Select getValuesSelection() {
+    Select selection = new Select();
+    for (AccreditedStatus accreditedStatus: AccreditedStatus.values()) {
+      selection.addOption(accreditedStatus.value, accreditedStatus.name());
+    }
+    return selection;
   }
 
 }

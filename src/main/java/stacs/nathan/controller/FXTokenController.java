@@ -1,13 +1,10 @@
 package stacs.nathan.controller;
 
-import org.apache.catalina.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
-import stacs.nathan.entity.FXToken;
-import stacs.nathan.repository.FXTokenRepository;
 import stacs.nathan.service.FXTokenService;
 import stacs.nathan.service.UserService;
 

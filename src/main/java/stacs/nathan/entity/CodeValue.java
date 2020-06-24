@@ -15,11 +15,11 @@ public class CodeValue {
   private long id;
 
   @Size(min = 1, max = 20)
-  @Column(length = 20, updatable = false)
+  @Column(length = 100, updatable = false)
   protected String value;
 
   @Size(min = 1, max = 255)
-  @Column(length = 255)
+  @Column(length = 100)
   protected String label;
 
   @NotNull

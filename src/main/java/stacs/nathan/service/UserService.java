@@ -5,6 +5,7 @@ import stacs.nathan.dto.request.ClientRequestDto;
 import stacs.nathan.dto.request.CreateClientRequestDto;
 import stacs.nathan.dto.response.ClientResponseDto;
 import stacs.nathan.dto.response.ClientSPPositionResponseDto;
+import stacs.nathan.dto.response.CreateClientInitDto;
 import stacs.nathan.entity.User;
 import java.util.List;
 
@@ -17,6 +18,10 @@ public interface UserService {
     User fetchByUsername(String username);
 
     List<ClientResponseDto> fetchAllClients();
+
+    ClientResponseDto fetchByClientId(String clientId);
+
+    CreateClientInitDto fetchInitForm();
 
     List<String> fetchAllClientIds();
 

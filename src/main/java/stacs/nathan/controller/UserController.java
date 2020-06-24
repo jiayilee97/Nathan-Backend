@@ -6,6 +6,7 @@ import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.CreateClientRequestDto;
 import stacs.nathan.dto.response.ClientResponseDto;
 import stacs.nathan.dto.response.ClientSPPositionResponseDto;
+import stacs.nathan.dto.response.CreateClientInitDto;
 import stacs.nathan.entity.User;
 import stacs.nathan.service.UserService;
 import java.util.List;
@@ -36,6 +37,16 @@ public class UserController {
   @GetMapping("/fetch/clients")
   public List<ClientResponseDto> fetchAllClients(){
     return userService.fetchAllClients();
+  }
+
+  @GetMapping("/fetch/client/{id}")
+  public ClientResponseDto fetchByClientId(@PathVariable("id") String clientId){
+    return userService.fetchByClientId(clientId);
+  }
+
+  @GetMapping("/init/client")
+  public CreateClientInitDto initForm(){
+    return userService.fetchInitForm();
   }
 
 }
