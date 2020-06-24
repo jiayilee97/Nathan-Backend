@@ -44,14 +44,6 @@ public class FXTokenServiceImpl implements FXTokenService {
   public List<SPTokenResponseDto> fetchAvailableTokens(User user) {
     List<SPTokenResponseDto> response = spTokenRepository.fetchAvailableTokens(user);
     response.removeIf(obj -> obj.getAvailability() == false);
-//    for (SPTokenResponseDto dto: response) {
-//        if (dto.getAvailability() == false) {
-//          System.out.println(dto.getTokenCode());
-//          System.out.println("dto" + dto.getAvailability());
-//          int index = response.indexOf(dto);
-//          response.remove(index);
-//        }
-//    }
     return response;
   }
 

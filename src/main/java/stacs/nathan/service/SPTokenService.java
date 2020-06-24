@@ -21,6 +21,8 @@ public interface SPTokenService {
 
   SPTokenResponseDto fetchByTokenCode(String tokenCode);
 
+  void transferToBurnAddress(String tokenCode) throws ServerErrorException;
+
   void execute();
 
   void checkSPTokenMaturity();

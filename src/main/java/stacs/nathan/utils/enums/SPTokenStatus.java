@@ -5,7 +5,8 @@ public enum SPTokenStatus {
     KNOCK_OUT("Knock Out"),
     CONTRACT_MATURITY("Contract Maturity"),
     UNCONFIRMED_IN_CHAIN("Unconfirmed in chain"),
-    CHAIN_UNAVAILABLE("Chain unavailable");
+    CHAIN_UNAVAILABLE("Chain unavailable"),
+    BURNT("Sent to burn address");
 
     private String value;
 

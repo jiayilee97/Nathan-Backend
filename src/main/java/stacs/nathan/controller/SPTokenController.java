@@ -39,4 +39,9 @@ public class SPTokenController {
     public SPTokenResponseDto fetchSPTokenById(@PathVariable String tokenCode) throws ServerErrorException {
         return spTokenService.fetchByTokenCode(tokenCode);
     }
+
+    @PostMapping("/transfer/{tokenCode}")
+    public void transferSPToken(@PathVariable String tokenCode) throws ServerErrorException {
+        spTokenService.transferToBurnAddress(tokenCode);
+    }
 }

@@ -1,9 +1,13 @@
 package stacs.nathan.service;
 
+import com.google.gson.JsonParser;
 import hashstacs.sdk.dto.Token;
+import hashstacs.sdk.dto.Transfer;
 import hashstacs.sdk.request.blockchain.IssueTokenReqBO;
+import hashstacs.sdk.request.blockchain.TransferTokenReqBO;
 import hashstacs.sdk.response.base.JsonRespBO;
 import hashstacs.sdk.response.blockchain.TokenQueryRespBO;
+import hashstacs.sdk.response.blockchain.TransferQueryRespBO;
 import hashstacs.sdk.util.ChainConnector;
 import hashstacs.sdk.util.StacsAPIUtil;
 import hashstacs.sdk.util.StacsUtil;
@@ -16,10 +20,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.encryption.CryptoCipher;
 import stacs.nathan.core.exception.ServerErrorException;
+import stacs.nathan.entity.BaseTokenEntity;
 import stacs.nathan.entity.User;
 import stacs.nathan.utils.enums.TokenType;
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 @Service
@@ -40,6 +46,10 @@ public class BlockchainService {
   private int queryWaitTime;
   @Value("${stacs.chain-query.max-retries}")
   private int queryMaxRetries;
+  @Value("${stacs.bdfunction}")
+  private String bdFunction;
+  @Value("${stacs.transfer.method}")
+  private String transferMethod;
 
   private static StringBuilder merchantAesKey = new StringBuilder();
   private static StringBuilder domainMerchantId = new StringBuilder();
@@ -68,7 +78,7 @@ public class BlockchainService {
 
     chainConnector = ChainConnector.initConn(merchantAesKey.toString(), domainMerchantId.toString(), domainGateway.toString());
     StacsECKey authKey = new StacsECKey();
-    StacsECKey tokenCustodyAddress = new StacsECKey();
+    //StacsECKey tokenCustodyAddress = new StacsECKey();
     StacsECKey contractAddress = new StacsECKey();
 
     Token token = new Token(bdCode);
@@ -78,7 +88,7 @@ public class BlockchainService {
     token.setSubmitterAddress(user.getWalletAddress());
     token.setAuthAddress(authKey.getHexAddress());
     token.setContractAddress(contractAddress.getHexAddress());
-    token.setTokenCustodyAddress(tokenCustodyAddress.getHexAddress());
+    token.setTokenCustodyAddress(user.getWalletAddress());
     token.setQtyNumOfDecimals(8);
     token.setTokenCode(tokenType.getCode() + "_" + new Date().getTime());
     token.setTokenName(tokenType.getValue());
@@ -126,6 +136,59 @@ public class BlockchainService {
       }
     }
     return null;
+  }
+
+  public TransferQueryRespBO getTransferDetails(String txId) {
+    String blockHeight = null;
+    chainConnector = ChainConnector.initConn(merchantAesKey.toString(), domainMerchantId.toString(), domainGateway.toString());
+    for (int i = 0; i < queryMaxRetries; i++) {
+      try {
+        Thread.sleep(queryWaitTime);
+        TransferQueryRespBO transferQueryRespBO = (TransferQueryRespBO) chainConnector.queryDetailsByTxId(txId);
+        return transferQueryRespBO;
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+    return null;
+  }
+
+  public JsonRespBO transferToken(User user, String recipientAddress, BaseTokenEntity token, BigInteger quantity) throws ServerErrorException {
+    merchantAesKey.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.MERCHANT_AESKEY));
+    domainMerchantId.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.DOMAIN_MERCHANTID));
+    domainGateway.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.DOMAIN_GATEWAY));
+    chainConnector = ChainConnector.initConn(merchantAesKey.toString(), domainMerchantId.toString(), domainGateway.toString());
+
+    Transfer transferObj = new Transfer(bdCode);
+    transferObj.setBdFunctionName(bdFunction);
+    transferObj.setSubmitterAddress(user.getWalletAddress());
+    transferObj.setSmartContractMethod(transferMethod);
+    transferObj.setSenderAddress(user.getWalletAddress());
+    transferObj.setRecipientAddress(recipientAddress);
+    transferObj.setTokenCode(token.getTokenCode());
+    transferObj.setTokenContractAddress(token.getTokenContractAddress());
+    transferObj.setTransferQuantity(quantity);
+
+    TransferTokenReqBO transferReq = new TransferTokenReqBO(transferObj);
+    transferReq.generateTxId();
+    StringBuilder signaturePayload = new StringBuilder();
+    signaturePayload.append(transferReq.generateOfflinePayloadForSigning());
+    String signature = StacsECKey.fromPrivate(Hex.decode(cipher.decrypt(user.getPrivateKey().trim()))).signMessage(signaturePayload.toString());
+
+    Transfer afterSignTransfer = new Transfer(transferObj.getReqObj());
+    afterSignTransfer.setSubmitterSignature(signature);
+    JsonRespBO jsonRespBO = null;
+    try {
+      jsonRespBO = chainConnector.transferToken(afterSignTransfer);
+      if (jsonRespBO == null || !jsonRespBO.getIsSuccessful()) {
+        return jsonRespBO;
+      }
+    } catch (Exception e) {
+      LOGGER.error("Transfer token in blockchain is not successful");
+      return jsonRespBO;
+    }
+    return jsonRespBO;
+
   }
 
 }

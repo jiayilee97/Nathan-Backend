@@ -23,7 +23,7 @@ public class FXTokenController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/fetch")
+    @GetMapping("/fetch-available-sp")
     public List<SPTokenResponseDto> fetchAvailableTokens() throws ServerErrorException {
         return fxTokenService.fetchAvailableTokens(userService.fetchLoginUser());
     }
