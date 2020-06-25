@@ -3,6 +3,7 @@ package stacs.nathan.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.BCTokenRequestDto;
 import stacs.nathan.dto.response.BCTokenResponseDto;
@@ -25,7 +26,7 @@ public class BCTokenController {
   }
 
   @PostMapping("/create")
-  public void createBCToken(@RequestBody BCTokenRequestDto token) throws ServerErrorException {
+  public void createBCToken(@RequestBody BCTokenRequestDto token) throws ServerErrorException, BadRequestException {
     bcTokenService.createBCToken(token);
   }
 

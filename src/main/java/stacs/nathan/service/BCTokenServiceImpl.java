@@ -15,13 +15,11 @@ import stacs.nathan.dto.request.BCTokenRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.response.BCTokenResponseDto;
 import stacs.nathan.dto.response.CreateBCTokenInitDto;
-import stacs.nathan.dto.response.CreateSPTokenInitDto;
 import stacs.nathan.entity.BaseCurrencyToken;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.BCTokenRepository;
 import stacs.nathan.utils.enums.BCTokenStatus;
 import stacs.nathan.utils.enums.CodeType;
-import stacs.nathan.utils.enums.ProductType;
 import stacs.nathan.utils.enums.TokenType;
 import java.util.List;
 
@@ -50,13 +48,13 @@ public class BCTokenServiceImpl implements BCTokenService {
     return dto;
   }
 
-  public void createBCToken(BCTokenRequestDto dto) throws ServerErrorException {
+  public void createBCToken(BCTokenRequestDto dto) throws ServerErrorException, BadRequestException {
     LOGGER.debug("Entering createBCToken().");
+    BaseCurrencyToken token = repository.findByTokenCode(dto.getTokenCode());
+    if(token != null){
+      throw new BadRequestException("Token Code already exists.");
+    }
     try{
-      BaseCurrencyToken token = repository.findByTokenCode(dto.getTokenCode());
-      if(token != null){
-        throw new BadRequestException("Token Code already exists.");
-      }
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
       token = convertToBCToken(dto);
