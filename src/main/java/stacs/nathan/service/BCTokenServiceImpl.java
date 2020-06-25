@@ -64,7 +64,7 @@ public class BCTokenServiceImpl implements BCTokenService {
       token.setIssuerId(loggedInUser.getUuid());
       token.setIssuerAddress(loggedInUser.getWalletAddress());
       token.setCreatedBy(username);
-      JsonRespBO jsonRespBO = null;// blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getAmount());
+      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getAmount());
       if (jsonRespBO == null) {
         token.setStatus(BCTokenStatus.CHAIN_UNAVAILABLE);
         repository.save(token);
