@@ -4,9 +4,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import hashstacs.sdk.response.base.JsonRespBO;
 import hashstacs.sdk.response.blockchain.TokenQueryRespBO;
+import hashstacs.sdk.response.blockchain.TransferQueryRespBO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ import stacs.nathan.utils.enums.FXTokenStatus;
 import stacs.nathan.utils.enums.SPTokenStatus;
 import stacs.nathan.utils.enums.TokenType;
 
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -40,6 +44,9 @@ public class FXTokenServiceImpl implements FXTokenService {
 
   @Autowired
   BlockchainService blockchainService;
+
+  @Value("${stacs.burn.address}")
+  String burnAddress;
 
   public List<SPTokenResponseDto> fetchAvailableTokens(User user) {
     List<SPTokenResponseDto> response = spTokenRepository.fetchAvailableTokens(user);
@@ -91,6 +98,34 @@ public class FXTokenServiceImpl implements FXTokenService {
       LOGGER.error("SP Token selected is not available");
       throw new ServerErrorException("SP Token not available");
     }
+  }
+
+  public void closeFXToken(String tokenCode) throws ServerErrorException {
+    LOGGER.debug("Entering closeFXToken().");
+    try {
+      String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+      User loggedInUser = userService.fetchByUsername(username);
+      FXToken fxToken = fxTokenRepository.findByTokenCode(tokenCode);
+      SPToken spToken = fxToken.getSpToken();
+      if (spToken.getStatus() != SPTokenStatus.BURNT) {
+        LOGGER.error("SP Token not closed.");
+        throw new ServerErrorException("SP Token not closed.");
+      }
+      JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, burnAddress, fxToken, new BigInteger(String.valueOf(1)));
+      String txId = jsonRespBO.getTxId();
+      TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
+      if (txDetail != null) {
+        fxToken.setBlockHeight(txDetail.getBlockHeight());
+        fxToken.setUpdatedBy(username);
+        fxToken.setUpdatedDate(new Date());
+        fxToken.setStatus(FXTokenStatus.CLOSED);
+        fxTokenRepository.save(fxToken);
+      }
+    } catch (Exception e) {
+      LOGGER.error("Exception in closeFXToken().", e);
+      throw new ServerErrorException("Exception in closeFXToken().", e);
+    }
+
   }
 
   public void execute() {

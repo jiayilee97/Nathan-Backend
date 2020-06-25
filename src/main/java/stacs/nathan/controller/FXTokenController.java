@@ -30,4 +30,9 @@ public class FXTokenController {
         fxTokenService.createFXToken(token);
     }
 
+    @PostMapping("/close/{tokenCode}")
+    public void closeFXToken(@PathVariable String tokenCode) throws ServerErrorException {
+        fxTokenService.closeFXToken(tokenCode);
+    }
+
 }

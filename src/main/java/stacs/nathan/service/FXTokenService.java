@@ -13,4 +13,6 @@ public interface FXTokenService {
 
     void createFXToken(FXTokenRequestDto token) throws ServerErrorException;
 
+    void closeFXToken(String tokenCode) throws ServerErrorException;
+
 }
