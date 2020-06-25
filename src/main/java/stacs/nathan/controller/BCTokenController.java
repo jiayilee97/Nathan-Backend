@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.BCTokenRequestDto;
 import stacs.nathan.dto.response.BCTokenResponseDto;
+import stacs.nathan.dto.response.CreateBCTokenInitDto;
 import stacs.nathan.service.BCTokenService;
 import java.util.List;
 
@@ -17,14 +18,25 @@ public class BCTokenController {
   @Autowired
   private BCTokenService bcTokenService;
 
+
+  @GetMapping("/init")
+  public CreateBCTokenInitDto initForm(){
+    return bcTokenService.fetchInitForm();
+  }
+
   @PostMapping("/create")
   public void createBCToken(@RequestBody BCTokenRequestDto token) throws ServerErrorException {
     bcTokenService.createBCToken(token);
   }
 
-  @GetMapping("/fetch/{issuerAddress}")
+  @GetMapping("/fetch-all/{issuerAddress}")
   public List<BCTokenResponseDto> fetchAllByIssuerAddress(@PathVariable String issuerAddress) throws ServerErrorException {
     return bcTokenService.fetchAllByIssuerAddress(issuerAddress);
+  }
+
+  @GetMapping("/fetch/{tokenCode}")
+  public BCTokenResponseDto fetchTokenByTokenCode(@PathVariable String tokenCode) throws ServerErrorException {
+    return bcTokenService.fetchTokenByTokenCode(tokenCode);
   }
 
   @GetMapping("/executeUnavailableChain")

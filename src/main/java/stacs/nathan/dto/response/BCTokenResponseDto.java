@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 public class BCTokenResponseDto {
 
+  private long id;
+
   private String underlyingCurrency;
 
   private String tokenCode;
@@ -13,11 +15,20 @@ public class BCTokenResponseDto {
   private BigDecimal balance;
 
 
-  public BCTokenResponseDto(String underlyingCurrency, String tokenCode, int currencyCode, BigDecimal balance){
+  public BCTokenResponseDto(long id, String underlyingCurrency, String tokenCode, int currencyCode, BigDecimal balance){
+    setId(id);
     setUnderlyingCurrency(underlyingCurrency);
     setTokenCode(tokenCode);
     setCurrencyCode(currencyCode);
     setBalance(balance);
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
   }
 
   public String getUnderlyingCurrency() {

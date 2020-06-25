@@ -13,10 +13,14 @@ import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.BCTokenRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.response.BCTokenResponseDto;
+import stacs.nathan.dto.response.CreateBCTokenInitDto;
+import stacs.nathan.dto.response.CreateSPTokenInitDto;
 import stacs.nathan.entity.BaseCurrencyToken;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.BCTokenRepository;
 import stacs.nathan.utils.enums.BCTokenStatus;
+import stacs.nathan.utils.enums.CodeType;
+import stacs.nathan.utils.enums.ProductType;
 import stacs.nathan.utils.enums.TokenType;
 import java.util.List;
 
@@ -32,6 +36,18 @@ public class BCTokenServiceImpl implements BCTokenService {
 
   @Autowired
   BlockchainService blockchainService;
+
+  @Autowired
+  CodeValueService codeValueService;
+
+  public CreateBCTokenInitDto fetchInitForm(){
+    String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    User loggedInUser = userService.fetchByUsername(username);
+    CreateBCTokenInitDto dto = new CreateBCTokenInitDto();
+    dto.setUnderlying(codeValueService.findByType(CodeType.UNDERLYING));
+    dto.setIssuingAddress(loggedInUser.getWalletAddress());
+    return dto;
+  }
 
   public void createBCToken(BCTokenRequestDto dto) throws ServerErrorException {
     LOGGER.debug("Entering createBCToken().");
@@ -79,6 +95,16 @@ public class BCTokenServiceImpl implements BCTokenService {
     } catch (Exception e) {
       LOGGER.error("Exception in fetchAllBCTokens().", e);
       throw new ServerErrorException("Exception in fetchAllBCTokens().", e);
+    }
+  }
+
+  public BCTokenResponseDto fetchTokenByTokenCode(String tokenCode) throws ServerErrorException {
+    LOGGER.debug("Entering fetchTokenById().");
+    try {
+      return repository.fetchByTokenCode(tokenCode);
+    } catch (Exception e) {
+      LOGGER.error("Exception in fetchTokenById().", e);
+      throw new ServerErrorException("Exception in fetchTokenById().", e);
     }
   }
 
