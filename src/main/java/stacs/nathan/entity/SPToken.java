@@ -13,7 +13,7 @@ import java.util.Date;
 public class SPToken extends BaseTokenEntity {
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.BCTokenRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
@@ -52,9 +53,13 @@ public class BCTokenServiceImpl implements BCTokenService {
   public void createBCToken(BCTokenRequestDto dto) throws ServerErrorException {
     LOGGER.debug("Entering createBCToken().");
     try{
+      BaseCurrencyToken token = repository.findByTokenCode(dto.getTokenCode());
+      if(token != null){
+        throw new BadRequestException("Token Code already exists.");
+      }
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
-      BaseCurrencyToken token = convertToBCToken(dto);
+      token = convertToBCToken(dto);
       token.setUser(loggedInUser);
       token.setIssuerId(loggedInUser.getUuid());
       token.setIssuerAddress(loggedInUser.getWalletAddress());

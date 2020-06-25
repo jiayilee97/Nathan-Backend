@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 public class FXToken extends BaseTokenEntity {
     private static final long serialVersionUID = 1L;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "sp_token_id", nullable = false)
     private SPToken spToken;
 

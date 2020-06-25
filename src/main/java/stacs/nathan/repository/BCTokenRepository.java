@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import stacs.nathan.dto.request.BCTokenRequestDto;
 import stacs.nathan.dto.response.BCTokenResponseDto;
 import stacs.nathan.entity.BaseCurrencyToken;
 import stacs.nathan.utils.enums.BCTokenStatus;
@@ -23,5 +22,7 @@ public interface BCTokenRepository extends JpaRepository<BaseCurrencyToken, Long
 
 //  @Query("SELECT bc FROM BaseCurrencyToken bc WHERE bc.status = :status")
   List<BaseCurrencyToken> findByStatus(@Param("status")BCTokenStatus status);
+
+  BaseCurrencyToken findByTokenCode(String tokenCode);
 
 }
