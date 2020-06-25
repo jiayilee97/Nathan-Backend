@@ -7,12 +7,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
+import stacs.nathan.dto.response.*;
 import stacs.nathan.dto.request.ClientRequestDto;
 import stacs.nathan.dto.request.CreateClientRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
-import stacs.nathan.dto.response.ClientResponseDto;
-import stacs.nathan.dto.response.ClientSPPositionResponseDto;
-import stacs.nathan.dto.response.CreateClientInitDto;
 import stacs.nathan.utils.CommonUtils;
 import stacs.nathan.utils.enums.AccreditedStatus;
 import stacs.nathan.utils.enums.CodeType;
@@ -45,8 +43,11 @@ public class UserServiceImpl implements UserService {
         for(User user : users) {
             ClientSPPositionResponseDto dto = new ClientSPPositionResponseDto();
             dto.setClientId(user.getClientId());
-            dto.setOpenPositions(spTokenService.fetchAllOpenPositions(user).size());
-            dto.setClosePositions(spTokenService.fetchAllClosedPositions(user).size());
+            List<SPTokenResponseDto> spToken = spTokenService.fetchAllOpenPositions(user);
+            dto.setOpenPositions(spToken == null ? 0 : spToken.size() );
+            spToken = spTokenService.fetchAllClosedPositions(user);
+            dto.setClosePositions(spToken == null ? 0 : spToken.size());
+            dto.setInvestorRisk(null);
             clientResponseDtos.add(dto);
         }
         return clientResponseDtos;
@@ -63,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
     public List<ClientResponseDto> fetchAllClients(){
         LOGGER.debug("Entering fetchAllClients().");
-        return repository.fetchAllClients(UserRole.CLIENT);
+        return repository.fetchByRole(UserRole.CLIENT);
     }
 
     public ClientResponseDto fetchByClientId(String clientId){

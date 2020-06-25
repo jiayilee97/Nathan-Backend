@@ -24,6 +24,8 @@ import stacs.nathan.utils.enums.ProductType;
 import stacs.nathan.utils.enums.SPTokenStatus;
 import stacs.nathan.utils.enums.TokenType;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -110,7 +112,7 @@ public class SPTokenServiceImpl implements SPTokenService {
   }
 
   public List<SPTokenResponseDto> fetchAllClosedPositions(User user){
-    return repository.fetchAllClosedPositions(user, SPTokenStatus.ACTIVE);
+    return repository.fetchAllClosedPositions(user, Arrays.asList(SPTokenStatus.CONTRACT_MATURITY, SPTokenStatus.KNOCK_OUT));
   }
 
   public CreateSPTokenInitDto fetchInitForm(){

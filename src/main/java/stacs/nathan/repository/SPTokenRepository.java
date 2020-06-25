@@ -23,8 +23,9 @@ public interface SPTokenRepository extends JpaRepository<SPToken, Long> {
   @Query("SELECT sp FROM SPToken sp WHERE sp.status = :status")
   List<SPToken> fetchAllUnconfirmedChain(@Param("status") SPTokenStatus status);
 
-  @Query("SELECT sp FROM SPToken sp WHERE sp.user = :user AND sp.status != :status")
-  List<SPTokenResponseDto> fetchAllClosedPositions(@Param("user") User user, @Param("status") SPTokenStatus status);
+  @Query("SELECT NEW stacs.nathan.dto.response.SPTokenResponseDto(sp.tokenCode, sp.productType, sp.contractInceptionDate, sp.underlyingCurrency, sp.notionalAmount, sp.fixingAmount, sp.spotPrice, sp.strikeRate, sp.knockOutPrice, sp.maturityDate, sp.fixingPage, sp.numberOfFixing, sp.cpId, sp.opsId, sp.issuingAddress, sp.status, sp.user.displayName, sp.clientId)" +
+      "FROM SPToken sp WHERE sp.user = :user AND sp.status in :status")
+  List<SPTokenResponseDto> fetchAllClosedPositions(@Param("user") User user, @Param("status") List<SPTokenStatus> status);
 
   @Query("SELECT NEW stacs.nathan.dto.response.SPTokenResponseDto(sp.tokenCode, sp.productType, sp.contractInceptionDate, sp.underlyingCurrency, sp.notionalAmount, sp.fixingAmount, sp.spotPrice, sp.strikeRate, sp.knockOutPrice, sp.maturityDate, sp.fixingPage, sp.numberOfFixing, sp.cpId, sp.opsId, sp.issuingAddress, sp.status, sp.user.displayName, sp.clientId)" +
           "FROM SPToken sp WHERE sp.tokenCode =?1")
