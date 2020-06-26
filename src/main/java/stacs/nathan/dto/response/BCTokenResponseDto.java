@@ -14,7 +14,6 @@ public class BCTokenResponseDto {
 
   private BigDecimal balance;
 
-
   public BCTokenResponseDto(long id, String underlyingCurrency, String tokenCode, int currencyCode, BigDecimal balance){
     setId(id);
     setUnderlyingCurrency(underlyingCurrency);

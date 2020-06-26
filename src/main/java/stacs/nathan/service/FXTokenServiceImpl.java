@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
+import stacs.nathan.dto.response.ClientOpenPositionResponseDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.FXToken;
 import stacs.nathan.entity.SPToken;
@@ -125,7 +126,10 @@ public class FXTokenServiceImpl implements FXTokenService {
       LOGGER.error("Exception in closeFXToken().", e);
       throw new ServerErrorException("Exception in closeFXToken().", e);
     }
+  }
 
+  public List<ClientOpenPositionResponseDto> fetchClientOpenPosition(String issuerId){
+    return fxTokenRepository.fetchClientOpenPosition(issuerId);
   }
 
   public void execute() {

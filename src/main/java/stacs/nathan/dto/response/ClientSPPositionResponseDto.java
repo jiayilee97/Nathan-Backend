@@ -2,10 +2,19 @@ package stacs.nathan.dto.response;
 
 public class ClientSPPositionResponseDto {
 
+  private long id;
   private String clientId;
   private int openPositions;
   private int closePositions;
   private String investorRisk;
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
 
   public String getClientId() {
     return clientId;

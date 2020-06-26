@@ -42,6 +42,7 @@ public class UserServiceImpl implements UserService {
         List<User> users = repository.findByRole(UserRole.CLIENT);
         for(User user : users) {
             ClientSPPositionResponseDto dto = new ClientSPPositionResponseDto();
+            dto.setId(user.getId());
             dto.setClientId(user.getClientId());
             List<SPTokenResponseDto> spToken = spTokenService.fetchAllOpenPositions(user);
             dto.setOpenPositions(spToken == null ? 0 : spToken.size() );
