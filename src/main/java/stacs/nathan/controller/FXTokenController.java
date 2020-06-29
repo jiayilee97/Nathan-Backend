@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.response.ClientOpenPositionResponseDto;
+import stacs.nathan.dto.response.FXTokenResponseDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.service.FXTokenService;
 import stacs.nathan.service.UserService;
@@ -38,6 +39,11 @@ public class FXTokenController {
     @GetMapping("/open-positions/{issuerId}")
     public List<ClientOpenPositionResponseDto> fetchClientOpenPosition(@PathVariable String issuerId) {
         return fxTokenService.fetchClientOpenPosition(issuerId);
+    }
+
+    @GetMapping("/fetch-all")
+    public List<FXTokenResponseDto> fetchAllTokens() {
+        return fxTokenService.fetchAllFxTokens(userService.fetchLoginUser());
     }
 
 }

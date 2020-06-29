@@ -16,6 +16,7 @@ import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.response.ClientOpenPositionResponseDto;
+import stacs.nathan.dto.response.FXTokenResponseDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.FXToken;
 import stacs.nathan.entity.SPToken;
@@ -130,6 +131,10 @@ public class FXTokenServiceImpl implements FXTokenService {
 
   public List<ClientOpenPositionResponseDto> fetchClientOpenPosition(String issuerId){
     return fxTokenRepository.fetchClientOpenPosition(issuerId);
+  }
+
+  public List<FXTokenResponseDto> fetchAllFxTokens(User user) {
+    return fxTokenRepository.fetchAllFxTokens();
   }
 
   public void execute() {
