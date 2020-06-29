@@ -16,7 +16,7 @@ public class FXTokenRequestDto {
 
     private String issuerId;
 
-    private Long spTokenId;
+    private String spTokenCode;
 
     public String getTokenType() {
         return tokenType;
@@ -66,11 +66,11 @@ public class FXTokenRequestDto {
         this.issuerId = issuerId;
     }
 
-    public Long getSpTokenId() {
-        return spTokenId;
+    public String getSpTokenCode() {
+        return spTokenCode;
     }
 
-    public void setSpTokenId(Long spTokenId) {
-        this.spTokenId = spTokenId;
+    public void setSpTokenCode(String spTokenCode) {
+        this.spTokenCode = spTokenCode;
     }
 }

@@ -87,9 +87,9 @@ public class FXTokenServiceImpl implements FXTokenService {
 
   public FXToken convertToFXToken(FXTokenRequestDto dto) throws ServerErrorException {
     FXToken token = new FXToken();
-    SPToken availableToken = spTokenRepository.findAvailableSPTokenById(dto.getSpTokenId());
+    SPToken availableToken = spTokenRepository.findAvailableSPTokenByTokenCode(dto.getSpTokenCode());
     if (availableToken.getFxToken() == null) {
-      spTokenRepository.updateSPTokenAvailabilityById(dto.getSpTokenId());
+      spTokenRepository.updateSPTokenAvailabilityByTokenCode(dto.getSpTokenCode());
       token.setSpToken(availableToken);
       token.setCurrencyCode(dto.getCurrencyCode());
       token.setAmount(dto.getAmount());

@@ -47,11 +47,11 @@ public interface SPTokenRepository extends JpaRepository<SPToken, Long> {
           "FROM SPToken sp WHERE sp.user = :user")
   List<SPTokenResponseDto> fetchAvailableTokens(@Param("user") User user);
 
-  @Query("SELECT sp FROM SPToken sp WHERE id =?1")
-  SPToken findAvailableSPTokenById(Long id);
+  @Query("SELECT sp FROM SPToken sp WHERE sp.tokenCode =?1")
+  SPToken findAvailableSPTokenByTokenCode(String tokenCode);
 
   @Modifying
   @Transactional
-  @Query("UPDATE SPToken sp set sp.availability = 0 WHERE id =?1")
-  void updateSPTokenAvailabilityById(Long id);
+  @Query("UPDATE SPToken sp set sp.availability = 0 WHERE sp.tokenCode =?1")
+  void updateSPTokenAvailabilityByTokenCode(String tokenCode);
 }
