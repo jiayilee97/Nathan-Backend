@@ -59,6 +59,13 @@ public class BlockchainService {
   @Autowired
   private CryptoCipher cipher;
 
+  private void initChainConnector(){
+    merchantAesKey.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.MERCHANT_AESKEY));
+    domainMerchantId.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.DOMAIN_MERCHANTID));
+    domainGateway.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.DOMAIN_GATEWAY));
+    chainConnector = ChainConnector.initConn(merchantAesKey.toString(), domainMerchantId.toString(), domainGateway.toString());
+  }
+
   public void createWallet(User user){
     LOGGER.debug("Entering createWallet().");
     try{
@@ -72,11 +79,7 @@ public class BlockchainService {
 
   public JsonRespBO createToken(User user, TokenType tokenType, BigDecimal quantity) throws ServerErrorException {
     LOGGER.debug("Entering createToken().");
-    merchantAesKey.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.MERCHANT_AESKEY));
-    domainMerchantId.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.DOMAIN_MERCHANTID));
-    domainGateway.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.DOMAIN_GATEWAY));
-
-    chainConnector = ChainConnector.initConn(merchantAesKey.toString(), domainMerchantId.toString(), domainGateway.toString());
+    initChainConnector();
     StacsECKey authKey = new StacsECKey();
     //StacsECKey tokenCustodyAddress = new StacsECKey();
     StacsECKey contractAddress = new StacsECKey();
@@ -123,7 +126,7 @@ public class BlockchainService {
 
   public TokenQueryRespBO getTxDetails(String txId){
     String blockHeight = null;
-    chainConnector = ChainConnector.initConn(merchantAesKey.toString(), domainMerchantId.toString(), domainGateway.toString());
+    initChainConnector();
     for(int i = 0; i < queryMaxRetries; i++) {
       try {
         Thread.sleep(queryWaitTime);
@@ -140,7 +143,7 @@ public class BlockchainService {
 
   public TransferQueryRespBO getTransferDetails(String txId) {
     String blockHeight = null;
-    chainConnector = ChainConnector.initConn(merchantAesKey.toString(), domainMerchantId.toString(), domainGateway.toString());
+    initChainConnector();
     for (int i = 0; i < queryMaxRetries; i++) {
       try {
         Thread.sleep(queryWaitTime);
@@ -154,11 +157,7 @@ public class BlockchainService {
   }
 
   public JsonRespBO transferToken(User user, String recipientAddress, BaseTokenEntity token, BigInteger quantity) throws ServerErrorException {
-    merchantAesKey.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.MERCHANT_AESKEY));
-    domainMerchantId.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.DOMAIN_MERCHANTID));
-    domainGateway.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.DOMAIN_GATEWAY));
-    chainConnector = ChainConnector.initConn(merchantAesKey.toString(), domainMerchantId.toString(), domainGateway.toString());
-
+    initChainConnector();
     Transfer transferObj = new Transfer(bdCode);
     transferObj.setBdFunctionName(bdFunction);
     transferObj.setSubmitterAddress(user.getWalletAddress());

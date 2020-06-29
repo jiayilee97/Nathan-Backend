@@ -39,7 +39,7 @@ public class User extends BaseEntity{
 
     @Email
     @Size(min = 1, max = 100)
-    @Column(length = 100, nullable = false)
+    @Column(length = 100)
     private String email;
 
     //for client, operation, counter party, market
