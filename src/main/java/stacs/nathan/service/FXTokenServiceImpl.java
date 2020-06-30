@@ -137,6 +137,8 @@ public class FXTokenServiceImpl implements FXTokenService {
     return fxTokenRepository.fetchAllFxTokens();
   }
 
+  public FXTokenResponseDto fetchTokenById(String tokenCode) { return fxTokenRepository.fetchTokenById(tokenCode); }
+
   public void execute() {
     List<FXToken> tokens = fxTokenRepository.fetchAllUnconfirmedChain(FXTokenStatus.UNCONFIRMED_IN_CHAIN);
     for (FXToken token: tokens) {

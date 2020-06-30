@@ -20,4 +20,6 @@ public interface FXTokenService {
 
     List<FXTokenResponseDto> fetchAllFxTokens(User user);
 
+    FXTokenResponseDto fetchTokenById(String tokenCode);
+
 }

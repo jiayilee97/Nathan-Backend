@@ -14,6 +14,32 @@ public class FXTokenResponseDto {
     private FXTokenStatus status;
     private String issuerId;
     private String clientId;
+    private String fxCurrency;
+    private String issuerAddress;
+
+    public int getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(int currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
+    private int currencyCode;
+
+    public FXTokenResponseDto(String fxTokenCode, String spTokenCode, Date contractInceptionDate, Date maturityDate, BigDecimal balance, FXTokenStatus status, String issuerId, String clientId, String fxCurrency, int currencyCode, String issuerAddress){
+        setFxTokenCode(fxTokenCode);
+        setSpTokenCode(spTokenCode);
+        setContractInceptionDate(contractInceptionDate);
+        setMaturityDate(maturityDate);
+        setBalance(balance);
+        setStatus(status);
+        setIssuerId(issuerId);
+        setClientId(clientId);
+        setFxCurrency(fxCurrency);
+        setCurrencyCode(currencyCode);
+        setIssuerAddress(issuerAddress);
+    }
 
     public FXTokenResponseDto(String fxTokenCode, String spTokenCode, Date contractInceptionDate, Date maturityDate, BigDecimal balance, FXTokenStatus status, String issuerId, String clientId){
         setFxTokenCode(fxTokenCode);
@@ -88,5 +114,21 @@ public class FXTokenResponseDto {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public String getFxCurrency() {
+        return fxCurrency;
+    }
+
+    public void setFxCurrency(String fxCurrency) {
+        this.fxCurrency = fxCurrency;
+    }
+
+    public String getIssuerAddress() {
+        return issuerAddress;
+    }
+
+    public void setIssuerAddress(String issuerAddress) {
+        this.issuerAddress = issuerAddress;
     }
 }

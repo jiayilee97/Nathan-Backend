@@ -46,4 +46,9 @@ public class FXTokenController {
         return fxTokenService.fetchAllFxTokens(userService.fetchLoginUser());
     }
 
+    @GetMapping("/fetch/{tokenCode}")
+    public FXTokenResponseDto fetchToken(@PathVariable String tokenCode) {
+        return fxTokenService.fetchTokenById(tokenCode);
+    }
+
 }
