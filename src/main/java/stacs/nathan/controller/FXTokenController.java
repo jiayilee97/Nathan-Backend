@@ -3,8 +3,10 @@ package stacs.nathan.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.ServerErrorException;
+import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.response.ClientOpenPositionResponseDto;
+import stacs.nathan.dto.response.FXTokenDataEntryResponseDto;
 import stacs.nathan.dto.response.FXTokenResponseDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.service.FXTokenService;
@@ -49,6 +51,21 @@ public class FXTokenController {
     @GetMapping("/fetch/{tokenCode}")
     public FXTokenResponseDto fetchToken(@PathVariable String tokenCode) {
         return fxTokenService.fetchTokenById(tokenCode);
+    }
+
+    @PostMapping("/spotPrice")
+    public void enterSpotPrice(@RequestBody FXTokenDataEntryRequestDto dto) throws ServerErrorException {
+        fxTokenService.enterSpotPrice(dto);
+    }
+
+    @GetMapping("/fetch-all-open")
+    public List<FXTokenResponseDto> fetchAllOpenTokens() {
+        return fxTokenService.fetchAvailableFXTokens();
+    }
+
+    @GetMapping("/data-entry-history")
+    public List<FXTokenDataEntryResponseDto> fetchDataEntryHistory() {
+        return fxTokenService.fetchDataEntryHistory();
     }
 
 }
