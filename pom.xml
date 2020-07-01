@@ -58,7 +58,7 @@
 		<dependency>
 			<groupId>stacs-sdk</groupId>
 			<artifactId>stacs-sdk</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>

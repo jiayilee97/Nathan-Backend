@@ -3,7 +3,7 @@ package stacs.nathan.service;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import hashstacs.sdk.response.base.JsonRespBO;
-import hashstacs.sdk.response.blockchain.TokenQueryRespBO;
+import hashstacs.sdk.response.blockchain.token.TokenQueryRespBO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
