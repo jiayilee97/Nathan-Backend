@@ -33,7 +33,7 @@ public class RolePagesServiceImpl implements RolePagesService {
       userInfoDto.setUsername(user.getUsername());
       userInfoDto.setName(user.getDisplayName());
       userInfoDto.setPageNames(repository.findByRoles(roles));
-      userInfoDto.setRole(roles);
+      userInfoDto.setRoleName(roles);
       return userInfoDto;
     }catch (Exception e){
       LOGGER.error("Exception in fetchUserInfo().", e);

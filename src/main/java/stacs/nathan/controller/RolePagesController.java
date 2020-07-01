@@ -10,7 +10,7 @@ import stacs.nathan.service.RolePagesService;
 
 @RestController
 @RequestMapping("/rolepages")
-@PreAuthorize("hasAuthority('ADMIN')")
+@PreAuthorize("hasAuthority('ADMIN') or hasAuthority('CRO') or hasAuthority('OPS')")
 public class RolePagesController {
 
   @Autowired

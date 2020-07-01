@@ -12,7 +12,7 @@ public class UserInfoDto {
 
   private String pageNames;
 
-  private String role;
+  private String roleName;
 
   public String getUsername() {
     return username;
@@ -42,16 +42,16 @@ public class UserInfoDto {
     this.pageNames = pageNames.toString();
   }
 
-  public String getRole() {
-    return role;
+  public String getRoleName() {
+    return roleName;
   }
 
-  public void setRole(List<String> roles) {
+  public void setRoleName(List<String> roles) {
     StringJoiner strRole = new StringJoiner(",");
     for (String role : roles) {
       strRole.add(role);
     }
-    this.role = strRole.toString();
+    this.roleName = strRole.toString();
   }
 
 }

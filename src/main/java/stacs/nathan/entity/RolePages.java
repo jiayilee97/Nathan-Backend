@@ -7,8 +7,8 @@ import javax.persistence.*;
 public class RolePages extends BaseEntity {
   private static final long serialVersionUID = 1L;
 
-  @Column(length = 10)
-  private String role;
+  @Column(name = "role_name", length = 20)
+  private String roleName;
 
   @Column(name = "page_name", length = 200)
   private String pageName;
@@ -16,12 +16,12 @@ public class RolePages extends BaseEntity {
   @Column(name = "is_enabled", nullable = false)
   private boolean isVisible = true;
 
-  public String getRole() {
-    return role;
+  public String getRoleName() {
+    return roleName;
   }
 
-  public void setRole(String role) {
-    this.role = role;
+  public void setRoleName(String roleName) {
+    this.roleName = roleName;
   }
 
   public String getPageName() {
