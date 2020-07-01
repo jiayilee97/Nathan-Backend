@@ -12,14 +12,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.exception.ServerErrorException;
+import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.response.ClientOpenPositionResponseDto;
+import stacs.nathan.dto.response.FXTokenDataEntryResponseDto;
 import stacs.nathan.dto.response.FXTokenResponseDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.FXToken;
+import stacs.nathan.entity.FXTokenDataEntry;
 import stacs.nathan.entity.SPToken;
 import stacs.nathan.entity.User;
+import stacs.nathan.repository.FXTokenDataEntryRepository;
 import stacs.nathan.repository.FXTokenRepository;
 import stacs.nathan.repository.SPTokenRepository;
 import stacs.nathan.utils.enums.FXTokenStatus;
@@ -38,6 +42,9 @@ public class FXTokenServiceImpl implements FXTokenService {
 
   @Autowired
   SPTokenRepository spTokenRepository;
+
+  @Autowired
+  FXTokenDataEntryRepository fxTokenDataEntryRepository;
 
   @Autowired
   UserService userService;
@@ -127,6 +134,38 @@ public class FXTokenServiceImpl implements FXTokenService {
     }
   }
 
+  public void enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException {
+    String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    try {
+      FXTokenDataEntry data = convertToFXTokenDataEntry(dto);
+      SPToken spToken = data.getFxToken().getSpToken();
+      if (dto.getPrice().compareTo(spToken.getKnockOutPrice()) >= 0) {
+        spToken.setStatus(SPTokenStatus.KNOCK_OUT);
+        spTokenRepository.save(spToken);
+      }
+        data.setCreatedBy(username);
+        // TODO: Check price and trigger smart contract?
+        fxTokenDataEntryRepository.save(data);
+    } catch (Exception e) {
+      LOGGER.error("Exception in enterSpotPrice().", e);
+      throw new ServerErrorException("Exception in enterSpotPrice().", e);
+    }
+  }
+
+  public FXTokenDataEntry convertToFXTokenDataEntry(FXTokenDataEntryRequestDto dto) throws ServerErrorException {
+    FXTokenDataEntry data = new FXTokenDataEntry();
+    FXToken fxToken = fxTokenRepository.findByTokenCode(dto.getFxTokenCode());
+    if (fxToken.getStatus() != FXTokenStatus.CLOSED) {
+      data.setEntryDate(dto.getEntryDate());
+      data.setFxCurrency(dto.getFxCurrency());
+      data.setFxToken(fxToken);
+      data.setPrice(dto.getPrice());
+      return data;
+    } else {
+      throw new ServerErrorException("FX Token not available");
+    }
+  }
+
   public List<ClientOpenPositionResponseDto> fetchClientOpenPosition(String issuerId){
     return fxTokenRepository.fetchClientOpenPosition(issuerId);
   }
@@ -136,6 +175,14 @@ public class FXTokenServiceImpl implements FXTokenService {
   }
 
   public FXTokenResponseDto fetchTokenById(String tokenCode) { return fxTokenRepository.fetchTokenById(tokenCode); }
+
+  public List<FXTokenResponseDto> fetchAvailableFXTokens() {
+    return fxTokenRepository.fetchAvailableFXTokens();
+  }
+
+  public List<FXTokenDataEntryResponseDto> fetchDataEntryHistory() {
+    return fxTokenDataEntryRepository.fetchAll();
+  }
 
   public void execute() {
     List<FXToken> tokens = fxTokenRepository.fetchAllUnconfirmedChain(FXTokenStatus.UNCONFIRMED_IN_CHAIN);

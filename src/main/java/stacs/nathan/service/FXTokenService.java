@@ -1,8 +1,10 @@
 package stacs.nathan.service;
 
 import stacs.nathan.core.exception.ServerErrorException;
+import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.response.ClientOpenPositionResponseDto;
+import stacs.nathan.dto.response.FXTokenDataEntryResponseDto;
 import stacs.nathan.dto.response.FXTokenResponseDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.User;
@@ -21,5 +23,11 @@ public interface FXTokenService {
     List<FXTokenResponseDto> fetchAllFxTokens(User user);
 
     FXTokenResponseDto fetchTokenById(String tokenCode);
+
+    void enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException;
+
+    List<FXTokenResponseDto> fetchAvailableFXTokens();
+
+    List<FXTokenDataEntryResponseDto> fetchDataEntryHistory();
 
 }
