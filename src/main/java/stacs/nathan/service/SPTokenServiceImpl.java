@@ -3,8 +3,8 @@ package stacs.nathan.service;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import hashstacs.sdk.response.base.JsonRespBO;
-import hashstacs.sdk.response.blockchain.TokenQueryRespBO;
-import hashstacs.sdk.response.blockchain.TransferQueryRespBO;
+import hashstacs.sdk.response.blockchain.token.TokenQueryRespBO;
+import hashstacs.sdk.response.blockchain.token.TransferQueryRespBO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,6 @@ import stacs.nathan.utils.enums.ProductType;
 import stacs.nathan.utils.enums.SPTokenStatus;
 import stacs.nathan.utils.enums.TokenType;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -150,7 +149,8 @@ public class SPTokenServiceImpl implements SPTokenService {
       User loggedInUser = userService.fetchByUsername(username);
       SPToken token = repository.findSPTokenByTokenCode(tokenCode);
       //TransactionHistory transaction = initTransactionHistory(token);
-      JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, burnAddress, token, new BigInteger(String.valueOf(1)));
+      //retrieve balance and transfer all
+      JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, burnAddress, token, BigInteger.valueOf(100));
       String txId = jsonRespBO.getTxId();
       TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
       if (txDetail != null) {

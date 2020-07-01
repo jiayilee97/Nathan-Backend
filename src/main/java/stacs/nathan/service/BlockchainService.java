@@ -1,13 +1,13 @@
 package stacs.nathan.service;
 
-import com.google.gson.JsonParser;
-import hashstacs.sdk.dto.Token;
-import hashstacs.sdk.dto.Transfer;
-import hashstacs.sdk.request.blockchain.IssueTokenReqBO;
-import hashstacs.sdk.request.blockchain.TransferTokenReqBO;
+import hashstacs.sdk.dto.token.Token;
+import hashstacs.sdk.dto.token.Transfer;
+import hashstacs.sdk.dto.token.Wallet;
+import hashstacs.sdk.request.blockchain.token.IssueTokenReqBO;
+import hashstacs.sdk.request.blockchain.token.TransferTokenReqBO;
 import hashstacs.sdk.response.base.JsonRespBO;
-import hashstacs.sdk.response.blockchain.TokenQueryRespBO;
-import hashstacs.sdk.response.blockchain.TransferQueryRespBO;
+import hashstacs.sdk.response.blockchain.token.TokenQueryRespBO;
+import hashstacs.sdk.response.blockchain.token.TransferQueryRespBO;
 import hashstacs.sdk.util.ChainConnector;
 import hashstacs.sdk.util.StacsAPIUtil;
 import hashstacs.sdk.util.StacsUtil;
@@ -188,6 +188,16 @@ public class BlockchainService {
     }
     return jsonRespBO;
 
+  }
+
+  public BigDecimal getWalletBalance(BaseTokenEntity token, String walletAddress) {
+    Wallet walletBalance = new Wallet();
+    initChainConnector();
+    walletBalance.setTokenContractAddress(token.getTokenContractAddress());
+    walletBalance.setTokenContractBalanceMethod("(uint256)balanceOf(address)");
+    walletBalance.setWalletAddress(walletAddress);
+
+    return chainConnector.getWalletBalance(walletBalance);
   }
 
 }
