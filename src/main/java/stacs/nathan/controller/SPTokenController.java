@@ -1,6 +1,7 @@
 package stacs.nathan.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.SPTokenRequestDto;
@@ -25,6 +26,7 @@ public class SPTokenController {
         return spTokenService.fetchInitForm();
     }
 
+    @PreAuthorize("hasAuthority('OPS')")
     @PostMapping("/create")
     public void createSPToken(@RequestBody SPTokenRequestDto token) throws ServerErrorException {
         spTokenService.createSPToken(token);

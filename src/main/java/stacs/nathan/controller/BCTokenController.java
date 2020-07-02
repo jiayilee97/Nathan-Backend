@@ -13,13 +13,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/bctoken")
-//@PreAuthorize("hasAuthority('OPS')")
 public class BCTokenController {
 
   @Autowired
   private BCTokenService bcTokenService;
 
-
+  @PreAuthorize("hasAuthority('OPS')")
   @GetMapping("/init")
   public CreateBCTokenInitDto initForm(){
     return bcTokenService.fetchInitForm();

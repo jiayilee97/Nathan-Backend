@@ -38,6 +38,8 @@ public class BlockchainService {
   private String bdCode;
   @Value("${stacs.contract.method}")
   private String contractMethod;
+  @Value("${stacs.balance.method}")
+  private String balanceMethod;
   @Value("${code.location}")
   private String codeLocation;
   @Value("${stacs.config.props}")
@@ -194,7 +196,7 @@ public class BlockchainService {
     Wallet walletBalance = new Wallet();
     initChainConnector();
     walletBalance.setTokenContractAddress(token.getTokenContractAddress());
-    walletBalance.setTokenContractBalanceMethod("(uint256)balanceOf(address)");
+    walletBalance.setTokenContractBalanceMethod(balanceMethod);
     walletBalance.setWalletAddress(walletAddress);
 
     return chainConnector.getWalletBalance(walletBalance);

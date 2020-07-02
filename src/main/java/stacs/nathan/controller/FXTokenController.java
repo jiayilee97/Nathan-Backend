@@ -1,6 +1,7 @@
 package stacs.nathan.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
@@ -28,6 +29,7 @@ public class FXTokenController {
         return fxTokenService.fetchAvailableTokens(userService.fetchLoginUser());
     }
 
+    @PreAuthorize("hasAuthority('OPS')")
     @PostMapping("/create")
     public void createFXToken(@RequestBody FXTokenRequestDto token) throws ServerErrorException {
         fxTokenService.createFXToken(token);

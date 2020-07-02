@@ -10,12 +10,12 @@ import stacs.nathan.service.RolePagesService;
 
 @RestController
 @RequestMapping("/rolepages")
-@PreAuthorize("hasAuthority('ADMIN') or hasAuthority('CRO') or hasAuthority('OPS') or hasAuthority('MKT') or hasAuthority('CP') or hasAuthority('CLIENT')")
 public class RolePagesController {
 
   @Autowired
   RolePagesService rolePagesService;
 
+  @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('CRO') or hasAuthority('OPS') or hasAuthority('MKT') or hasAuthority('CP') or hasAuthority('CLIENT')")
   @GetMapping("/userinfo")
   public UserInfoDto fetchUserInfo() throws ServerErrorException {
     return rolePagesService.fetchUserInfo();
