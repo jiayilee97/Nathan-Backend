@@ -1,7 +1,8 @@
 package stacs.nathan.entity;
-
+import org.hibernate.annotations.ColumnDefault;
+import stacs.nathan.utils.enums.TokenType;
 import javax.persistence.*;
-import java.util.List;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "trade_history")
@@ -11,11 +12,19 @@ public class TradeHistory extends BaseEntity {
     @Column(nullable = false)
     private long tokenId;
 
-    @Column
-    private String type; //buy, sell
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private TokenType tokenType;
 
-    @OneToMany(mappedBy = "tradeHistory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<TransactionHistory> transactionHistoryList;
+    @Column
+    private String side; //buy, sell
+
+    @Column(length = 10)
+    private String underlying;
+
+    @Column(precision = 15, scale = 2)
+    @ColumnDefault("0.0")
+    private BigDecimal quantity = BigDecimal.ZERO;
 
     public long getTokenId() {
         return tokenId;
@@ -25,12 +34,35 @@ public class TradeHistory extends BaseEntity {
         this.tokenId = tokenId;
     }
 
-    public String getType() {
-        return type;
+    public TokenType getTokenType() {
+        return tokenType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTokenType(TokenType tokenType) {
+        this.tokenType = tokenType;
     }
 
+    public String getSide() {
+        return side;
+    }
+
+    public void setSide(String side) {
+        this.side = side;
+    }
+
+    public String getUnderlying() {
+        return underlying;
+    }
+
+    public void setUnderlying(String underlying) {
+        this.underlying = underlying;
+    }
+
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 }

@@ -11,9 +11,8 @@ import java.math.BigDecimal;
 public class TransactionHistory extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trade_id", nullable = false)
-    private TradeHistory tradeHistory;
+    @Column(nullable = false)
+    private long tokenId;
 
     @Column(name = "from_address", length = 100)
     private String fromAddress;
@@ -32,19 +31,25 @@ public class TransactionHistory extends BaseEntity {
     @ColumnDefault("0.0")
     private BigDecimal amount;
 
+    @Column(name = "c_tx_id", length = 100, unique = true)
+    private String ctxId;
+
     @Column(name = "block_height", length = 50)
-    private int blockHeight;
+    private String blockHeight;
+
+    @Column(name = "token_contract_address", length = 100)
+    private String tokenContractAddress;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
     private TransactionStatus status;
 
-    public TradeHistory getTradeHistory() {
-        return tradeHistory;
+    public long getTokenId() {
+        return tokenId;
     }
 
-    public void setTradeHistory(TradeHistory tradeHistory) {
-        this.tradeHistory = tradeHistory;
+    public void setTokenId(long tokenId) {
+        this.tokenId = tokenId;
     }
 
     public String getFromAddress() {
@@ -87,12 +92,28 @@ public class TransactionHistory extends BaseEntity {
         this.amount = amount;
     }
 
-    public int getBlockHeight() {
+    public String getCtxId() {
+        return ctxId;
+    }
+
+    public void setCtxId(String ctxId) {
+        this.ctxId = ctxId;
+    }
+
+    public String getBlockHeight() {
         return blockHeight;
     }
 
-    public void setBlockHeight(int blockHeight) {
+    public void setBlockHeight(String blockHeight) {
         this.blockHeight = blockHeight;
+    }
+
+    public String getTokenContractAddress() {
+        return tokenContractAddress;
+    }
+
+    public void setTokenContractAddress(String tokenContractAddress) {
+        this.tokenContractAddress = tokenContractAddress;
     }
 
     public TransactionStatus getStatus() {

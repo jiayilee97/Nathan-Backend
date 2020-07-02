@@ -35,7 +35,10 @@ public class NAV {
     private String ctxId;
 
     @Column(name = "block_height", length = 50)
-    private int blockHeight;
+    private String blockHeight;
+
+    @Column(name = "token_contract_address", length = 100)
+    private String tokenContractAddress;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
@@ -98,12 +101,20 @@ public class NAV {
         this.ctxId = ctxId;
     }
 
-    public int getBlockHeight() {
+    public String getBlockHeight() {
         return blockHeight;
     }
 
-    public void setBlockHeight(int blockHeight) {
+    public void setBlockHeight(String blockHeight) {
         this.blockHeight = blockHeight;
+    }
+
+    public String getTokenContractAddress() {
+        return tokenContractAddress;
+    }
+
+    public void setTokenContractAddress(String tokenContractAddress) {
+        this.tokenContractAddress = tokenContractAddress;
     }
 
     public NAVType getType() {
