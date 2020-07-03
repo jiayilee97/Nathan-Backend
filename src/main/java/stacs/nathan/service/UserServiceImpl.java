@@ -56,7 +56,9 @@ public class UserServiceImpl implements UserService {
 
     public User fetchLoginUser() {
         String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        return fetchByUsername(username);
+        User user = fetchByUsername(username);
+        user.setPrivateKey(null);
+        return user;
     }
 
     public User fetchByUsername(String username) {
