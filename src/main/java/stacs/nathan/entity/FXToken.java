@@ -32,7 +32,7 @@ public class FXToken extends BaseTokenEntity {
     private String issuerAddress;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 10)
+    @Column(length = 30)
     private FXTokenStatus status;
 
     public SPToken getSpToken() {

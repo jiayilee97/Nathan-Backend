@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
@@ -61,6 +62,7 @@ public class FXTokenServiceImpl implements FXTokenService {
     return response;
   }
 
+  @Transactional(rollbackFor = ServerErrorException.class)
   public void createFXToken(FXTokenRequestDto dto) throws ServerErrorException {
     LOGGER.debug("Entering createFXToken().");
     try{

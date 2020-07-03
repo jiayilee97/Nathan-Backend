@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.BCTokenRequestDto;
@@ -52,6 +53,7 @@ public class BCTokenServiceImpl implements BCTokenService {
     return dto;
   }
 
+  @Transactional(rollbackFor = ServerErrorException.class)
   public void createBCToken(BCTokenRequestDto dto) throws ServerErrorException, BadRequestException {
     LOGGER.debug("Entering createBCToken().");
     BaseCurrencyToken token = repository.findByTokenCode(dto.getTokenCode());
