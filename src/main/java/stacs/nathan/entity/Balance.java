@@ -14,8 +14,11 @@ public class Balance extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "token_code", length = 50, nullable = false)
+    private String tokenCode;
+
     @Enumerated(EnumType.STRING)
-    @Column(length = 10)
+    @Column(length = 10, nullable = false)
     private TokenType tokenType;
 
     @Column(name = "balance_amount", precision = 15, scale = 2)
@@ -28,6 +31,14 @@ public class Balance extends BaseEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getTokenCode() {
+        return tokenCode;
+    }
+
+    public void setTokenCode(String tokenCode) {
+        this.tokenCode = tokenCode;
     }
 
     public TokenType getTokenType() {

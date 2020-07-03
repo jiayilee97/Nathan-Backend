@@ -15,6 +15,7 @@ import stacs.nathan.dto.request.BCTokenRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.response.BCTokenResponseDto;
 import stacs.nathan.dto.response.CreateBCTokenInitDto;
+import stacs.nathan.entity.Balance;
 import stacs.nathan.entity.BaseCurrencyToken;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.BCTokenRepository;
@@ -38,6 +39,9 @@ public class BCTokenServiceImpl implements BCTokenService {
 
   @Autowired
   CodeValueService codeValueService;
+
+  @Autowired
+  BalanceService balanceService;
 
   public CreateBCTokenInitDto fetchInitForm(){
     String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
@@ -63,6 +67,12 @@ public class BCTokenServiceImpl implements BCTokenService {
       token.setIssuerAddress(loggedInUser.getWalletAddress());
       token.setCreatedBy(username);
       JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getAmount());
+      Balance balance = new Balance();
+      balance.setUser(loggedInUser);
+      balance.setTokenType(TokenType.BC_TOKEN);
+      balance.setTokenCode(dto.getTokenCode());
+      balance.setBalanceAmount(dto.getAmount());
+      balanceService.createBalance(balance);
       if (jsonRespBO == null) {
         token.setStatus(BCTokenStatus.CHAIN_UNAVAILABLE);
         repository.save(token);
