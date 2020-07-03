@@ -1,7 +1,10 @@
 package stacs.nathan.utils.enums;
 
 public enum FXTokenStatus {
-    OPEN("Open"), CLOSED("Closed"), UNCONFIRMED_IN_CHAIN("Unconfirmed in chain");
+    OPEN("Open"),
+    CLOSED("Closed"),
+    UNCONFIRMED_IN_CHAIN("Unconfirmed in chain"),
+    CHAIN_UNAVAILABLE("Chain unavailable");
 
     private String value;
 

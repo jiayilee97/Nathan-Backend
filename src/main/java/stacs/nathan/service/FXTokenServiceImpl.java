@@ -19,10 +19,7 @@ import stacs.nathan.dto.response.ClientOpenPositionResponseDto;
 import stacs.nathan.dto.response.FXTokenDataEntryResponseDto;
 import stacs.nathan.dto.response.FXTokenResponseDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
-import stacs.nathan.entity.FXToken;
-import stacs.nathan.entity.FXTokenDataEntry;
-import stacs.nathan.entity.SPToken;
-import stacs.nathan.entity.User;
+import stacs.nathan.entity.*;
 import stacs.nathan.repository.FXTokenDataEntryRepository;
 import stacs.nathan.repository.FXTokenRepository;
 import stacs.nathan.repository.SPTokenRepository;
@@ -52,6 +49,9 @@ public class FXTokenServiceImpl implements FXTokenService {
   @Autowired
   BlockchainService blockchainService;
 
+  @Autowired
+  BalanceService balanceService;
+
   @Value("${stacs.burn.address}")
   String burnAddress;
 
@@ -66,27 +66,42 @@ public class FXTokenServiceImpl implements FXTokenService {
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
-      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.FX_TOKEN, dto.getAmount());
-
-      JsonParser parser = new JsonParser();
-      JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
-      String txId = txResponse.get("txId").getAsString();
       FXToken token = convertToFXToken(dto);
-      token.setCtxId(txId);
       token.setIssuerId(dto.getIssuerId());
       token.setIssuerAddress(loggedInUser.getWalletAddress());
       token.setCreatedBy(username);
-      token.setStatus(FXTokenStatus.UNCONFIRMED_IN_CHAIN); // add new status "unconfirmed in chain"
-      TokenQueryRespBO txDetail = blockchainService.getTxDetails(txId);
-      if (txDetail != null) {
-        token.setBlockHeight(txDetail.getBlockHeight());
-        token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
-        token.setStatus(FXTokenStatus.OPEN);
+      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.FX_TOKEN, dto.getAmount());
+      Balance balance = new Balance();
+      balance.setUser(loggedInUser);
+      balance.setTokenType(TokenType.FX_TOKEN);
+      balance.setTokenCode(dto.getTokenCode());
+      balance.setBalanceAmount(dto.getAmount());
+      balanceService.createBalance(balance);
+      if (jsonRespBO == null) {
+        token.setStatus(FXTokenStatus.CHAIN_UNAVAILABLE);
         fxTokenRepository.save(token);
+      } else {
+        processAvailableChain(token, jsonRespBO);
       }
     } catch (Exception e){
       LOGGER.error("Exception in createFXToken().", e);
       throw new ServerErrorException("Exception in createFXToken().", e);
+    }
+  }
+
+  void processAvailableChain(FXToken token, JsonRespBO jsonRespBO){
+    JsonParser parser = new JsonParser();
+    JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
+    String txId = txResponse.get("txId").getAsString();
+    token.setCtxId(txId);
+    token.setStatus(FXTokenStatus.UNCONFIRMED_IN_CHAIN);
+    fxTokenRepository.save(token);
+    TokenQueryRespBO txDetail = blockchainService.getTxDetails(txId);
+    if (txDetail != null) {
+      token.setBlockHeight(txDetail.getBlockHeight());
+      token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
+      token.setStatus(FXTokenStatus.OPEN);
+      fxTokenRepository.save(token);
     }
   }
 
@@ -184,8 +199,8 @@ public class FXTokenServiceImpl implements FXTokenService {
     return fxTokenDataEntryRepository.fetchAll();
   }
 
-  public void execute() {
-    List<FXToken> tokens = fxTokenRepository.fetchAllUnconfirmedChain(FXTokenStatus.UNCONFIRMED_IN_CHAIN);
+  public void executeUnconfirmedChain() {
+    List<FXToken> tokens = fxTokenRepository.findByStatus(FXTokenStatus.UNCONFIRMED_IN_CHAIN);
     for (FXToken token: tokens) {
       TokenQueryRespBO txDetail = blockchainService.getTxDetails(token.getCtxId());
       if (txDetail != null) {
@@ -194,7 +209,21 @@ public class FXTokenServiceImpl implements FXTokenService {
         token.setStatus(FXTokenStatus.OPEN);
         fxTokenRepository.save(token);
       }
-      blockchainService.getTxDetails(token.getCtxId());
+    }
+  }
+
+  public void executeUnavailableChain(){
+    LOGGER.debug("Entering executeUnavailableChain().");
+    try {
+      List<FXToken> tokens = fxTokenRepository.findByStatus(FXTokenStatus.CHAIN_UNAVAILABLE);
+      for (FXToken token : tokens) {
+        JsonRespBO jsonRespBO = blockchainService.createToken(token.getSpToken().getUser(), TokenType.FX_TOKEN, token.getAmount());
+        if (jsonRespBO != null) {
+          processAvailableChain(token, jsonRespBO);
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.error("Exception in executeUnavailableChain().", e);
     }
   }
 

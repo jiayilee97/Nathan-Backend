@@ -13,8 +13,7 @@ import java.util.List;
 @Repository
 public interface FXTokenRepository extends JpaRepository<FXToken, Long> {
 
-    @Query("SELECT fx FROM FXToken fx WHERE fx.status = :status")
-    List<FXToken> fetchAllUnconfirmedChain(@Param("status") FXTokenStatus status);
+    List<FXToken> findByStatus(@Param("status") FXTokenStatus status);
 
     @Query("SELECT fx FROM FXToken fx WHERE fx.tokenCode =?1")
     FXToken findByTokenCode(String tokenCode);

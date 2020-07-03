@@ -96,7 +96,7 @@ public class BCTokenServiceImpl implements BCTokenService {
     if(txDetail != null) {
       token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
       token.setBlockHeight(txDetail.getBlockHeight());
-      token.setStatus(BCTokenStatus.CONFIRMED_IN_CHAIN);
+      token.setStatus(BCTokenStatus.OPEN);
       repository.save(token);
     }
   }
@@ -104,7 +104,7 @@ public class BCTokenServiceImpl implements BCTokenService {
   public List<BCTokenResponseDto> fetchAllByIssuerAddress(String issuerAddress) throws ServerErrorException {
     LOGGER.debug("Entering fetchAllBCTokens().");
     try {
-      return repository.fetchAllByIssuerAddress(issuerAddress, BCTokenStatus.CONFIRMED_IN_CHAIN);
+      return repository.fetchAllByIssuerAddress(issuerAddress, BCTokenStatus.OPEN);
     } catch (Exception e) {
       LOGGER.error("Exception in fetchAllBCTokens().", e);
       throw new ServerErrorException("Exception in fetchAllBCTokens().", e);
@@ -129,10 +129,9 @@ public class BCTokenServiceImpl implements BCTokenService {
       if (txDetail != null) {
         token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
         token.setBlockHeight(txDetail.getBlockHeight());
-        token.setStatus(BCTokenStatus.CONFIRMED_IN_CHAIN);
+        token.setStatus(BCTokenStatus.OPEN);
         repository.save(token);
       }
-      blockchainService.getTxDetails(token.getCtxId());
     }
   }
 

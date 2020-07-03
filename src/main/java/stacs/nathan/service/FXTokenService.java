@@ -30,4 +30,8 @@ public interface FXTokenService {
 
     List<FXTokenDataEntryResponseDto> fetchDataEntryHistory();
 
+    void executeUnconfirmedChain();
+
+    void executeUnavailableChain();
+
 }
