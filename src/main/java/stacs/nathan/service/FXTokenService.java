@@ -34,4 +34,6 @@ public interface FXTokenService {
 
     void executeUnavailableChain();
 
+    String fetchAppWalletAddress();
+
 }

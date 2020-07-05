@@ -68,7 +68,6 @@ public class SPTokenServiceImpl implements SPTokenService {
       token.setIssuingAddress(loggedInUser.getWalletAddress());
       token.setCreatedBy(username);
       token.setStatus(SPTokenStatus.UNCONFIRMED_IN_CHAIN);
-      token.setAvailability(true);
       TokenQueryRespBO txDetail = blockchainService.getTxDetails(txId);
       if (txDetail != null) {
         token.setBlockHeight(txDetail.getBlockHeight());
@@ -158,7 +157,7 @@ public class SPTokenServiceImpl implements SPTokenService {
         token.setUpdatedBy(username);
         token.setUpdatedDate(new Date());
         // update tx_history table instead of sp_token?
-        token.setStatus(SPTokenStatus.BURNT);
+        token.setStatus(SPTokenStatus.KNOCK_OUT);
         repository.save(token);
       }
 

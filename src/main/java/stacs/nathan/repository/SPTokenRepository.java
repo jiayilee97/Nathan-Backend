@@ -43,15 +43,14 @@ public interface SPTokenRepository extends JpaRepository<SPToken, Long> {
 
 
   // Used by FXTokenService
-  @Query("SELECT NEW stacs.nathan.dto.response.SPTokenResponseDto(sp.tokenCode, sp.productType, sp.contractInceptionDate, sp.underlyingCurrency, sp.notionalAmount, sp.fixingAmount, sp.spotPrice, sp.strikeRate, sp.knockOutPrice, sp.maturityDate, sp.fixingPage, sp.numberOfFixing, sp.cpId, sp.opsId, sp.issuingAddress, sp.status, sp.user.displayName, sp.clientId, sp.availability)" +
-          "FROM SPToken sp WHERE sp.user = :user")
-  List<SPTokenResponseDto> fetchAvailableTokens(@Param("user") User user);
+  @Query("SELECT sp FROM SPToken sp WHERE sp.user = :user and sp.status = :status")
+  List<SPToken> fetchAvailableTokens(@Param("user") User user, @Param("status") SPTokenStatus status);
 
-  @Query("SELECT sp FROM SPToken sp WHERE sp.tokenCode =?1")
+  @Query("SELECT sp FROM SPToken sp WHERE sp.tokenCode =?1 AND sp.fxToken = null")
   SPToken findAvailableSPTokenByTokenCode(String tokenCode);
 
-  @Modifying
-  @Transactional
-  @Query("UPDATE SPToken sp set sp.availability = 0 WHERE sp.tokenCode =?1")
-  void updateSPTokenAvailabilityByTokenCode(String tokenCode);
+//  @Modifying
+//  @Transactional
+//  @Query("UPDATE SPToken sp set sp.availability = 0 WHERE sp.tokenCode =?1")
+//  void updateSPTokenAvailabilityByTokenCode(String tokenCode);
 }

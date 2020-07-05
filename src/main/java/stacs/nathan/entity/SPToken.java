@@ -21,7 +21,8 @@ public class SPToken extends BaseTokenEntity {
     private String clientId;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "spToken", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne
+    @JoinColumn(name = "fx_token_id", nullable = true)
     private FXToken fxToken;
 
     @Column(name = "product_type", length = 50)
@@ -76,17 +77,6 @@ public class SPToken extends BaseTokenEntity {
     @Enumerated(EnumType.STRING)
     @Column(length = 30)
     private SPTokenStatus status;
-
-    @Column(name = "availability")
-    private Boolean availability;
-
-    public Boolean getAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(Boolean availability) {
-        this.availability = availability;
-    }
 
     public User getUser() {
         return user;

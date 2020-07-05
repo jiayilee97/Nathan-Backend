@@ -14,8 +14,6 @@ public class FXTokenRequestDto {
 
     private BigDecimal amount;
 
-    private String issuerId;
-
     private String spTokenCode;
 
     public String getTokenType() {
@@ -56,14 +54,6 @@ public class FXTokenRequestDto {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
-    }
-
-    public String getIssuerId() {
-        return issuerId;
-    }
-
-    public void setIssuerId(String issuerId) {
-        this.issuerId = issuerId;
     }
 
     public String getSpTokenCode() {

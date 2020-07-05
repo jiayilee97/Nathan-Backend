@@ -70,4 +70,7 @@ public class FXTokenController {
         return fxTokenService.fetchDataEntryHistory();
     }
 
+    @GetMapping("/app-wallet-address")
+    public String fetchAppWalletAddress() { return fxTokenService.fetchAppWalletAddress(); }
+
 }
