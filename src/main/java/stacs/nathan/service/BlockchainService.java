@@ -42,8 +42,6 @@ public class BlockchainService {
   private String balanceMethod;
   @Value("${code.location}")
   private String codeLocation;
-  @Value("${stacs.config.props}")
-  private String configProps;
   @Value("${stacs.chain-query.wait-time}")
   private int queryWaitTime;
   @Value("${stacs.chain-query.max-retries}")
