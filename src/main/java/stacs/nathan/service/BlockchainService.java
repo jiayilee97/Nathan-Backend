@@ -9,29 +9,25 @@ import hashstacs.sdk.response.base.JsonRespBO;
 import hashstacs.sdk.response.blockchain.token.TokenQueryRespBO;
 import hashstacs.sdk.response.blockchain.token.TransferQueryRespBO;
 import hashstacs.sdk.util.ChainConnector;
-import hashstacs.sdk.util.StacsAPIUtil;
-import hashstacs.sdk.util.StacsUtil;
 import io.stacs.nav.crypto.StacsECKey;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.util.encoders.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.encryption.CryptoCipher;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.entity.BaseTokenEntity;
 import stacs.nathan.entity.User;
 import stacs.nathan.utils.enums.TokenType;
-
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Service
@@ -68,35 +64,31 @@ public class BlockchainService {
   @Autowired
   private CryptoCipher cipher;
 
-  @Autowired
-  private ResourceLoader resourceLoader;
-
-  private File codeFile;
+  private String codeString;
 
   @PostConstruct
   public void init() throws IOException {
-    Resource resource = resourceLoader.getResource(codeLocation);
-    codeFile = resource.getFile();
-  }
-
-  private void initChainConnector(){
+    InputStream stream = getClass().getResourceAsStream(codeLocation);
+    codeString = IOUtils.toString(stream, StandardCharsets.UTF_8);
+    if (codeString.equals("")) {
+      throw new IOException("File content not correct!");
+    }
     chainConnector = ChainConnector.initConn(merchantAesKey, domainMerchantId, domainGateway);
   }
 
-  public void createWallet(User user){
+  public void createWallet(User user) {
     LOGGER.debug("Entering createWallet().");
-    try{
+    try {
       StacsECKey submitterKey = new StacsECKey();
       user.setPrivateKey(cipher.encrypt(submitterKey.getHexPriKey()));
       user.setWalletAddress(submitterKey.getHexAddress());
-    }catch (Exception e){
+    } catch (Exception e) {
       LOGGER.error("Exception in createWallet().", e);
     }
   }
 
   public JsonRespBO createToken(User user, TokenType tokenType, BigDecimal quantity) throws ServerErrorException {
     LOGGER.debug("Entering createToken().");
-    initChainConnector();
     StacsECKey authKey = new StacsECKey();
     //StacsECKey tokenCustodyAddress = new StacsECKey();
     StacsECKey contractAddress = new StacsECKey();
@@ -104,7 +96,7 @@ public class BlockchainService {
     Token token = new Token(bdCode);
     token.setPolicyName(policy);
     token.setContractMainMethod(contractMethod);
-    token.setContractCode(StacsAPIUtil.txt2String(codeFile));
+    token.setContractCode(codeString);
     token.setSubmitterAddress(user.getWalletAddress());
     token.setAuthAddress(authKey.getHexAddress());
     token.setContractAddress(contractAddress.getHexAddress());
@@ -131,7 +123,7 @@ public class BlockchainService {
     JsonRespBO jsonRespBO = null;
     try {
       jsonRespBO = chainConnector.issueToken(afterSignToken);
-      if(jsonRespBO == null || !jsonRespBO.getIsSuccessful()){
+      if (jsonRespBO == null || !jsonRespBO.getIsSuccessful()) {
         return jsonRespBO;
       }
     } catch (Exception e) {
@@ -141,13 +133,12 @@ public class BlockchainService {
     return jsonRespBO;
   }
 
-  public TokenQueryRespBO getTxDetails(String txId){
-    initChainConnector();
-    for(int i = 0; i < queryMaxRetries; i++) {
+  public TokenQueryRespBO getTxDetails(String txId) {
+    for (int i = 0; i < queryMaxRetries; i++) {
       try {
         Thread.sleep(queryWaitTime);
         TokenQueryRespBO txDetailRespBO = (TokenQueryRespBO) chainConnector.queryDetailsByTxId(txId);
-        if(txDetailRespBO != null && txDetailRespBO.getBlockHeight() != null) {
+        if (txDetailRespBO != null && txDetailRespBO.getBlockHeight() != null) {
           return txDetailRespBO;
         }
       } catch (InterruptedException e) {
@@ -158,7 +149,6 @@ public class BlockchainService {
   }
 
   public TransferQueryRespBO getTransferDetails(String txId) {
-    initChainConnector();
     for (int i = 0; i < queryMaxRetries; i++) {
       try {
         Thread.sleep(queryWaitTime);
@@ -172,7 +162,6 @@ public class BlockchainService {
   }
 
   public JsonRespBO transferToken(User user, String recipientAddress, BaseTokenEntity token, BigInteger quantity) throws ServerErrorException {
-    initChainConnector();
     Transfer transferObj = new Transfer(bdCode);
     transferObj.setBdFunctionName(bdFunction);
     transferObj.setSubmitterAddress(user.getWalletAddress());
@@ -206,7 +195,6 @@ public class BlockchainService {
   }
 
   public BigDecimal getWalletBalance(BaseTokenEntity token, String walletAddress) {
-    initChainConnector();
     Wallet walletBalance = new Wallet();
     walletBalance.setTokenContractAddress(token.getTokenContractAddress());
     walletBalance.setTokenContractBalanceMethod(balanceMethod);
