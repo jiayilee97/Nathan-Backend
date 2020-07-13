@@ -52,21 +52,20 @@ public class BlockchainService {
   private String bdFunction;
   @Value("${stacs.transfer.method}")
   private String transferMethod;
+  @Value("${merchant_aeskey}")
+  private String merchantAesKey;
+  @Value("${domain_merchantid}")
+  private String domainMerchantId;
+  @Value("${domain_gateway}")
+  private String domainGateway;
 
-  private static StringBuilder merchantAesKey = new StringBuilder();
-  private static StringBuilder domainMerchantId = new StringBuilder();
-  private static StringBuilder domainGateway = new StringBuilder();
   private static ChainConnector chainConnector;
 
   @Autowired
   private CryptoCipher cipher;
 
   private void initChainConnector(){
-    System.out.println(configProps);
-    merchantAesKey.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.MERCHANT_AESKEY));
-    domainMerchantId.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.DOMAIN_MERCHANTID));
-    domainGateway.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.DOMAIN_GATEWAY));
-    chainConnector = ChainConnector.initConn(merchantAesKey.toString(), domainMerchantId.toString(), domainGateway.toString());
+    chainConnector = ChainConnector.initConn(merchantAesKey, domainMerchantId, domainGateway);
   }
 
   public void createWallet(User user){
