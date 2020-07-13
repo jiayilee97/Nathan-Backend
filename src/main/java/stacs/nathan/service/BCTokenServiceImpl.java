@@ -125,15 +125,19 @@ public class BCTokenServiceImpl implements BCTokenService {
 
   public void executeUnconfirmedChain() {
     LOGGER.debug("Entering executeUnconfirmedChain().");
-    List<BaseCurrencyToken> tokens = repository.findByStatus(BCTokenStatus.UNCONFIRMED_IN_CHAIN);
-    for (BaseCurrencyToken token : tokens) {
-      TokenQueryRespBO txDetail = blockchainService.getTxDetails(token.getCtxId());
-      if (txDetail != null) {
-        token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
-        token.setBlockHeight(txDetail.getBlockHeight());
-        token.setStatus(BCTokenStatus.OPEN);
-        repository.save(token);
+    try {
+      List<BaseCurrencyToken> tokens = repository.findByStatus(BCTokenStatus.UNCONFIRMED_IN_CHAIN);
+      for (BaseCurrencyToken token : tokens) {
+        TokenQueryRespBO txDetail = blockchainService.getTxDetails(token.getCtxId());
+        if (txDetail != null) {
+          token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
+          token.setBlockHeight(txDetail.getBlockHeight());
+          token.setStatus(BCTokenStatus.OPEN);
+          repository.save(token);
+        }
       }
+    } catch (Exception e) {
+      LOGGER.error("Exception in executeUnconfirmedChain().", e);
     }
   }
 

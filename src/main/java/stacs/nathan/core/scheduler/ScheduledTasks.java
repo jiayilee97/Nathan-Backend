@@ -44,14 +44,14 @@ public class ScheduledTasks {
   @Scheduled(fixedRate=60*60*1000)
   public void executeSPTokenUnconfirmedChain() {
     LOGGER.debug("Entering executeSPTokenUnconfirmedChain() method. {}", new Date());
-    spTokenService.execute();
+    spTokenService.executeUnconfirmedChain();
   }
 
-//  @Scheduled(fixedRate=60*60*1000)
-//  public void executeSPTokenUnavailableChain() {
-//    LOGGER.debug("Entering executeSPTokenUnavailableChain() method. {}", new Date());
-//    spTokenService.executeUnavailableChain();
-//  }
+  @Scheduled(fixedRate=60*60*1000)
+  public void executeSPTokenUnavailableChain() {
+    LOGGER.debug("Entering executeSPTokenUnavailableChain() method. {}", new Date());
+    spTokenService.executeUnavailableChain();
+  }
 
   @Scheduled(fixedRate=3*60*1000)
   public void checkSPTokenMaturity() {

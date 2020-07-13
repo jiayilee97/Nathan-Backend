@@ -23,7 +23,9 @@ public interface SPTokenService {
 
   void transferToBurnAddress(String tokenCode) throws ServerErrorException;
 
-  void execute();
+  void executeUnconfirmedChain();
+
+  void executeUnavailableChain();
 
   void checkSPTokenMaturity();
 

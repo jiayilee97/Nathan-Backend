@@ -224,15 +224,20 @@ public class FXTokenServiceImpl implements FXTokenService {
   }
 
   public void executeUnconfirmedChain() {
-    List<FXToken> tokens = fxTokenRepository.findByStatus(FXTokenStatus.UNCONFIRMED_IN_CHAIN);
-    for (FXToken token: tokens) {
-      TokenQueryRespBO txDetail = blockchainService.getTxDetails(token.getCtxId());
-      if (txDetail != null) {
-        token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
-        token.setBlockHeight(txDetail.getBlockHeight());
-        token.setStatus(FXTokenStatus.OPEN);
-        fxTokenRepository.save(token);
+    LOGGER.debug("Entering executeUnconfirmedChain().");
+    try {
+      List<FXToken> tokens = fxTokenRepository.findByStatus(FXTokenStatus.UNCONFIRMED_IN_CHAIN);
+      for (FXToken token: tokens) {
+        TokenQueryRespBO txDetail = blockchainService.getTxDetails(token.getCtxId());
+        if (txDetail != null) {
+          token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
+          token.setBlockHeight(txDetail.getBlockHeight());
+          token.setStatus(FXTokenStatus.OPEN);
+          fxTokenRepository.save(token);
+        }
       }
+    } catch (Exception e) {
+      LOGGER.error("Exception in executeUnconfirmedChain().", e);
     }
   }
 
