@@ -15,7 +15,7 @@ phases:
       # Download application.properties file from S3
       - aws s3 cp s3://$S3_BUCKET/application.properties src/main/resources/application.properties
       # Download config.properties file from S3
-      - aws s3 cp s3://$S3_BUCKET/config.properties config.properties
+      # - aws s3 cp s3://$S3_BUCKET/config.properties config.properties
       - echo "after download application file"
       - mvn clean compile test -T1C
   build:
