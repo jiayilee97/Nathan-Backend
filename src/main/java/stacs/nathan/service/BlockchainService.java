@@ -62,6 +62,7 @@ public class BlockchainService {
   private CryptoCipher cipher;
 
   private void initChainConnector(){
+    System.out.println(configProps);
     merchantAesKey.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.MERCHANT_AESKEY));
     domainMerchantId.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.DOMAIN_MERCHANTID));
     domainGateway.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.DOMAIN_GATEWAY));
