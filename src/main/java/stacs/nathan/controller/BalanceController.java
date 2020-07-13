@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import stacs.nathan.entity.Balance;
+import stacs.nathan.dto.response.BalanceResponseDto;
 import stacs.nathan.service.BalanceService;
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class BalanceController {
   BalanceService balanceService;
 
   @GetMapping("/fetch/{clientId}")
-  public List<Balance> fetchBalanceByClient(@PathVariable String clientId){
+  public List<BalanceResponseDto> fetchBalanceByClient(@PathVariable String clientId){
     return balanceService.fetchBalanceByClient(clientId);
   }
 
