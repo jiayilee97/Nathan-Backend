@@ -23,7 +23,6 @@ import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.entity.BaseTokenEntity;
 import stacs.nathan.entity.User;
 import stacs.nathan.utils.enums.TokenType;
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
