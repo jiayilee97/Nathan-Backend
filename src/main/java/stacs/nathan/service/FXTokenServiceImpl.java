@@ -92,12 +92,6 @@ public class FXTokenServiceImpl implements FXTokenService {
       token.setCreatedBy(username);
       BigDecimal tokenAmount = spToken.getNotionalAmount();
       JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.FX_TOKEN, tokenAmount);
-      Balance balance = new Balance();
-      balance.setUser(loggedInUser);
-      balance.setTokenType(TokenType.FX_TOKEN);
-      balance.setTokenCode(dto.getTokenCode());
-      balance.setBalanceAmount(tokenAmount);
-      balanceService.createBalance(balance);
       if (jsonRespBO == null) {
         token.setStatus(FXTokenStatus.CHAIN_UNAVAILABLE);
         fxTokenRepository.save(token);
@@ -126,6 +120,12 @@ public class FXTokenServiceImpl implements FXTokenService {
       SPToken spToken = spTokenRepository.findAvailableSPTokenByTokenCode(token.getSpToken().getTokenCode());
       spToken.setFxToken(token);
       spTokenRepository.save(spToken);
+      Balance balance = new Balance();
+      balance.setUser(spToken.getUser());
+      balance.setTokenType(TokenType.FX_TOKEN);
+      balance.setTokenCode(token.getTokenCode());
+      balance.setBalanceAmount(token.getAmount());
+      balanceService.createBalance(balance);
     }
   }
 

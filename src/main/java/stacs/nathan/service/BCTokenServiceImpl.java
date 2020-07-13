@@ -69,12 +69,6 @@ public class BCTokenServiceImpl implements BCTokenService {
       token.setIssuerAddress(loggedInUser.getWalletAddress());
       token.setCreatedBy(username);
       JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getAmount());
-      Balance balance = new Balance();
-      balance.setUser(loggedInUser);
-      balance.setTokenType(TokenType.BC_TOKEN);
-      balance.setTokenCode(dto.getTokenCode());
-      balance.setBalanceAmount(dto.getAmount());
-      balanceService.createBalance(balance);
       if (jsonRespBO == null) {
         token.setStatus(BCTokenStatus.CHAIN_UNAVAILABLE);
         repository.save(token);
@@ -100,6 +94,12 @@ public class BCTokenServiceImpl implements BCTokenService {
       token.setBlockHeight(txDetail.getBlockHeight());
       token.setStatus(BCTokenStatus.OPEN);
       repository.save(token);
+      Balance balance = new Balance();
+      balance.setUser(token.getUser());
+      balance.setTokenType(TokenType.BC_TOKEN);
+      balance.setTokenCode(token.getTokenCode());
+      balance.setBalanceAmount(token.getAmount());
+      balanceService.createBalance(balance);
     }
   }
 

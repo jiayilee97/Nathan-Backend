@@ -66,12 +66,6 @@ public class SPTokenServiceImpl implements SPTokenService {
       token.setCreatedBy(username);
       token.setStatus(SPTokenStatus.UNCONFIRMED_IN_CHAIN);
       JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.SP_TOKEN, dto.getNotionalAmount());
-      Balance balance = new Balance();
-      balance.setUser(loggedInUser);
-      balance.setTokenType(TokenType.SP_TOKEN);
-      balance.setTokenCode(dto.getTokenCode());
-      balance.setBalanceAmount(dto.getNotionalAmount());
-      balanceService.createBalance(balance);
       if (jsonRespBO == null) {
         token.setStatus(SPTokenStatus.CHAIN_UNAVAILABLE);
         repository.save(token);
@@ -177,6 +171,12 @@ public class SPTokenServiceImpl implements SPTokenService {
       token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
       token.setStatus(SPTokenStatus.ACTIVE);
       repository.save(token);
+      Balance balance = new Balance();
+      balance.setUser(token.getUser());
+      balance.setTokenType(TokenType.SP_TOKEN);
+      balance.setTokenCode(token.getTokenCode());
+      balance.setBalanceAmount(token.getNotionalAmount());
+      balanceService.createBalance(balance);
     }
   }
 
