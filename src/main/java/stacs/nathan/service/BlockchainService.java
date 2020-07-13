@@ -17,13 +17,19 @@ import org.slf4j.LoggerFactory;
 import org.spongycastle.util.encoders.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import stacs.nathan.core.encryption.CryptoCipher;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.entity.BaseTokenEntity;
 import stacs.nathan.entity.User;
 import stacs.nathan.utils.enums.TokenType;
+
+import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
@@ -62,6 +68,17 @@ public class BlockchainService {
   @Autowired
   private CryptoCipher cipher;
 
+  @Autowired
+  private ResourceLoader resourceLoader;
+
+  private File codeFile;
+
+  @PostConstruct
+  public void init() throws IOException {
+    Resource resource = resourceLoader.getResource(codeLocation);
+    codeFile = resource.getFile();
+  }
+
   private void initChainConnector(){
     chainConnector = ChainConnector.initConn(merchantAesKey, domainMerchantId, domainGateway);
   }
@@ -87,7 +104,7 @@ public class BlockchainService {
     Token token = new Token(bdCode);
     token.setPolicyName(policy);
     token.setContractMainMethod(contractMethod);
-    token.setContractCode(StacsAPIUtil.txt2String(new File(codeLocation)));
+    token.setContractCode(StacsAPIUtil.txt2String(codeFile));
     token.setSubmitterAddress(user.getWalletAddress());
     token.setAuthAddress(authKey.getHexAddress());
     token.setContractAddress(contractAddress.getHexAddress());
