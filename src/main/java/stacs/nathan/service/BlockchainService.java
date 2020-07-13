@@ -62,7 +62,6 @@ public class BlockchainService {
   @Autowired
   private CryptoCipher cipher;
 
-  @PostConstruct
   private void initChainConnector(){
     merchantAesKey.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.MERCHANT_AESKEY));
     domainMerchantId.append(StacsUtil.getConfigProperty(configProps,StacsUtil.ConfigEnums.DOMAIN_MERCHANTID));
@@ -83,6 +82,7 @@ public class BlockchainService {
 
   public JsonRespBO createToken(User user, TokenType tokenType, BigDecimal quantity) throws ServerErrorException {
     LOGGER.debug("Entering createToken().");
+    initChainConnector();
     StacsECKey authKey = new StacsECKey();
     //StacsECKey tokenCustodyAddress = new StacsECKey();
     StacsECKey contractAddress = new StacsECKey();
@@ -128,6 +128,7 @@ public class BlockchainService {
   }
 
   public TokenQueryRespBO getTxDetails(String txId){
+    initChainConnector();
     for(int i = 0; i < queryMaxRetries; i++) {
       try {
         Thread.sleep(queryWaitTime);
@@ -157,6 +158,7 @@ public class BlockchainService {
   }
 
   public JsonRespBO transferToken(User user, String recipientAddress, BaseTokenEntity token, BigInteger quantity) throws ServerErrorException {
+    initChainConnector();
     Transfer transferObj = new Transfer(bdCode);
     transferObj.setBdFunctionName(bdFunction);
     transferObj.setSubmitterAddress(user.getWalletAddress());
@@ -190,6 +192,7 @@ public class BlockchainService {
   }
 
   public BigDecimal getWalletBalance(BaseTokenEntity token, String walletAddress) {
+    initChainConnector();
     Wallet walletBalance = new Wallet();
     walletBalance.setTokenContractAddress(token.getTokenContractAddress());
     walletBalance.setTokenContractBalanceMethod(balanceMethod);
