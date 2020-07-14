@@ -24,4 +24,7 @@ public interface BalanceRepository extends JpaRepository<Balance, Long> {
 
   Balance findByTokenCode(@Param("tokenCode") String tokenCode);
 
+  @Query("SELECT b from Balance b WHERE b.user.id = :id AND b.tokenCode = :tokenCode")
+  Balance findByTokenCodeAndId(@Param("tokenCode") String tokenCode, @Param("id") Long id);
+
 }

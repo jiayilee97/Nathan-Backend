@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.BCTokenRequestDto;
+import stacs.nathan.dto.request.TransferBCTokenRequestDto;
 import stacs.nathan.dto.response.BCTokenResponseDto;
 import stacs.nathan.dto.response.CreateBCTokenInitDto;
 import stacs.nathan.service.BCTokenService;
@@ -43,6 +44,11 @@ public class BCTokenController {
   @GetMapping("/executeUnavailableChain")
   public void executeUnavailableChain() {
     bcTokenService.executeUnavailableChain();
+  }
+
+  @PostMapping("/transfer")
+  public void transferBCToken(@RequestBody TransferBCTokenRequestDto dto) throws ServerErrorException {
+    bcTokenService.transferBCToken(dto);
   }
 
 }

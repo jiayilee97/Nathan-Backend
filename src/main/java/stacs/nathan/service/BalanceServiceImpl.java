@@ -24,4 +24,6 @@ public class BalanceServiceImpl implements BalanceService {
   public Balance fetchBalanceByTokenCode(String tokenCode) {
     return repository.findByTokenCode(tokenCode);
   }
+
+  public Balance fetchBalanceByTokenCodeAndId(String tokenCode, Long id) { return repository.findByTokenCodeAndId(tokenCode, id); }
 }
