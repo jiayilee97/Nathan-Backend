@@ -3,6 +3,7 @@ package stacs.nathan.service;
 import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.BCTokenRequestDto;
+import stacs.nathan.dto.request.TransferBCTokenRequestDto;
 import stacs.nathan.dto.response.BCTokenResponseDto;
 import stacs.nathan.dto.response.CreateBCTokenInitDto;
 import java.util.List;
@@ -20,5 +21,7 @@ public interface BCTokenService {
   void executeUnconfirmedChain();
 
   void executeUnavailableChain();
+
+  void transferBCToken(TransferBCTokenRequestDto dto) throws ServerErrorException;
 
 }

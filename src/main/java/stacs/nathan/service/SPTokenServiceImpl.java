@@ -209,7 +209,7 @@ public class SPTokenServiceImpl implements SPTokenService {
       String txId = jsonRespBO.getTxId();
       TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
       if (txDetail != null) {
-        token.setBlockHeight(txDetail.getBlockHeight());
+        //token.setBlockHeight(txDetail.getBlockHeight());
         token.setUpdatedBy(username);
         token.setUpdatedDate(new Date());
         token.setStatus(SPTokenStatus.KNOCK_OUT);

@@ -11,4 +11,6 @@ public interface BalanceService {
   List<BalanceResponseDto> fetchBalanceByClient(String clientId);
 
   Balance fetchBalanceByTokenCode(String tokenCode);
+
+  Balance fetchBalanceByTokenCodeAndId(String tokenCode, Long id);
 }

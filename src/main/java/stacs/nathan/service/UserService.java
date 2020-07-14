@@ -31,4 +31,6 @@ public interface UserService {
 
     void updateUser(ClientRequestDto dto) throws ServerErrorException;
 
+    User fetchByWalletAddress(String walletAddress);
+
 }
