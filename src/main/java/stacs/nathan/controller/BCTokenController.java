@@ -51,4 +51,9 @@ public class BCTokenController {
     bcTokenService.transferBCToken(dto);
   }
 
+  @PostMapping("/trade")
+  public void tradeBCTokenForFXToken(@RequestBody TransferBCTokenRequestDto dto) throws ServerErrorException {
+    bcTokenService.tradeBCTokenWithFXToken(dto);
+  }
+
 }

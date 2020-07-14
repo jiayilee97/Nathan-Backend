@@ -205,7 +205,7 @@ public class SPTokenServiceImpl implements SPTokenService {
       //retrieve balance and transfer all
       // TODO: get balance from table instead
       Balance balance = balanceService.fetchBalanceByTokenCode(token.getTokenCode());
-      JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, burnAddress, token, balance.getBalanceAmount().toBigInteger());
+      JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, loggedInUser.getWalletAddress(), burnAddress, token, balance.getBalanceAmount().toBigInteger());
       String txId = jsonRespBO.getTxId();
       TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
       if (txDetail != null) {
@@ -250,7 +250,7 @@ public class SPTokenServiceImpl implements SPTokenService {
           //String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
           User user = token.getUser();
           Balance balance = balanceService.fetchBalanceByTokenCode(token.getTokenCode());
-          JsonRespBO jsonRespBO = blockchainService.transferToken(user, burnAddress, token, balance.getBalanceAmount().toBigInteger());
+          JsonRespBO jsonRespBO = blockchainService.transferToken(user, user.getWalletAddress(), burnAddress, token, balance.getBalanceAmount().toBigInteger());
           String txId = jsonRespBO.getTxId();
           TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
           if (txDetail != null) {
@@ -271,6 +271,7 @@ public class SPTokenServiceImpl implements SPTokenService {
             tx.setCtxId(txId);
             tx.setTokenType(TokenType.SP_TOKEN);
             tx.setTokenId(token.getId());
+            tx.setTokenCode(token.getTokenCode());
             tx.setCreatedBy(user.getUsername());
             transactionRepository.save(tx);
 

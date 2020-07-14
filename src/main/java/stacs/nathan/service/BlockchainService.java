@@ -58,6 +58,8 @@ public class BlockchainService {
   private String domainMerchantId;
   @Value("${domain_gateway}")
   private String domainGateway;
+  @Value("${stacs.app.address}")
+  private String appAddress;
 
   private static ChainConnector chainConnector;
 
@@ -100,7 +102,7 @@ public class BlockchainService {
     token.setSubmitterAddress(user.getWalletAddress());
     token.setAuthAddress(authKey.getHexAddress());
     token.setContractAddress(contractAddress.getHexAddress());
-    token.setTokenCustodyAddress(user.getWalletAddress());
+    token.setTokenCustodyAddress(appAddress);
     token.setQtyNumOfDecimals(8);
     token.setTokenCode(tokenType.getCode() + "_" + new Date().getTime());
     token.setTokenName(tokenType.getValue());
@@ -161,12 +163,12 @@ public class BlockchainService {
     return null;
   }
 
-  public JsonRespBO transferToken(User user, String recipientAddress, BaseTokenEntity token, BigInteger quantity) throws ServerErrorException {
+  public JsonRespBO transferToken(User user, String senderAddress, String recipientAddress, BaseTokenEntity token, BigInteger quantity) throws ServerErrorException {
     Transfer transferObj = new Transfer(bdCode);
     transferObj.setBdFunctionName(bdFunction);
     transferObj.setSubmitterAddress(user.getWalletAddress());
     transferObj.setSmartContractMethod(transferMethod);
-    transferObj.setSenderAddress(user.getWalletAddress());
+    transferObj.setSenderAddress(senderAddress);
     transferObj.setRecipientAddress(recipientAddress);
     transferObj.setTokenCode(token.getTokenCode());
     transferObj.setTokenContractAddress(token.getTokenContractAddress());
