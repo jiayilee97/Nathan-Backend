@@ -9,4 +9,6 @@ public interface BalanceService {
   void createBalance(Balance balance);
 
   List<BalanceResponseDto> fetchBalanceByClient(String clientId);
+
+  Balance fetchBalanceByTokenCode(String tokenCode);
 }

@@ -19,9 +19,15 @@ import stacs.nathan.dto.response.CreateSPTokenInitDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.Balance;
 import stacs.nathan.entity.SPToken;
+import stacs.nathan.entity.TransactionHistory;
 import stacs.nathan.entity.User;
+import stacs.nathan.repository.BalanceRepository;
 import stacs.nathan.repository.SPTokenRepository;
+import stacs.nathan.repository.TransactionRepository;
+import stacs.nathan.repository.UserRepository;
 import stacs.nathan.utils.enums.*;
+
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
@@ -45,6 +51,15 @@ public class SPTokenServiceImpl implements SPTokenService {
 
   @Autowired
   BalanceService balanceService;
+
+  @Autowired
+  BalanceRepository balanceRepository;
+
+  @Autowired
+  TransactionRepository transactionRepository;
+
+  @Autowired
+  UserRepository userRepository;
 
   @Value("${stacs.burn.address}")
   String burnAddress;
@@ -188,16 +203,34 @@ public class SPTokenServiceImpl implements SPTokenService {
       SPToken token = repository.findSPTokenByTokenCode(tokenCode);
       //TransactionHistory transaction = initTransactionHistory(token);
       //retrieve balance and transfer all
-      JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, burnAddress, token, BigInteger.valueOf(100));
+      // TODO: get balance from table instead
+      Balance balance = balanceService.fetchBalanceByTokenCode(token.getTokenCode());
+      JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, burnAddress, token, balance.getBalanceAmount().toBigInteger());
       String txId = jsonRespBO.getTxId();
       TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
       if (txDetail != null) {
         token.setBlockHeight(txDetail.getBlockHeight());
         token.setUpdatedBy(username);
         token.setUpdatedDate(new Date());
-        // update tx_history table instead of sp_token?
         token.setStatus(SPTokenStatus.KNOCK_OUT);
         repository.save(token);
+
+        // update tx_history table
+        TransactionHistory tx = new TransactionHistory();
+        tx.setTokenContractAddress(token.getTokenContractAddress());
+        tx.setAmount(balance.getBalanceAmount()); // TODO: get balance from table instead
+        tx.setFromAddress(loggedInUser.getWalletAddress());
+        tx.setToAddress(burnAddress);
+        tx.setBlockHeight(txDetail.getBlockHeight());
+        tx.setStatus(TransactionStatus.KNOCK_OUT);
+        tx.setCtxId(txId);
+        tx.setTokenType(TokenType.SP_TOKEN);
+        tx.setTokenId(token.getId());
+        tx.setCreatedBy(loggedInUser.getUsername());
+        transactionRepository.save(tx);
+
+        balance.setBalanceAmount(BigDecimal.valueOf(0));
+        balanceRepository.save(balance);
       }
 
     } catch (Exception e) {
@@ -206,15 +239,50 @@ public class SPTokenServiceImpl implements SPTokenService {
     }
   }
 
-  public void checkSPTokenMaturity() {
+  public void checkSPTokenMaturity() throws ServerErrorException {
     List<SPToken> tokens = repository.fetchAllActiveTokens(SPTokenStatus.ACTIVE);
     for (SPToken token: tokens) {
       Date tokenMaturityDate = token.getMaturityDate();
       Date currentDate = new Date();
       if (tokenMaturityDate.before(currentDate)) {
-        token.setStatus(SPTokenStatus.CONTRACT_MATURITY);
         System.out.println("Contract maturity reached for token: " + token.getTokenCode());
-        repository.save(token);
+        try {
+          //String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+          User user = token.getUser();
+          Balance balance = balanceService.fetchBalanceByTokenCode(token.getTokenCode());
+          JsonRespBO jsonRespBO = blockchainService.transferToken(user, burnAddress, token, balance.getBalanceAmount().toBigInteger());
+          String txId = jsonRespBO.getTxId();
+          TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
+          if (txDetail != null) {
+            token.setBlockHeight(txDetail.getBlockHeight());
+            token.setUpdatedBy(user.getUsername());
+            token.setUpdatedDate(new Date());
+            token.setStatus(SPTokenStatus.CONTRACT_MATURITY);
+            repository.save(token);
+
+            // update tx_history table
+            TransactionHistory tx = new TransactionHistory();
+            tx.setTokenContractAddress(token.getTokenContractAddress());
+            tx.setAmount(balance.getBalanceAmount());
+            tx.setFromAddress(user.getWalletAddress());
+            tx.setToAddress(burnAddress);
+            tx.setBlockHeight(txDetail.getBlockHeight());
+            tx.setStatus(TransactionStatus.CONTRACT_MATURITY);
+            tx.setCtxId(txId);
+            tx.setTokenType(TokenType.SP_TOKEN);
+            tx.setTokenId(token.getId());
+            tx.setCreatedBy(user.getUsername());
+            transactionRepository.save(tx);
+
+            // update balance table
+            balance.setBalanceAmount(BigDecimal.valueOf(0));
+            balanceRepository.save(balance);
+          }
+
+        } catch (Exception e) {
+          LOGGER.error("Exception in checkSPTokenMaturity(). ", e);
+          throw new ServerErrorException("Exception in checkSPTokenMaturity(). ", e);
+        }
       }
     }
   }
