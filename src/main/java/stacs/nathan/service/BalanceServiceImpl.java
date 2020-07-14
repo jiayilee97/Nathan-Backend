@@ -20,4 +20,8 @@ public class BalanceServiceImpl implements BalanceService {
   public List<BalanceResponseDto> fetchBalanceByClient(String clientId){
     return repository.findByClientId(clientId);
   }
+
+  public Balance fetchBalanceByTokenCode(String tokenCode) {
+    return repository.findByTokenCode(tokenCode);
+  }
 }

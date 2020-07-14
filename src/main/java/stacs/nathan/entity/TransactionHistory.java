@@ -27,6 +27,9 @@ public class TransactionHistory extends BaseEntity {
     @Column
     private int quantity;
 
+    @Column(name="token_code", length = 50)
+    private String tokenCode;
+
     @Column(name = "balance_amount", precision = 15, scale = 2)
     @ColumnDefault("0.0")
     private BigDecimal amount;
@@ -41,7 +44,7 @@ public class TransactionHistory extends BaseEntity {
     private String tokenContractAddress;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 10)
+    @Column(length = 30)
     private TransactionStatus status;
 
     public long getTokenId() {
@@ -124,4 +127,11 @@ public class TransactionHistory extends BaseEntity {
         this.status = status;
     }
 
+    public String getTokenCode() {
+        return tokenCode;
+    }
+
+    public void setTokenCode(String tokenCode) {
+        this.tokenCode = tokenCode;
+    }
 }

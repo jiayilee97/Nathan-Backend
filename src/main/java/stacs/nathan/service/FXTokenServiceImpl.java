@@ -21,6 +21,7 @@ import stacs.nathan.dto.response.FXTokenDataEntryResponseDto;
 import stacs.nathan.dto.response.FXTokenResponseDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.*;
+import stacs.nathan.repository.BalanceRepository;
 import stacs.nathan.repository.FXTokenDataEntryRepository;
 import stacs.nathan.repository.FXTokenRepository;
 import stacs.nathan.repository.SPTokenRepository;
@@ -45,6 +46,9 @@ public class FXTokenServiceImpl implements FXTokenService {
 
   @Autowired
   FXTokenDataEntryRepository fxTokenDataEntryRepository;
+
+  @Autowired
+  BalanceRepository balanceRepository;
 
   @Autowired
   UserService userService;
@@ -152,11 +156,12 @@ public class FXTokenServiceImpl implements FXTokenService {
       User loggedInUser = userService.fetchByUsername(username);
       FXToken fxToken = fxTokenRepository.findByTokenCode(tokenCode);
       SPToken spToken = fxToken.getSpToken();
+      Balance fxBalance = balanceService.fetchBalanceByTokenCode(fxToken.getTokenCode());
 //      if (spToken.getStatus() != SPTokenStatus.KNOCK_OUT) {
 //        LOGGER.error("SP Token not closed.");
 //        throw new ServerErrorException("SP Token not closed.");
 //      }
-      JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, burnAddress, fxToken, new BigInteger(String.valueOf(1)));
+      JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, burnAddress, fxToken, fxBalance.getBalanceAmount().toBigInteger());
       String txId = jsonRespBO.getTxId();
       TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
       if (txDetail != null) {
@@ -164,6 +169,9 @@ public class FXTokenServiceImpl implements FXTokenService {
         fxToken.setUpdatedDate(new Date());
         fxToken.setStatus(FXTokenStatus.CLOSED);
         fxTokenRepository.save(fxToken);
+
+        fxBalance.setBalanceAmount(BigDecimal.valueOf(0));
+        balanceRepository.save(fxBalance);
       }
     } catch (Exception e) {
       LOGGER.error("Exception in closeFXToken().", e);
@@ -180,6 +188,7 @@ public class FXTokenServiceImpl implements FXTokenService {
         spToken.setStatus(SPTokenStatus.KNOCK_OUT);
         spToken.setUpdatedBy(username);
         spTokenRepository.save(spToken);
+        spTokenService.transferToBurnAddress(spToken.getTokenCode());
       }
         data.setCreatedBy(username);
         // TODO: Check price and trigger smart contract?
