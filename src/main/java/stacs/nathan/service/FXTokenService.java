@@ -7,6 +7,7 @@ import stacs.nathan.dto.response.ClientOpenPositionResponseDto;
 import stacs.nathan.dto.response.FXTokenDataEntryResponseDto;
 import stacs.nathan.dto.response.FXTokenResponseDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
+import stacs.nathan.entity.FXToken;
 import stacs.nathan.entity.User;
 import java.util.List;
 
@@ -35,5 +36,7 @@ public interface FXTokenService {
     void executeUnavailableChain();
 
     String fetchAppWalletAddress();
+
+    FXToken fetchByTokenCode(String tokenCode);
 
 }

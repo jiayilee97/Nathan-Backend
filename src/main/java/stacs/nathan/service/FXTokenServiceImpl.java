@@ -161,7 +161,7 @@ public class FXTokenServiceImpl implements FXTokenService {
 //        LOGGER.error("SP Token not closed.");
 //        throw new ServerErrorException("SP Token not closed.");
 //      }
-      JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, burnAddress, fxToken, fxBalance.getBalanceAmount().toBigInteger());
+      JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, loggedInUser.getWalletAddress(), burnAddress, fxToken, fxBalance.getBalanceAmount().toBigInteger());
       String txId = jsonRespBO.getTxId();
       TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
       if (txDetail != null) {
@@ -230,6 +230,8 @@ public class FXTokenServiceImpl implements FXTokenService {
   public List<FXTokenDataEntryResponseDto> fetchDataEntryHistory() {
     return fxTokenDataEntryRepository.fetchAll();
   }
+
+  public FXToken fetchByTokenCode(String tokenCode) { return fxTokenRepository.findByTokenCode(tokenCode); }
 
   public void executeUnconfirmedChain() {
     LOGGER.debug("Entering executeUnconfirmedChain().");
