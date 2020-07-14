@@ -2,6 +2,7 @@ package stacs.nathan.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import stacs.nathan.dto.response.BalanceResponseDto;
 import stacs.nathan.entity.Balance;
 import stacs.nathan.repository.BalanceRepository;
 import java.util.List;
@@ -16,7 +17,7 @@ public class BalanceServiceImpl implements BalanceService {
     repository.save(balance);
   }
 
-  public List<Balance> fetchBalanceByClient(String clientId){
+  public List<BalanceResponseDto> fetchBalanceByClient(String clientId){
     return repository.findByClientId(clientId);
   }
 }
