@@ -16,7 +16,7 @@ public interface FXTokenRepository extends JpaRepository<FXToken, Long> {
     List<FXToken> findByStatus(@Param("status") FXTokenStatus status);
 
     @Query("SELECT fx FROM FXToken fx WHERE fx.tokenCode =?1")
-    FXToken findByTokenCode(String tokenCode);
+    FXToken findByTokenCode(@Param("tokenCode") String tokenCode);
 
     @Query("SELECT NEW stacs.nathan.dto.response.ClientOpenPositionResponseDto(fx.tokenCode, fx.spToken.tokenCode, fx.spToken.contractInceptionDate, fx.spToken.maturityDate) " +
         "FROM FXToken fx WHERE fx.issuerId = :issuerId and fx.spToken.status = 'ACTIVE'")

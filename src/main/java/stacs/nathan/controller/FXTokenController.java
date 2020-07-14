@@ -45,6 +45,7 @@ public class FXTokenController {
         return fxTokenService.fetchClientOpenPosition(issuerId);
     }
 
+    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/fetch-all")
     public List<FXTokenResponseDto> fetchAllTokens() {
         return fxTokenService.fetchAllFxTokens(userService.fetchLoginUser());

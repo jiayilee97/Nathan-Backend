@@ -15,7 +15,7 @@ public class RolePagesController {
   @Autowired
   RolePagesService rolePagesService;
 
-  @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('CRO') or hasAuthority('OPS') or hasAuthority('MKT') or hasAuthority('CP') or hasAuthority('CLIENT')")
+  @PreAuthorize("hasAuthority('CRO') or hasAuthority('OPS') or hasAuthority('MKT') or hasAuthority('CP')")
   @GetMapping("/userinfo")
   public UserInfoDto fetchUserInfo() throws ServerErrorException {
     return rolePagesService.fetchUserInfo();

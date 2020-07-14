@@ -21,6 +21,7 @@ public class SPTokenController {
     @Autowired
     private UserService userService;
 
+    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/init")
     public CreateSPTokenInitDto initForm(){
         return spTokenService.fetchInitForm();
@@ -32,6 +33,7 @@ public class SPTokenController {
         spTokenService.createSPToken(token);
     }
 
+    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/fetch-all")
     public List<SPTokenResponseDto> fetchAllSPTokens() throws ServerErrorException {
         return spTokenService.fetchAllTokens(userService.fetchLoginUser());

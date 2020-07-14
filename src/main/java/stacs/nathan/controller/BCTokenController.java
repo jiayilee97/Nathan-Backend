@@ -24,6 +24,7 @@ public class BCTokenController {
     return bcTokenService.fetchInitForm();
   }
 
+  @PreAuthorize("hasAuthority('OPS')")
   @PostMapping("/create")
   public void createBCToken(@RequestBody BCTokenRequestDto token) throws ServerErrorException, BadRequestException {
     bcTokenService.createBCToken(token);
