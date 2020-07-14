@@ -27,6 +27,6 @@ public interface SPTokenService {
 
   void executeUnavailableChain();
 
-  void checkSPTokenMaturity();
+  void checkSPTokenMaturity() throws ServerErrorException;
 
 }

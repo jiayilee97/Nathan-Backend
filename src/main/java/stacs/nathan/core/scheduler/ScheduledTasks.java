@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.service.BCTokenService;
 import stacs.nathan.service.FXTokenService;
 import stacs.nathan.service.SPTokenService;
@@ -53,8 +54,8 @@ public class ScheduledTasks {
     spTokenService.executeUnavailableChain();
   }
 
-  @Scheduled(fixedRate=3*60*1000)
-  public void checkSPTokenMaturity() {
+  @Scheduled(fixedRate=1*60*1000)
+  public void checkSPTokenMaturity() throws ServerErrorException {
     LOGGER.debug("Entering checkSPTokenMaturity() method. {}", new Date());
     spTokenService.checkSPTokenMaturity();
   }

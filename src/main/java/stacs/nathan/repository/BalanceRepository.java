@@ -17,4 +17,11 @@ public interface BalanceRepository extends JpaRepository<Balance, Long> {
   @Query("SELECT NEW stacs.nathan.dto.response.BalanceResponseDto(b.tokenCode, b.tokenType, b.balanceAmount) " +
       "FROM Balance b where b.user.clientId = :clientId")
   List<BalanceResponseDto> findByClientId(@Param("clientId") String clientId);
+
+//  @Query("SELECT NEW stacs.nathan.dto.response.BalanceResponseDto(b.tokenCode, b.tokenType, b.balanceAmount)" +
+//          "FROM BALANCE b where b.tokenCode = :tokenCode")
+//  BalanceResponseDto findByTokenCode(@Param("tokenCode") String tokenCode);
+
+  Balance findByTokenCode(@Param("tokenCode") String tokenCode);
+
 }
