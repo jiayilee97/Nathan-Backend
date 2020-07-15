@@ -156,7 +156,7 @@ public class FXTokenServiceImpl implements FXTokenService {
       User loggedInUser = userService.fetchByUsername(username);
       FXToken fxToken = fxTokenRepository.findByTokenCode(tokenCode);
       SPToken spToken = fxToken.getSpToken();
-      Balance fxBalance = balanceService.fetchBalanceByTokenCode(fxToken.getTokenCode());
+      Balance fxBalance = balanceService.fetchBalanceByTokenCodeAndId(fxToken.getTokenCode(), loggedInUser.getId());
 //      if (spToken.getStatus() != SPTokenStatus.KNOCK_OUT) {
 //        LOGGER.error("SP Token not closed.");
 //        throw new ServerErrorException("SP Token not closed.");
@@ -184,14 +184,19 @@ public class FXTokenServiceImpl implements FXTokenService {
     try {
       FXTokenDataEntry data = convertToFXTokenDataEntry(dto);
       SPToken spToken = data.getFxToken().getSpToken();
+      FXToken fxToken = data.getFxToken();
       if (dto.getPrice().compareTo(spToken.getKnockOutPrice()) >= 0) {
         spToken.setStatus(SPTokenStatus.KNOCK_OUT);
         spToken.setUpdatedBy(username);
         spTokenRepository.save(spToken);
         spTokenService.transferToBurnAddress(spToken.getTokenCode());
+
+        // Update fx token status
+        fxToken.setStatus(FXTokenStatus.KNOCK_OUT);
+        fxTokenRepository.save(fxToken);
       }
         data.setCreatedBy(username);
-        // TODO: Check price and trigger smart contract?
+        // TODO: Transfer FX Tokens if below knockout price
         fxTokenDataEntryRepository.save(data);
     } catch (Exception e) {
       LOGGER.error("Exception in enterSpotPrice().", e);
@@ -266,4 +271,7 @@ public class FXTokenServiceImpl implements FXTokenService {
     }
   }
 
+  public List<FXTokenResponseDto> fetchMaturedOrKnockout() {
+    return fxTokenRepository.fetchAllMaturedOrKnockout();
+  }
 }

@@ -39,4 +39,6 @@ public interface FXTokenService {
 
     FXToken fetchByTokenCode(String tokenCode);
 
+    List<FXTokenResponseDto> fetchMaturedOrKnockout();
+
 }

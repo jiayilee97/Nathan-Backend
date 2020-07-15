@@ -17,14 +17,8 @@ import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.request.SPTokenRequestDto;
 import stacs.nathan.dto.response.CreateSPTokenInitDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
-import stacs.nathan.entity.Balance;
-import stacs.nathan.entity.SPToken;
-import stacs.nathan.entity.TransactionHistory;
-import stacs.nathan.entity.User;
-import stacs.nathan.repository.BalanceRepository;
-import stacs.nathan.repository.SPTokenRepository;
-import stacs.nathan.repository.TransactionRepository;
-import stacs.nathan.repository.UserRepository;
+import stacs.nathan.entity.*;
+import stacs.nathan.repository.*;
 import stacs.nathan.utils.enums.*;
 
 import java.math.BigDecimal;
@@ -60,6 +54,9 @@ public class SPTokenServiceImpl implements SPTokenService {
 
   @Autowired
   UserRepository userRepository;
+
+  @Autowired
+  FXTokenRepository fxTokenRepository;
 
   @Value("${stacs.burn.address}")
   String burnAddress;
@@ -278,6 +275,11 @@ public class SPTokenServiceImpl implements SPTokenService {
             // update balance table
             balance.setBalanceAmount(BigDecimal.valueOf(0));
             balanceRepository.save(balance);
+
+            // update FX Token status
+            FXToken fxToken = token.getFxToken();
+            fxToken.setStatus(FXTokenStatus.MATURED);
+            fxTokenRepository.save(fxToken);
           }
 
         } catch (Exception e) {
