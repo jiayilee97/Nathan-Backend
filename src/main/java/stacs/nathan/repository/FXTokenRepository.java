@@ -33,4 +33,8 @@ public interface FXTokenRepository extends JpaRepository<FXToken, Long> {
     @Query("SELECT NEW stacs.nathan.dto.response.FXTokenResponseDto(fx.tokenCode, fx.spToken.tokenCode, fx.spToken.contractInceptionDate, fx.spToken.maturityDate, fx.amount, fx.status, fx.issuerId, fx.spToken.clientId, fx.fxCurrency, fx.currencyCode, fx.issuerAddress)" +
             "FROM FXToken fx WHERE fx.status = 'OPEN'")
    List<FXTokenResponseDto> fetchAvailableFXTokens();
+
+    @Query("SELECT NEW stacs.nathan.dto.response.FXTokenResponseDto(fx.tokenCode, fx.spToken.tokenCode, fx.spToken.contractInceptionDate, fx.spToken.maturityDate, fx.amount, fx.status, fx.issuerId, fx.spToken.clientId, fx.fxCurrency, fx.currencyCode, fx.issuerAddress)" +
+            "FROM FXToken fx WHERE fx.status = 'KNOCK_OUT' OR fx.status = 'MATURED'")
+    List<FXTokenResponseDto> fetchAllMaturedOrKnockout();
 }

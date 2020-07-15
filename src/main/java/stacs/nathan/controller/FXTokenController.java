@@ -73,4 +73,8 @@ public class FXTokenController {
     @GetMapping("/app-wallet-address")
     public String fetchAppWalletAddress() { return fxTokenService.fetchAppWalletAddress(); }
 
+    @GetMapping("/fetch-matured-knockout")
+    public List<FXTokenResponseDto> fetchMaturedOrKnockout() {
+        return fxTokenService.fetchMaturedOrKnockout();
+    }
 }
