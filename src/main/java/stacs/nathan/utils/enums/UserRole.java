@@ -1,7 +1,7 @@
 package stacs.nathan.utils.enums;
 
 public enum UserRole {
-    CLIENT("Client"), CRO("Client Relationship Optimization"), MKT("Marketing"), OPS("Operation"), CP("Counter Party");
+    CLIENT("Client"), CRO("Client Relationship Optimization"), MKT("Marketing"), OPS("Operation"), CP("Counter Party"), APP("App");
 
     private String value;
 

@@ -224,6 +224,7 @@ public class SPTokenServiceImpl implements SPTokenService {
         tx.setStatus(TransactionStatus.KNOCK_OUT);
         tx.setCtxId(txId);
         tx.setTokenType(TokenType.SP_TOKEN);
+        tx.setTokenCode(token.getTokenCode());
         tx.setTokenId(token.getId());
         tx.setCreatedBy(loggedInUser.getUsername());
         transactionRepository.save(tx);
