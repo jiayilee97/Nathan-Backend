@@ -36,7 +36,7 @@ public class SPTokenController {
     @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/fetch-all")
     public List<SPTokenResponseDto> fetchAllSPTokens() throws ServerErrorException {
-        return spTokenService.fetchAllTokens(userService.fetchLoginUser());
+        return spTokenService.fetchAllTokens();
     }
 
     @GetMapping("/fetch/{tokenCode}")

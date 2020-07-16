@@ -12,7 +12,7 @@ public interface SPTokenService {
 
   void createSPToken(SPTokenRequestDto token) throws ServerErrorException;
 
-  List<SPTokenResponseDto> fetchAllTokens(User user);
+  List<SPTokenResponseDto> fetchAllTokens();
 
   List<SPTokenResponseDto> fetchAllOpenPositions(User user);
 
