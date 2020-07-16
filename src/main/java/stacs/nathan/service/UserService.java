@@ -17,9 +17,13 @@ public interface UserService {
 
     User fetchByUsername(String username);
 
+    User fetchById(long id);
+
     List<ClientResponseDto> fetchAllClients();
 
     ClientResponseDto fetchByClientId(String clientId);
+
+    User fetchUserByClientId(String clientId);
 
     CreateClientInitDto fetchInitForm();
 

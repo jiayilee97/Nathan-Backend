@@ -47,12 +47,12 @@ public class CryptoCipher {
 
   public String decrypt(String encrypted) throws ServerErrorException {
     LOGGER.debug("Entering decrypt().");
-    try{
+    try {
       initCipher();
       cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
       byte[] decryptedBytes = cipher.doFinal(Base64.decodeBase64(encrypted));
       return new String(decryptedBytes);
-    }catch (Exception e){
+    } catch (Exception e) {
       LOGGER.error("Exception in decrypt().", e);
       throw new ServerErrorException("Exception in decrypt().", e);
     }

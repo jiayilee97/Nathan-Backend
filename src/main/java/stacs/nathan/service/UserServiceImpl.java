@@ -65,6 +65,10 @@ public class UserServiceImpl implements UserService {
         return repository.findByUsername(username);
     }
 
+    public User fetchById(long id) {
+        return repository.findById(id);
+    }
+
     public List<ClientResponseDto> fetchAllClients(){
         LOGGER.debug("Entering fetchAllClients().");
         return repository.fetchByRole(UserRole.CLIENT);
@@ -73,6 +77,10 @@ public class UserServiceImpl implements UserService {
     public ClientResponseDto fetchByClientId(String clientId){
         LOGGER.debug("Entering fetchByClientId().");
         return repository.findClientById(clientId);
+    }
+
+    public User fetchUserByClientId(String clientId) {
+        return repository.findByClientId(clientId);
     }
 
     public CreateClientInitDto fetchInitForm(){
