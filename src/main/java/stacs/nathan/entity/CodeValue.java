@@ -14,11 +14,9 @@ public class CodeValue {
   @Column(name = "id", length = 20)
   private long id;
 
-  @Size(min = 1, max = 20)
   @Column(length = 100, updatable = false)
   protected String value;
 
-  @Size(min = 1, max = 255)
   @Column(length = 100)
   protected String label;
 

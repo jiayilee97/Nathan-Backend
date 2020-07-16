@@ -31,8 +31,8 @@ public interface SPTokenRepository extends JpaRepository<SPToken, Long> {
   SPToken findSPTokenByTokenCode(String tokenCode);
 
   @Query("SELECT NEW stacs.nathan.dto.response.SPTokenResponseDto(sp.tokenCode, sp.productType, sp.contractInceptionDate, sp.underlyingCurrency, sp.notionalAmount, sp.fixingAmount, sp.spotPrice, sp.strikeRate, sp.knockOutPrice, sp.maturityDate, sp.fixingPage, sp.numberOfFixing, sp.cpId, sp.opsId, sp.issuingAddress, sp.status, sp.user.displayName, sp.clientId)" +
-          "FROM SPToken sp WHERE sp.user = :user")
-  List<SPTokenResponseDto> fetchAllTokens(@Param("user") User user);
+          "FROM SPToken sp")
+  List<SPTokenResponseDto> fetchAllTokens();
 
   @Query("SELECT sp FROM SPToken sp WHERE sp.status = :status")
   List<SPToken> fetchAllActiveTokens(@Param("status") SPTokenStatus status);
