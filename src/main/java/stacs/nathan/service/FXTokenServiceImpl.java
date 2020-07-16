@@ -283,7 +283,8 @@ public class FXTokenServiceImpl implements FXTokenService {
   }
 
   public List<ClientOpenPositionResponseDto> fetchClientOpenPosition(String issuerId){
-    return fxTokenRepository.fetchClientOpenPosition(issuerId);
+    User user = userService.fetchById(Long.parseLong(issuerId));
+    return fxTokenRepository.fetchClientOpenPosition(user.getUuid());
   }
 
   public List<FXTokenResponseDto> fetchAllFxTokens(User user) {

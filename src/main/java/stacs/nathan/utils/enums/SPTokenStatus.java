@@ -6,7 +6,7 @@ public enum SPTokenStatus {
     CONTRACT_MATURITY("Contract Maturity"),
     UNCONFIRMED_IN_CHAIN("Unconfirmed in chain"),
     CHAIN_UNAVAILABLE("Chain unavailable"),
-    BURNT("Burn");
+    BURNT("Burnt");
 
     private String value;
 

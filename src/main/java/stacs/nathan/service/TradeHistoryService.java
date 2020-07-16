@@ -9,4 +9,6 @@ public interface TradeHistoryService {
 
     List<TradeHistoryResponseDto> fetchAllTradeHistory(String startDate, String endDate) throws ServerErrorException, ParseException;
 
+    List<TradeHistoryResponseDto> fetchByClientAndContract(String clientId, String contract) throws ServerErrorException;
+
 }

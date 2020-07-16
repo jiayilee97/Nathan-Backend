@@ -29,7 +29,7 @@ public class TradeHistory extends BaseEntity {
 
     @JsonIgnore
     @OneToOne
-    @JoinColumn(name = "sp_token_id", nullable = true)
+    @JoinColumn(name = "sp_token_id", nullable = false)
     private SPToken spToken;
 
     @ManyToOne

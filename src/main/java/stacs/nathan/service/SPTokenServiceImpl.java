@@ -135,6 +135,10 @@ public class SPTokenServiceImpl implements SPTokenService {
     return repository.findByTokenCode(tokenCode);
   }
 
+  public SPToken fetchSPTokenByTokenCode(String tokenCode){
+    return repository.findSPTokenByTokenCode(tokenCode);
+  }
+
   public void executeUnconfirmedChain() {
     LOGGER.debug("Entering executeUnconfirmedChain().");
     try {
