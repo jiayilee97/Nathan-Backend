@@ -36,7 +36,7 @@ public class UserController {
     userService.createClient(dto);
   }
 
-  @PreAuthorize("hasAuthority('CRO')")
+  @PreAuthorize("hasAuthority('CRO') or hasAuthority('OPS')")
   @GetMapping("/fetch/clients")
   public List<ClientResponseDto> fetchAllClients(){
     return userService.fetchAllClients();

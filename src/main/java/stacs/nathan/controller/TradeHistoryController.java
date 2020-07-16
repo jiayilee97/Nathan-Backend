@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.response.TradeHistoryResponseDto;
 import stacs.nathan.service.TradeHistoryService;
-
 import java.text.ParseException;
 import java.util.List;
 
