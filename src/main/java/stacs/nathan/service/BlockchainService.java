@@ -89,7 +89,7 @@ public class BlockchainService {
     }
   }
 
-  public JsonRespBO createToken(User user, TokenType tokenType, BigDecimal quantity) throws ServerErrorException {
+  public JsonRespBO createToken(User user, String custodyAddress, TokenType tokenType, BigDecimal quantity) throws ServerErrorException {
     LOGGER.debug("Entering createToken().");
     StacsECKey authKey = new StacsECKey();
     //StacsECKey tokenCustodyAddress = new StacsECKey();
@@ -102,7 +102,7 @@ public class BlockchainService {
     token.setSubmitterAddress(user.getWalletAddress());
     token.setAuthAddress(authKey.getHexAddress());
     token.setContractAddress(contractAddress.getHexAddress());
-    token.setTokenCustodyAddress(appAddress);
+    token.setTokenCustodyAddress(custodyAddress);
     token.setQtyNumOfDecimals(8);
     token.setTokenCode(tokenType.getCode() + "_" + new Date().getTime());
     token.setTokenName(tokenType.getValue());

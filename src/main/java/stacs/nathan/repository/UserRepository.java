@@ -30,4 +30,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u where u.walletAddress = :walletAddress")
     User fetchIdByWalletAddress(@Param("walletAddress") String walletAddress);
 
+    @Query("SELECT u FROM User u WHERE u.clientId = :clientId")
+    User fetchByClientId(@Param("clientId") String clientId);
 }

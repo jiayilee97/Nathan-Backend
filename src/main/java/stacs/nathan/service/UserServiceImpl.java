@@ -162,4 +162,6 @@ public class UserServiceImpl implements UserService {
     public User fetchByWalletAddress(String walletAddress) {
         return repository.fetchIdByWalletAddress(walletAddress);
     }
+
+    public User fetchUserByClientId(String clientId) { return repository.fetchByClientId(clientId); }
 }

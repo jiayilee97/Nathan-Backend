@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
@@ -21,13 +22,12 @@ import stacs.nathan.dto.response.FXTokenDataEntryResponseDto;
 import stacs.nathan.dto.response.FXTokenResponseDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.*;
-import stacs.nathan.repository.BalanceRepository;
-import stacs.nathan.repository.FXTokenDataEntryRepository;
-import stacs.nathan.repository.FXTokenRepository;
-import stacs.nathan.repository.SPTokenRepository;
+import stacs.nathan.repository.*;
 import stacs.nathan.utils.enums.FXTokenStatus;
 import stacs.nathan.utils.enums.SPTokenStatus;
 import stacs.nathan.utils.enums.TokenType;
+import stacs.nathan.utils.enums.TransactionStatus;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +48,12 @@ public class FXTokenServiceImpl implements FXTokenService {
 
   @Autowired
   BalanceRepository balanceRepository;
+
+  @Autowired
+  TradeHistoryRepository tradeHistoryRepository;
+
+  @Autowired
+  TransactionRepository transactionRepository;
 
   @Autowired
   UserService userService;
@@ -90,10 +96,10 @@ public class FXTokenServiceImpl implements FXTokenService {
       SPToken spToken = spTokenRepository.findAvailableSPTokenByTokenCode(dto.getSpTokenCode());
       FXToken token = convertToFXToken(dto);
       token.setIssuerId(loggedInUser.getUuid());
-      token.setIssuerAddress(loggedInUser.getWalletAddress());
+      token.setIssuerAddress(appWalletAddress);
       token.setCreatedBy(username);
       BigDecimal tokenAmount = spToken.getNotionalAmount();
-      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.FX_TOKEN, tokenAmount);
+      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, appWalletAddress, TokenType.FX_TOKEN, tokenAmount);
       if (jsonRespBO == null) {
         token.setStatus(FXTokenStatus.CHAIN_UNAVAILABLE);
         fxTokenRepository.save(token);
@@ -180,10 +186,14 @@ public class FXTokenServiceImpl implements FXTokenService {
 
   public void enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException {
     String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    User loggedInUser = userService.fetchByUsername(username);
     try {
       FXTokenDataEntry data = convertToFXTokenDataEntry(dto);
       SPToken spToken = data.getFxToken().getSpToken();
       FXToken fxToken = data.getFxToken();
+      User client = userService.fetchUserByClientId(spToken.getClientId());
+
+      // Set status of FX and SP Token to knockout if spot price is greater than knockout price
       if (dto.getPrice().compareTo(spToken.getKnockOutPrice()) >= 0) {
         spToken.setStatus(SPTokenStatus.KNOCK_OUT);
         spToken.setUpdatedBy(username);
@@ -193,6 +203,61 @@ public class FXTokenServiceImpl implements FXTokenService {
         // Update fx token status
         fxToken.setStatus(FXTokenStatus.KNOCK_OUT);
         fxTokenRepository.save(fxToken);
+      }
+
+      // Auto transfer FX Tokens from app wallet address to investor wallet
+      else {
+        Balance fxTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(fxToken.getTokenCode(), loggedInUser.getId());
+        //Balance fxTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(fxToken.getTokenCode(), fetchAppWalletAddress());
+        BigDecimal remainingAmount = fxTokenBalance.getBalanceAmount().subtract(spToken.getFixingAmount());
+        fxTokenBalance.setBalanceAmount(remainingAmount);
+        balanceRepository.save(fxTokenBalance);
+
+        // Save balance for receiver wallet
+        Balance receiverBalance = balanceService.fetchBalanceByTokenCodeAndId(fxToken.getTokenCode(), client.getId());
+        if (receiverBalance == null) {
+          Balance newBalance = new Balance();
+          newBalance.setBalanceAmount(spToken.getFixingAmount());
+          newBalance.setTokenCode(fxToken.getTokenCode());
+          newBalance.setTokenType(TokenType.FX_TOKEN);
+          newBalance.setUser(client);
+          balanceRepository.save(newBalance);
+        }
+
+        // Update trade history
+        TradeHistory tradeHistory = new TradeHistory();
+        tradeHistory.setSide("BUY");
+        tradeHistory.setQuantity(spToken.getFixingAmount());
+        tradeHistory.setTokenId(fxToken.getId());
+        tradeHistory.setUnderlying(fxToken.getFxCurrency());
+        tradeHistory.setTokenType(TokenType.FX_TOKEN);
+        tradeHistory.setSpToken(fxToken.getSpToken());
+        tradeHistory.setUser(client);
+        tradeHistoryRepository.save(tradeHistory);
+
+        if (remainingAmount.compareTo(BigDecimal.ZERO) < 0) {
+          throw new BadRequestException("Insufficient balance for transfer");
+        } else {
+          JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, appWalletAddress, client.getWalletAddress(), fxToken, spToken.getFixingAmount().toBigInteger());
+          String txId = jsonRespBO.getTxId();
+          TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
+          if (txDetail != null) {
+            // Update Transaction history
+            TransactionHistory tx = new TransactionHistory();
+            tx.setTokenContractAddress(fxToken.getTokenContractAddress());
+            tx.setAmount(spToken.getFixingAmount());
+            tx.setFromAddress(appWalletAddress);
+            tx.setToAddress(client.getWalletAddress());
+            tx.setBlockHeight(txDetail.getBlockHeight());
+            tx.setStatus(TransactionStatus.DEPOSIT);
+            tx.setCtxId(txId);
+            tx.setTokenCode(fxToken.getTokenCode());
+            tx.setTokenType(TokenType.FX_TOKEN);
+            tx.setTokenId(fxToken.getId());
+            tx.setCreatedBy(loggedInUser.getUsername());
+            transactionRepository.save(tx);
+          }
+        }
       }
         data.setCreatedBy(username);
         // TODO: Transfer FX Tokens if below knockout price
@@ -260,7 +325,7 @@ public class FXTokenServiceImpl implements FXTokenService {
     try {
       List<FXToken> tokens = fxTokenRepository.findByStatus(FXTokenStatus.CHAIN_UNAVAILABLE);
       for (FXToken token : tokens) {
-        JsonRespBO jsonRespBO = blockchainService.createToken(token.getSpToken().getUser(), TokenType.FX_TOKEN, token.getAmount());
+        JsonRespBO jsonRespBO = blockchainService.createToken(token.getSpToken().getUser(), appWalletAddress, TokenType.FX_TOKEN, token.getAmount());
         if (jsonRespBO != null) {
           processAvailableChain(token, jsonRespBO);
         }

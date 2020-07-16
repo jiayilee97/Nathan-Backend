@@ -33,4 +33,6 @@ public interface UserService {
 
     User fetchByWalletAddress(String walletAddress);
 
+    User fetchUserByClientId(String clientId);
+
 }
