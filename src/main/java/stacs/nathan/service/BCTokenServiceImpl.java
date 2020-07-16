@@ -5,7 +5,6 @@ import com.google.gson.JsonParser;
 import hashstacs.sdk.response.base.JsonRespBO;
 import hashstacs.sdk.response.blockchain.token.TokenQueryRespBO;
 import hashstacs.sdk.response.blockchain.token.TransferQueryRespBO;
-import org.apache.catalina.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +28,7 @@ import stacs.nathan.utils.enums.BCTokenStatus;
 import stacs.nathan.utils.enums.CodeType;
 import stacs.nathan.utils.enums.TokenType;
 import stacs.nathan.utils.enums.TransactionStatus;
-
-import javax.persistence.TransactionRequiredException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -192,54 +188,58 @@ public class BCTokenServiceImpl implements BCTokenService {
 
   public void transferBCToken(TransferBCTokenRequestDto dto) throws ServerErrorException {
     LOGGER.debug("Entering transferBCToken().");
-    String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-    User loggedInUser = userService.fetchByUsername(username);
-    BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
-    User investor = userService.fetchByWalletAddress(dto.getInvestorWalletAddress());
-    Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), loggedInUser.getId());
-    BigDecimal remainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
-    if (!(remainingAmount.compareTo(BigDecimal.ZERO) < 0)) {
-      JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, loggedInUser.getWalletAddress(), investor.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
-      String txId = jsonRespBO.getTxId();
-      TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
-      if (txDetail != null) {
-        // Save balance for sender wallet
-        bcTokenBalance.setBalanceAmount(remainingAmount);
-        balanceRepository.save(bcTokenBalance);
+    try{
+      String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+      User loggedInUser = userService.fetchByUsername(username);
+      BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
+      User investor = userService.fetchByWalletAddress(dto.getInvestorWalletAddress());
+      Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), loggedInUser.getId());
+      BigDecimal remainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
+      if (remainingAmount.compareTo(BigDecimal.ZERO) < 0) {
+        throw new BadRequestException("Insufficient balance for transfer");
+      } else {
+        JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, loggedInUser.getWalletAddress(), investor.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
+        String txId = jsonRespBO.getTxId();
+        TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
+        if (txDetail != null) {
+          // Save balance for sender wallet
+          bcTokenBalance.setBalanceAmount(remainingAmount);
+          balanceRepository.save(bcTokenBalance);
 
-        // Save balance for receiver wallet
-        Balance receiverBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), investor.getId());
-        if (receiverBalance == null) {
-          Balance newBalance = new Balance();
-          newBalance.setBalanceAmount(dto.getAmount());
-          newBalance.setTokenCode(dto.getBcTokenCode());
-          newBalance.setTokenType(TokenType.BC_TOKEN);
-          newBalance.setUser(investor);
-          balanceRepository.save(newBalance);
-        } else {
-          BigDecimal newAmount = receiverBalance.getBalanceAmount().add(dto.getAmount());
-          receiverBalance.setBalanceAmount(newAmount);
-          balanceRepository.save(receiverBalance);
+          // Save balance for receiver wallet
+          Balance receiverBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), investor.getId());
+          if (receiverBalance == null) {
+            Balance newBalance = new Balance();
+            newBalance.setBalanceAmount(dto.getAmount());
+            newBalance.setTokenCode(dto.getBcTokenCode());
+            newBalance.setTokenType(TokenType.BC_TOKEN);
+            newBalance.setUser(investor);
+            balanceRepository.save(newBalance);
+          } else {
+            BigDecimal newAmount = receiverBalance.getBalanceAmount().add(dto.getAmount());
+            receiverBalance.setBalanceAmount(newAmount);
+            balanceRepository.save(receiverBalance);
+          }
+
+          // Update transaction history table
+          TransactionHistory tx = new TransactionHistory();
+          tx.setTokenContractAddress(bcToken.getTokenContractAddress());
+          tx.setAmount(dto.getAmount());
+          tx.setFromAddress(loggedInUser.getWalletAddress());
+          tx.setToAddress(investor.getWalletAddress());
+          tx.setBlockHeight(txDetail.getBlockHeight());
+          tx.setStatus(TransactionStatus.DEPOSIT);
+          tx.setCtxId(txId);
+          tx.setTokenCode(bcToken.getTokenCode());
+          tx.setTokenType(TokenType.BC_TOKEN);
+          tx.setTokenId(bcToken.getId());
+          tx.setCreatedBy(loggedInUser.getUsername());
+          transactionRepository.save(tx);
         }
-
-        // Update transaction history table
-        TransactionHistory tx = new TransactionHistory();
-        tx.setTokenContractAddress(bcToken.getTokenContractAddress());
-        tx.setAmount(dto.getAmount());
-        tx.setFromAddress(loggedInUser.getWalletAddress());
-        tx.setToAddress(investor.getWalletAddress());
-        tx.setBlockHeight(txDetail.getBlockHeight());
-        tx.setStatus(TransactionStatus.DEPOSIT);
-        tx.setCtxId(txId);
-        tx.setTokenCode(bcToken.getTokenCode());
-        tx.setTokenType(TokenType.BC_TOKEN);
-        tx.setTokenId(bcToken.getId());
-        tx.setCreatedBy(loggedInUser.getUsername());
-        transactionRepository.save(tx);
       }
-    }
-    else {
-      throw new ServerErrorException("Insufficient balance for transfer");
+    } catch (Exception e){
+      LOGGER.error("Exception in transferBCToken().", e);
+      throw new ServerErrorException("Exception in transferBCToken().", e);
     }
   }
 

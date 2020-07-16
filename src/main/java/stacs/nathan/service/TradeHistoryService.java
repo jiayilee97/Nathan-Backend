@@ -2,7 +2,6 @@ package stacs.nathan.service;
 
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.response.TradeHistoryResponseDto;
-
 import java.text.ParseException;
 import java.util.List;
 

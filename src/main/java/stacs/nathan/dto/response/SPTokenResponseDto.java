@@ -40,7 +40,7 @@ public class SPTokenResponseDto {
 
     private String clientId;
 
-    private SPTokenStatus status;
+    private String status;
 
     private String issuingAddress;
 
@@ -64,7 +64,7 @@ public class SPTokenResponseDto {
         setIssuingAddress(issuingAddress);
         setIssuer(issuer);
         setClientId(clientId);
-        setStatus(status);
+        setStatus(status.getValue());
         System.out.println(tokenCode);
         if (fxToken != null) {
             setFxTokenCode(fxToken.getTokenCode());
@@ -91,7 +91,7 @@ public class SPTokenResponseDto {
         setIssuingAddress(issuingAddress);
         setIssuer(issuer);
         setClientId(clientId);
-        setStatus(status);
+        setStatus(status.getValue());
     }
 
     public SPTokenResponseDto(SPToken spToken) {
@@ -112,7 +112,7 @@ public class SPTokenResponseDto {
         setIssuingAddress(spToken.getIssuingAddress());
         setIssuer(spToken.getIssuingAddress());
         setClientId(spToken.getClientId());
-        setStatus(spToken.getStatus());
+        setStatus(spToken.getStatus().getValue());
     }
 
     public String getTokenCode() {
@@ -251,11 +251,11 @@ public class SPTokenResponseDto {
         this.clientId = clientId;
     }
 
-    public SPTokenStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(SPTokenStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

@@ -9,7 +9,6 @@ import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.response.TradeHistoryResponseDto;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.TradeHistoryRepository;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -4,7 +4,7 @@ public enum FXTokenStatus {
     OPEN("Open"),
     CLOSED("Closed"),
     MATURED("Matured"),
-    KNOCK_OUT("Knock-out"),
+    KNOCK_OUT("Knock Out"),
     UNCONFIRMED_IN_CHAIN("Unconfirmed in chain"),
     CHAIN_UNAVAILABLE("Chain unavailable");
 
