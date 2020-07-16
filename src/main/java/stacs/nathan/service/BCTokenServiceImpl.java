@@ -307,6 +307,8 @@ public class BCTokenServiceImpl implements BCTokenService {
       tradeHistory.setTokenId(bcToken.getId());
       tradeHistory.setUnderlying(fxToken.getFxCurrency());
       tradeHistory.setTokenType(TokenType.BC_TOKEN);
+      tradeHistory.setSpToken(fxToken.getSpToken());
+      tradeHistory.setUser(investor);
       tradeHistoryRepository.save(tradeHistory);
     }
   }

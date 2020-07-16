@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface TradeHistoryRepository extends JpaRepository<TradeHistory, Long> {
 
-    @Query("SELECT NEW stacs.nathan.dto.response.TradeHistoryResponseDto(th.updatedDate, th.side, th.underlying, th.quantity)" +
+    @Query("SELECT NEW stacs.nathan.dto.response.TradeHistoryResponseDto(th.updatedDate, th.side, th.underlying, th.quantity, th.user, th.spToken)" +
             "FROM TradeHistory th WHERE th.updatedDate >= :startDate AND th.updatedDate <= :endDate")
     List<TradeHistoryResponseDto> findAllByDateRange(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }
