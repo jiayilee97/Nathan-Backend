@@ -75,7 +75,7 @@ public class SPTokenServiceImpl implements SPTokenService {
       token.setIssuingAddress(loggedInUser.getWalletAddress());
       token.setCreatedBy(username);
       token.setStatus(SPTokenStatus.UNCONFIRMED_IN_CHAIN);
-      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.SP_TOKEN, dto.getNotionalAmount());
+      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, loggedInUser.getWalletAddress(), TokenType.SP_TOKEN, dto.getNotionalAmount());
       if (jsonRespBO == null) {
         token.setStatus(SPTokenStatus.CHAIN_UNAVAILABLE);
         repository.save(token);
@@ -162,7 +162,7 @@ public class SPTokenServiceImpl implements SPTokenService {
     try {
       List<SPToken> tokens = repository.findByStatus(SPTokenStatus.CHAIN_UNAVAILABLE);
       for(SPToken token : tokens){
-        JsonRespBO jsonRespBO = blockchainService.createToken(token.getUser(), TokenType.SP_TOKEN, token.getNotionalAmount());
+        JsonRespBO jsonRespBO = blockchainService.createToken(token.getUser(), token.getIssuingAddress(), TokenType.SP_TOKEN, token.getNotionalAmount());
         if (jsonRespBO != null) {
           processAvailableChain(token, jsonRespBO);
         }
@@ -224,6 +224,7 @@ public class SPTokenServiceImpl implements SPTokenService {
         tx.setStatus(TransactionStatus.KNOCK_OUT);
         tx.setCtxId(txId);
         tx.setTokenType(TokenType.SP_TOKEN);
+        tx.setTokenCode(token.getTokenCode());
         tx.setTokenId(token.getId());
         tx.setCreatedBy(loggedInUser.getUsername());
         transactionRepository.save(tx);
