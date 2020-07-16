@@ -24,7 +24,7 @@ public class CodeValue {
 
   @NotNull
   @Enumerated(EnumType.STRING)
-  @Column(length = 50)
+  @Column(length = 100)
   protected CodeType type;
 
   public CodeValue(){
