@@ -9,7 +9,7 @@ public class TransactionHistoryResponseDto {
     private String tokenCode;
     private BigDecimal amount;
     private String targetAddress;
-    private TransactionStatus status;
+    private String status;
     private String txId;
     private Date date;
 
@@ -17,7 +17,7 @@ public class TransactionHistoryResponseDto {
         this.tokenCode = tokenCode;
         this.amount = amount;
         this.targetAddress = targetAddress;
-        this.status = status;
+        this.status = status.getValue();
         this.txId = txId;
         this.date = date;
     }
@@ -46,11 +46,11 @@ public class TransactionHistoryResponseDto {
         this.targetAddress = targetAddress;
     }
 
-    public TransactionStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(TransactionStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

@@ -21,7 +21,6 @@ public class FXTokenController {
     @Autowired
     private UserService userService;
 
-
     @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/init")
     public CreateFXTokenInitDto initForm(){
@@ -34,11 +33,13 @@ public class FXTokenController {
         fxTokenService.createFXToken(token);
     }
 
+    @PreAuthorize("hasAuthority('OPS')")
     @PostMapping("/close/{tokenCode}")
     public void closeFXToken(@PathVariable String tokenCode) throws ServerErrorException {
         fxTokenService.closeFXToken(tokenCode);
     }
 
+    @PreAuthorize("hasAuthority('CRO') or hasAuthority('OPS') or hasAuthority('MKT') or hasAuthority('CP')")
     @GetMapping("/open-positions/{clientId}")
     public List<ClientOpenPositionResponseDto> fetchClientOpenPosition(@PathVariable String clientId) {
         return fxTokenService.fetchClientOpenPosition(clientId);
@@ -50,29 +51,31 @@ public class FXTokenController {
         return fxTokenService.fetchAllFxTokens(userService.fetchLoginUser());
     }
 
+    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/fetch/{tokenCode}")
     public FXTokenResponseDto fetchToken(@PathVariable String tokenCode) {
         return fxTokenService.fetchTokenById(tokenCode);
     }
 
+    @PreAuthorize("hasAuthority('CP')")
     @PostMapping("/spotPrice")
     public void enterSpotPrice(@RequestBody FXTokenDataEntryRequestDto dto) throws ServerErrorException {
         fxTokenService.enterSpotPrice(dto);
     }
 
+    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/fetch-all-open")
     public List<FXTokenResponseDto> fetchAllOpenTokens() {
         return fxTokenService.fetchAvailableFXTokens();
     }
 
+    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/data-entry-history")
     public List<FXTokenDataEntryResponseDto> fetchDataEntryHistory() {
         return fxTokenService.fetchDataEntryHistory();
     }
 
-    @GetMapping("/app-wallet-address")
-    public String fetchAppWalletAddress() { return fxTokenService.fetchAppWalletAddress(); }
-
+    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/fetch-matured-knockout")
     public List<FXTokenResponseDto> fetchMaturedOrKnockout() {
         return fxTokenService.fetchMaturedOrKnockout();

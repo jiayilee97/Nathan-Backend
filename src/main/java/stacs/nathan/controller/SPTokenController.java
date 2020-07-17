@@ -39,13 +39,14 @@ public class SPTokenController {
         return spTokenService.fetchAllTokens();
     }
 
+    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/fetch/{tokenCode}")
     public SPTokenResponseDto fetchSPTokenByTokenCode(@PathVariable String tokenCode) throws ServerErrorException {
         return spTokenService.fetchByTokenCode(tokenCode);
     }
 
-    @PostMapping("/transfer/{tokenCode}")
-    public void transferSPToken(@PathVariable String tokenCode) throws ServerErrorException {
-        spTokenService.transferToBurnAddress(tokenCode);
-    }
+//    @PostMapping("/transfer/{tokenCode}")
+//    public void transferSPToken(@PathVariable String tokenCode) throws ServerErrorException {
+//        spTokenService.transferToBurnAddress(tokenCode);
+//    }
 }

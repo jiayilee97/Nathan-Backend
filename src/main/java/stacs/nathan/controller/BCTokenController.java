@@ -31,26 +31,30 @@ public class BCTokenController {
     bcTokenService.createBCToken(token);
   }
 
+  @PreAuthorize("hasAuthority('OPS')")
   @GetMapping("/fetch-all/{issuerAddress}")
   public List<BCTokenResponseDto> fetchAllByIssuerAddress(@PathVariable String issuerAddress) throws ServerErrorException {
     return bcTokenService.fetchAllByIssuerAddress(issuerAddress);
   }
 
-  @GetMapping("/fetch/{tokenCode}")
-  public BCTokenResponseDto fetchTokenByTokenCode(@PathVariable String tokenCode) throws ServerErrorException {
-    return bcTokenService.fetchTokenByTokenCode(tokenCode);
-  }
+//  @GetMapping("/fetch/{tokenCode}")
+//  public BCTokenResponseDto fetchTokenByTokenCode(@PathVariable String tokenCode) throws ServerErrorException {
+//    return bcTokenService.fetchTokenByTokenCode(tokenCode);
+//  }
 
   @GetMapping("/executeUnavailableChain")
   public void executeUnavailableChain() {
     bcTokenService.executeUnavailableChain();
   }
 
+
+  @PreAuthorize("hasAuthority('OPS')")
   @PostMapping("/transfer")
   public void transferBCToken(@RequestBody TransferBCTokenRequestDto dto) throws ServerErrorException {
     bcTokenService.transferBCToken(dto);
   }
 
+  @PreAuthorize("hasAuthority('OPS')")
   @PostMapping("/trade")
   public void tradeBCTokenForFXToken(@RequestBody TransferBCTokenRequestDto dto) throws ServerErrorException {
     bcTokenService.tradeBCTokenWithFXToken(dto);
