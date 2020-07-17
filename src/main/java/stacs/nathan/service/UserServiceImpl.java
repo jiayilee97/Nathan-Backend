@@ -170,4 +170,8 @@ public class UserServiceImpl implements UserService {
     public User fetchByWalletAddress(String walletAddress) {
         return repository.fetchIdByWalletAddress(walletAddress);
     }
+
+    public User fetchAppAddress() {
+        return repository.fetchAppAddress(UserRole.APP);
+    }
 }

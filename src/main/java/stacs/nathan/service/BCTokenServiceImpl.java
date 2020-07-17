@@ -89,7 +89,7 @@ public class BCTokenServiceImpl implements BCTokenService {
       token.setIssuerId(loggedInUser.getUuid());
       token.setIssuerAddress(loggedInUser.getWalletAddress());
       token.setCreatedBy(username);
-      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, TokenType.BC_TOKEN, dto.getAmount());
+      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, loggedInUser.getWalletAddress(), TokenType.BC_TOKEN, dto.getAmount());
       if (jsonRespBO == null) {
         token.setStatus(BCTokenStatus.CHAIN_UNAVAILABLE);
         repository.save(token);
@@ -167,7 +167,7 @@ public class BCTokenServiceImpl implements BCTokenService {
     try {
       List<BaseCurrencyToken> tokens = repository.findByStatus(BCTokenStatus.CHAIN_UNAVAILABLE);
       for (BaseCurrencyToken token : tokens) {
-        JsonRespBO jsonRespBO = blockchainService.createToken(token.getUser(), TokenType.BC_TOKEN, token.getAmount());
+        JsonRespBO jsonRespBO = blockchainService.createToken(token.getUser(), token.getIssuerAddress(), TokenType.BC_TOKEN, token.getAmount());
         if (jsonRespBO != null) {
           processAvailableChain(token, jsonRespBO);
         }
