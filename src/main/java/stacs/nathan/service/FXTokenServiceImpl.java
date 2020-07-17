@@ -16,10 +16,7 @@ import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
-import stacs.nathan.dto.response.ClientOpenPositionResponseDto;
-import stacs.nathan.dto.response.FXTokenDataEntryResponseDto;
-import stacs.nathan.dto.response.FXTokenResponseDto;
-import stacs.nathan.dto.response.SPTokenResponseDto;
+import stacs.nathan.dto.response.*;
 import stacs.nathan.entity.*;
 import stacs.nathan.repository.BalanceRepository;
 import stacs.nathan.repository.FXTokenDataEntryRepository;
@@ -66,6 +63,11 @@ public class FXTokenServiceImpl implements FXTokenService {
 
   @Value("${stacs.app.address}")
   String appWalletAddress;
+
+  public CreateFXTokenInitDto fetchInitForm(){
+
+    return null;
+  }
 
   public List<SPTokenResponseDto> fetchAvailableTokens(User user) {
     List<SPToken> response = spTokenRepository.fetchAllActiveTokens(SPTokenStatus.ACTIVE);
@@ -217,9 +219,9 @@ public class FXTokenServiceImpl implements FXTokenService {
     }
   }
 
-  public List<ClientOpenPositionResponseDto> fetchClientOpenPosition(String issuerId){
-    User user = userService.fetchById(Long.parseLong(issuerId));
-    return fxTokenRepository.fetchClientOpenPosition(user.getUuid());
+  public List<ClientOpenPositionResponseDto> fetchClientOpenPosition(String clientId){
+    User user = userService.fetchById(Long.parseLong(clientId));
+    return fxTokenRepository.fetchClientOpenPosition(user.getClientId());
   }
 
   public List<FXTokenResponseDto> fetchAllFxTokens(User user) {

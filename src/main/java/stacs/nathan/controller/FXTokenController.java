@@ -6,10 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
-import stacs.nathan.dto.response.ClientOpenPositionResponseDto;
-import stacs.nathan.dto.response.FXTokenDataEntryResponseDto;
-import stacs.nathan.dto.response.FXTokenResponseDto;
-import stacs.nathan.dto.response.SPTokenResponseDto;
+import stacs.nathan.dto.response.*;
 import stacs.nathan.service.FXTokenService;
 import stacs.nathan.service.UserService;
 import java.util.List;
@@ -23,6 +20,13 @@ public class FXTokenController {
 
     @Autowired
     private UserService userService;
+
+
+    @PreAuthorize("hasAuthority('OPS')")
+    @GetMapping("/init")
+    public CreateFXTokenInitDto initForm(){
+        return fxTokenService.fetchInitForm();
+    }
 
     @GetMapping("/fetch-available-sp")
     public List<SPTokenResponseDto> fetchAvailableTokens() throws ServerErrorException {
@@ -40,9 +44,9 @@ public class FXTokenController {
         fxTokenService.closeFXToken(tokenCode);
     }
 
-    @GetMapping("/open-positions/{issuerId}")
-    public List<ClientOpenPositionResponseDto> fetchClientOpenPosition(@PathVariable String issuerId) {
-        return fxTokenService.fetchClientOpenPosition(issuerId);
+    @GetMapping("/open-positions/{clientId}")
+    public List<ClientOpenPositionResponseDto> fetchClientOpenPosition(@PathVariable String clientId) {
+        return fxTokenService.fetchClientOpenPosition(clientId);
     }
 
     @PreAuthorize("hasAuthority('OPS')")

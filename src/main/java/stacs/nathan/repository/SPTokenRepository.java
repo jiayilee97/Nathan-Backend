@@ -13,15 +13,23 @@ import java.util.List;
 @Repository
 public interface SPTokenRepository extends JpaRepository<SPToken, Long> {
 
+  List<SPToken> findByStatus(SPTokenStatus status);
+
   @Query("SELECT NEW stacs.nathan.dto.response.SPTokenResponseDto(sp.tokenCode, sp.productType, sp.contractInceptionDate, sp.underlyingCurrency, sp.notionalAmount, sp.fixingAmount, sp.spotPrice, sp.strikeRate, sp.knockOutPrice, sp.maturityDate, sp.fixingPage, sp.numberOfFixing, sp.cpId, sp.opsId, sp.issuingAddress, sp.status, sp.user.displayName, sp.clientId)" +
           "FROM SPToken sp WHERE sp.user = :user AND sp.status = :status")
   List<SPTokenResponseDto> fetchAllOpenPositions(@Param("user") User user, @Param("status") SPTokenStatus status);
 
-  List<SPToken> findByStatus(SPTokenStatus status);
-
   @Query("SELECT NEW stacs.nathan.dto.response.SPTokenResponseDto(sp.tokenCode, sp.productType, sp.contractInceptionDate, sp.underlyingCurrency, sp.notionalAmount, sp.fixingAmount, sp.spotPrice, sp.strikeRate, sp.knockOutPrice, sp.maturityDate, sp.fixingPage, sp.numberOfFixing, sp.cpId, sp.opsId, sp.issuingAddress, sp.status, sp.user.displayName, sp.clientId)" +
       "FROM SPToken sp WHERE sp.user = :user AND sp.status in :status")
   List<SPTokenResponseDto> fetchAllClosedPositions(@Param("user") User user, @Param("status") List<SPTokenStatus> status);
+
+  @Query("SELECT NEW stacs.nathan.dto.response.SPTokenResponseDto(sp.tokenCode, sp.productType, sp.contractInceptionDate, sp.underlyingCurrency, sp.notionalAmount, sp.fixingAmount, sp.spotPrice, sp.strikeRate, sp.knockOutPrice, sp.maturityDate, sp.fixingPage, sp.numberOfFixing, sp.cpId, sp.opsId, sp.issuingAddress, sp.status, sp.user.displayName, sp.clientId)" +
+      "FROM SPToken sp WHERE sp.clientId = :clientId AND sp.status = :status")
+  List<SPTokenResponseDto> fetchAllOpenPositionsByClientId(@Param("clientId") String clientId, @Param("status") SPTokenStatus status);
+
+  @Query("SELECT NEW stacs.nathan.dto.response.SPTokenResponseDto(sp.tokenCode, sp.productType, sp.contractInceptionDate, sp.underlyingCurrency, sp.notionalAmount, sp.fixingAmount, sp.spotPrice, sp.strikeRate, sp.knockOutPrice, sp.maturityDate, sp.fixingPage, sp.numberOfFixing, sp.cpId, sp.opsId, sp.issuingAddress, sp.status, sp.user.displayName, sp.clientId)" +
+      "FROM SPToken sp WHERE sp.clientId = :clientId AND sp.status in :status")
+  List<SPTokenResponseDto> fetchAllClosedPositionsByClientId(@Param("clientId") String clientId, @Param("status") List<SPTokenStatus> status);
 
   @Query("SELECT NEW stacs.nathan.dto.response.SPTokenResponseDto(sp.tokenCode, sp.productType, sp.contractInceptionDate, sp.underlyingCurrency, sp.notionalAmount, sp.fixingAmount, sp.spotPrice, sp.strikeRate, sp.knockOutPrice, sp.maturityDate, sp.fixingPage, sp.numberOfFixing, sp.cpId, sp.opsId, sp.issuingAddress, sp.status, sp.user.displayName, sp.clientId)" +
           "FROM SPToken sp WHERE sp.tokenCode =?1")

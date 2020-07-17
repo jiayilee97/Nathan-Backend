@@ -18,6 +18,10 @@ public interface SPTokenService {
 
   List<SPTokenResponseDto> fetchAllClosedPositions(User user);
 
+  List<SPTokenResponseDto> fetchAllOpenPositionsByClientId(String clientId);
+
+  List<SPTokenResponseDto> fetchAllClosedPositionsByClientId(String clientId);
+
   CreateSPTokenInitDto fetchInitForm();
 
   SPTokenResponseDto fetchByTokenCode(String tokenCode);

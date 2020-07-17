@@ -108,16 +108,24 @@ public class SPTokenServiceImpl implements SPTokenService {
     return token;
   }
 
-  public List<SPTokenResponseDto> fetchAllOpenPositions(User user) {
-    return repository.fetchAllOpenPositions(user, SPTokenStatus.ACTIVE);
-  }
-
   public List <SPTokenResponseDto> fetchAllTokens() {
     return repository.fetchAllTokens();
   }
 
+  public List<SPTokenResponseDto> fetchAllOpenPositions(User user) {
+    return repository.fetchAllOpenPositions(user, SPTokenStatus.ACTIVE);
+  }
+
   public List<SPTokenResponseDto> fetchAllClosedPositions(User user) {
     return repository.fetchAllClosedPositions(user, Arrays.asList(SPTokenStatus.CONTRACT_MATURITY, SPTokenStatus.KNOCK_OUT));
+  }
+
+  public List<SPTokenResponseDto> fetchAllOpenPositionsByClientId(String clientId){
+    return repository.fetchAllOpenPositionsByClientId(clientId, SPTokenStatus.ACTIVE);
+  }
+
+  public List<SPTokenResponseDto> fetchAllClosedPositionsByClientId(String clientId){
+    return repository.fetchAllClosedPositionsByClientId(clientId, Arrays.asList(SPTokenStatus.CONTRACT_MATURITY, SPTokenStatus.KNOCK_OUT));
   }
 
   public CreateSPTokenInitDto fetchInitForm() {

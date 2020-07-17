@@ -44,9 +44,9 @@ public class UserServiceImpl implements UserService {
             ClientSPPositionResponseDto dto = new ClientSPPositionResponseDto();
             dto.setId(user.getId());
             dto.setClientId(user.getClientId());
-            List<SPTokenResponseDto> spToken = spTokenService.fetchAllOpenPositions(user);
+            List<SPTokenResponseDto> spToken = spTokenService.fetchAllOpenPositionsByClientId(user.getClientId());
             dto.setOpenPositions(spToken == null ? 0 : spToken.size() );
-            spToken = spTokenService.fetchAllClosedPositions(user);
+            spToken = spTokenService.fetchAllClosedPositionsByClientId(user.getClientId());
             dto.setClosePositions(spToken == null ? 0 : spToken.size());
             dto.setInvestorRisk(null);
             clientResponseDtos.add(dto);

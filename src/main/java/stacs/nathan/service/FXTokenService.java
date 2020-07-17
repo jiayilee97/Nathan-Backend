@@ -3,15 +3,14 @@ package stacs.nathan.service;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
-import stacs.nathan.dto.response.ClientOpenPositionResponseDto;
-import stacs.nathan.dto.response.FXTokenDataEntryResponseDto;
-import stacs.nathan.dto.response.FXTokenResponseDto;
-import stacs.nathan.dto.response.SPTokenResponseDto;
+import stacs.nathan.dto.response.*;
 import stacs.nathan.entity.FXToken;
 import stacs.nathan.entity.User;
 import java.util.List;
 
 public interface FXTokenService {
+
+    CreateFXTokenInitDto fetchInitForm();
 
     List<SPTokenResponseDto> fetchAvailableTokens(User user);
 
@@ -19,7 +18,7 @@ public interface FXTokenService {
 
     void closeFXToken(String tokenCode) throws ServerErrorException;
 
-    List<ClientOpenPositionResponseDto> fetchClientOpenPosition(String issuerId);
+    List<ClientOpenPositionResponseDto> fetchClientOpenPosition(String clientId);
 
     List<FXTokenResponseDto> fetchAllFxTokens(User user);
 
