@@ -28,11 +28,6 @@ public class FXTokenController {
         return fxTokenService.fetchInitForm();
     }
 
-    @GetMapping("/fetch-available-sp")
-    public List<SPTokenResponseDto> fetchAvailableTokens() throws ServerErrorException {
-        return fxTokenService.fetchAvailableTokens(userService.fetchLoginUser());
-    }
-
     @PreAuthorize("hasAuthority('OPS')")
     @PostMapping("/create")
     public void createFXToken(@RequestBody FXTokenRequestDto token) throws ServerErrorException {

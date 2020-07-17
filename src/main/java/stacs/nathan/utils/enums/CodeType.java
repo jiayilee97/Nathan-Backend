@@ -1,7 +1,9 @@
 package stacs.nathan.utils.enums;
 
 public enum CodeType {
-  UNDERLYING("Underlying"), NATIONALITY("Nationality");
+  UNDERLYING("Underlying"),
+  NATIONALITY("Nationality"),
+  CURRENCY("Currency");
 
   private String value;
 

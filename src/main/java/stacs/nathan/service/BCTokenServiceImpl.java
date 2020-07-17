@@ -69,7 +69,7 @@ public class BCTokenServiceImpl implements BCTokenService {
     String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
     User loggedInUser = userService.fetchByUsername(username);
     CreateBCTokenInitDto dto = new CreateBCTokenInitDto();
-    dto.setUnderlying(codeValueService.findByType(CodeType.UNDERLYING));
+    dto.setUnderlying(codeValueService.findByType(CodeType.CURRENCY));
     dto.setIssuingAddress(loggedInUser.getWalletAddress());
     return dto;
   }

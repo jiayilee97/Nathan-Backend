@@ -20,10 +20,7 @@ import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.response.*;
 import stacs.nathan.entity.*;
 import stacs.nathan.repository.*;
-import stacs.nathan.utils.enums.FXTokenStatus;
-import stacs.nathan.utils.enums.SPTokenStatus;
-import stacs.nathan.utils.enums.TokenType;
-import stacs.nathan.utils.enums.TransactionStatus;
+import stacs.nathan.utils.enums.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -64,6 +61,9 @@ public class FXTokenServiceImpl implements FXTokenService {
   @Autowired
   SPTokenService spTokenService;
 
+  @Autowired
+  CodeValueService codeValueService;
+
   @Value("${stacs.burn.address}")
   String burnAddress;
 
@@ -71,8 +71,11 @@ public class FXTokenServiceImpl implements FXTokenService {
   String appWalletAddress;
 
   public CreateFXTokenInitDto fetchInitForm(){
-
-    return null;
+    CreateFXTokenInitDto dto = new CreateFXTokenInitDto();
+    dto.setAppWalletAddress(appWalletAddress);
+    dto.setAvailableSPToken(fetchAvailableTokens(userService.fetchLoginUser()));
+    dto.setCurrency(codeValueService.findByType(CodeType.CURRENCY));
+    return dto;
   }
 
   public List<SPTokenResponseDto> fetchAvailableTokens(User user) {
