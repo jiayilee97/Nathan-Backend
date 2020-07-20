@@ -37,10 +37,11 @@ public class BCTokenController {
     return bcTokenService.fetchAllByIssuerAddress(issuerAddress);
   }
 
-//  @GetMapping("/fetch/{tokenCode}")
-//  public BCTokenResponseDto fetchTokenByTokenCode(@PathVariable String tokenCode) throws ServerErrorException {
-//    return bcTokenService.fetchTokenByTokenCode(tokenCode);
-//  }
+  @PreAuthorize("hasAuthority('OPS')")
+  @GetMapping("/fetch/{tokenCode}")
+  public BCTokenResponseDto fetchTokenByTokenCode(@PathVariable String tokenCode) throws ServerErrorException {
+    return bcTokenService.fetchTokenByTokenCode(tokenCode);
+  }
 
   @GetMapping("/executeUnavailableChain")
   public void executeUnavailableChain() {
