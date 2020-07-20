@@ -4,14 +4,34 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class FXTokenDataEntryResponseDto {
+    private String clientId;
+    private String fxTokenCode;
     private BigDecimal price;
     private String currency;
     private Date entryDate;
 
-    public FXTokenDataEntryResponseDto(BigDecimal price, String currency, Date entryDate) {
+    public FXTokenDataEntryResponseDto(String clientId, String fxTokenCode, BigDecimal price, String currency, Date entryDate) {
+        this.clientId = clientId;
+        this.fxTokenCode = fxTokenCode;
         this.price = price;
         this.currency = currency;
         this.entryDate = entryDate;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getFxTokenCode() {
+        return fxTokenCode;
+    }
+
+    public void setFxTokenCode(String fxTokenCode) {
+        this.fxTokenCode = fxTokenCode;
     }
 
     public BigDecimal getPrice() {

@@ -1,11 +1,9 @@
 package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "fx_token_data_entry")
