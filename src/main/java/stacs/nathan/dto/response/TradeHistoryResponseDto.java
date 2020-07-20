@@ -13,6 +13,7 @@ public class TradeHistoryResponseDto {
     private BigDecimal quantity;
     private String clientId;
     private Long spTokenId;
+    private String fxTokenCode;
 
     public TradeHistoryResponseDto(Date date, String side, String underlying, BigDecimal quantity, User client, SPToken spToken) {
         this.date = date;
@@ -21,6 +22,7 @@ public class TradeHistoryResponseDto {
         this.quantity = quantity;
         this.clientId = client.getClientId();
         this.spTokenId = spToken.getId();
+        this.fxTokenCode = spToken.getFxToken().getTokenCode();
     }
 
     public Date getDate() {
@@ -69,5 +71,13 @@ public class TradeHistoryResponseDto {
 
     public void setSpTokenId(Long spTokenId) {
         this.spTokenId = spTokenId;
+    }
+
+    public String getFxTokenCode() {
+        return fxTokenCode;
+    }
+
+    public void setFxTokenCode(String fxTokenCode) {
+        this.fxTokenCode = fxTokenCode;
     }
 }
