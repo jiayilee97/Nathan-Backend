@@ -57,7 +57,7 @@ public class FXTokenController {
         return fxTokenService.fetchTokenById(tokenCode);
     }
 
-    @PreAuthorize("hasAuthority('CP')")
+    @PreAuthorize("hasAuthority('OPS')")
     @PostMapping("/spotPrice")
     public void enterSpotPrice(@RequestBody FXTokenDataEntryRequestDto dto) throws ServerErrorException {
         fxTokenService.enterSpotPrice(dto);
