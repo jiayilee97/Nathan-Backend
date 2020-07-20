@@ -22,8 +22,8 @@ public interface FXTokenRepository extends JpaRepository<FXToken, Long> {
         "FROM FXToken fx WHERE fx.spToken.clientId = :clientId and fx.spToken.status = 'ACTIVE'")
     List<ClientOpenPositionResponseDto> fetchClientOpenPosition(@Param("clientId") String clientId);
 
-    @Query("SELECT NEW stacs.nathan.dto.response.FXTokenResponseDto(fx.tokenCode, fx.spToken.tokenCode, fx.spToken.contractInceptionDate, fx.spToken.maturityDate, fx.amount, fx.status, fx.issuerId, fx.spToken.clientId)" +
-            "FROM FXToken fx")
+    @Query("SELECT NEW stacs.nathan.dto.response.FXTokenResponseDto(fx.tokenCode, fx.spToken.tokenCode, fx.spToken.contractInceptionDate, fx.spToken.maturityDate, fx.amount, fx.status, fx.issuerId, u.displayName, fx.spToken.clientId)" +
+            "FROM FXToken fx join User u on fx.spToken.clientId = u.clientId")
     List<FXTokenResponseDto> fetchAllFxTokens();
 
     @Query("SELECT NEW stacs.nathan.dto.response.FXTokenResponseDto(fx.tokenCode, fx.spToken.tokenCode, fx.spToken.contractInceptionDate, fx.spToken.maturityDate, fx.amount, fx.status, fx.issuerId, fx.spToken.clientId, fx.fxCurrency, fx.currencyCode, fx.issuerAddress)" +

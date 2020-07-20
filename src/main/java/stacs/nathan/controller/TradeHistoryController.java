@@ -16,7 +16,7 @@ public class TradeHistoryController {
     @Autowired
     TradeHistoryService tradeHistoryService;
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO')")
     @GetMapping("/fetch-all")
     public List<TradeHistoryResponseDto> fetchTradeHistory(@RequestParam String startDate, @RequestParam String endDate) throws ServerErrorException, ParseException {
         return tradeHistoryService.fetchAllTradeHistory(startDate, endDate);

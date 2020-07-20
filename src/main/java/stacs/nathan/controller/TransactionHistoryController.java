@@ -19,7 +19,7 @@ public class TransactionHistoryController {
     @Autowired
     TransactionHistoryService transactionHistoryService;
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO')")
     @GetMapping("/fetch-all")
     public List<TransactionHistoryResponseDto> fetchTransactionHistory(@RequestParam String startDate, @RequestParam String endDate) throws ServerErrorException, ParseException {
         return transactionHistoryService.fetchAllTransactionHistory(startDate, endDate);

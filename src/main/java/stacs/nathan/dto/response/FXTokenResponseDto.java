@@ -12,6 +12,7 @@ public class FXTokenResponseDto {
     private BigDecimal balance;
     private String status;
     private String issuerId;
+    private String clientName;
     private String clientId;
     private String fxCurrency;
     private String issuerAddress;
@@ -31,7 +32,7 @@ public class FXTokenResponseDto {
         setIssuerAddress(issuerAddress);
     }
 
-    public FXTokenResponseDto(String fxTokenCode, String spTokenCode, Date contractInceptionDate, Date maturityDate, BigDecimal balance, FXTokenStatus status, String issuerId, String clientId){
+    public FXTokenResponseDto(String fxTokenCode, String spTokenCode, Date contractInceptionDate, Date maturityDate, BigDecimal balance, FXTokenStatus status, String issuerId, String clientName, String clientId){
         setFxTokenCode(fxTokenCode);
         setSpTokenCode(spTokenCode);
         setContractInceptionDate(contractInceptionDate);
@@ -39,6 +40,7 @@ public class FXTokenResponseDto {
         setBalance(balance);
         setStatus(status.getValue());
         setIssuerId(issuerId);
+        setClientName(clientName);
         setClientId(clientId);
     }
 
@@ -96,6 +98,14 @@ public class FXTokenResponseDto {
 
     public void setIssuerId(String issuerId) {
         this.issuerId = issuerId;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
 
     public String getClientId() {

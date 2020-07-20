@@ -38,6 +38,8 @@ public class SPTokenResponseDto {
 
     private String issuer; //ops display name
 
+    private String clientName;
+
     private String clientId;
 
     private String status;
@@ -72,6 +74,29 @@ public class SPTokenResponseDto {
             setFxTokenCode(null);
         }
     }
+
+    public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress, SPTokenStatus status, String issuer, String clientName, String clientId) {
+        setTokenCode(tokenCode);
+        setProductType(ProductType.resolveCode(productType).getValue());
+        setContractInceptionDate(contractInceptionDate);
+        setUnderlyingCurrency(underlyingCurrency);
+        setNotionalAmount(notionalAmount);
+        setAmountPerFixing(amountPerFixing);
+        setIndicativeSpotPrice(indicativeSpotPrice);
+        setStrikeRate(strikeRate);
+        setKnockoutPrice(knockoutPrice);
+        setMaturityDate(maturityDate);
+        setFixingPage(fixingPage);
+        setNumFixing(numFixing);
+        setCounterPartyId(counterPartyId);
+        setOpsId(opsId);
+        setIssuingAddress(issuingAddress);
+        setIssuer(issuer);
+        setClientId(clientId);
+        setClientName(clientName);
+        setStatus(status.getValue());
+    }
+
 
     public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress, SPTokenStatus status, String issuer, String clientId) {
         setTokenCode(tokenCode);
@@ -241,6 +266,14 @@ public class SPTokenResponseDto {
 
     public void setIssuer(String issuer) {
         this.issuer = issuer;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
 
     public String getClientId() {
