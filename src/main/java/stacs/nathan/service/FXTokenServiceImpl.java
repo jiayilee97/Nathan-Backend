@@ -92,14 +92,18 @@ public class FXTokenServiceImpl implements FXTokenService {
   }
 
   @Transactional(rollbackFor = ServerErrorException.class)
-  public void createFXToken(FXTokenRequestDto dto) throws ServerErrorException {
+  public void createFXToken(FXTokenRequestDto dto) throws ServerErrorException, BadRequestException {
     LOGGER.debug("Entering createFXToken().");
+    FXToken token = fetchByTokenCode(dto.getTokenCode());
+    if(token != null){
+      throw new BadRequestException("Token Code already exists.");
+    }
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
       User appWallet = userService.fetchAppAddress();
       SPToken spToken = spTokenRepository.findAvailableSPTokenByTokenCode(dto.getSpTokenCode());
-      FXToken token = convertToFXToken(dto);
+      token = convertToFXToken(dto);
       token.setIssuerId(appWallet.getUuid());
       token.setIssuerAddress(appWallet.getWalletAddress());
       token.setCreatedBy(username);

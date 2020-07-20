@@ -1,5 +1,6 @@
 package stacs.nathan.service;
 
+import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
@@ -14,7 +15,7 @@ public interface FXTokenService {
 
     List<SPTokenResponseDto> fetchAvailableTokens(User user);
 
-    void createFXToken(FXTokenRequestDto token) throws ServerErrorException;
+    void createFXToken(FXTokenRequestDto token) throws ServerErrorException, BadRequestException;
 
     void closeFXToken(String tokenCode) throws ServerErrorException;
 
