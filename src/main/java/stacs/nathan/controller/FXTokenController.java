@@ -57,19 +57,19 @@ public class FXTokenController {
         return fxTokenService.fetchTokenById(tokenCode);
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP')")
     @PostMapping("/spotPrice")
     public void enterSpotPrice(@RequestBody FXTokenDataEntryRequestDto dto) throws ServerErrorException {
         fxTokenService.enterSpotPrice(dto);
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP')")
     @GetMapping("/fetch-all-open")
     public List<FXTokenResponseDto> fetchAllOpenTokens() {
         return fxTokenService.fetchAvailableFXTokens();
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP')")
     @GetMapping("/data-entry-history")
     public List<FXTokenDataEntryResponseDto> fetchDataEntryHistory() {
         return fxTokenService.fetchDataEntryHistory();
