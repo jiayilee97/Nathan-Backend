@@ -265,8 +265,6 @@ public class FXTokenServiceImpl implements FXTokenService {
 
       // Auto transfer FX Tokens from app wallet address to investor wallet
       else {
-        System.out.println("TEST: " + fxToken.getTokenCode());
-        System.out.println("TEST: " + appWallet.getId());
         Balance fxTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(fxToken.getTokenCode(), appWallet.getId());
         BigDecimal remainingAmount = fxTokenBalance.getBalanceAmount().subtract(spToken.getFixingAmount());
         fxTokenBalance.setBalanceAmount(remainingAmount);
@@ -283,6 +281,10 @@ public class FXTokenServiceImpl implements FXTokenService {
           newBalance.setUser(client);
           fxTokenBalance.setCreatedBy(username);
           balanceRepository.save(newBalance);
+        } else {
+          BigDecimal newAmount = receiverBalance.getBalanceAmount().add(spToken.getFixingAmount());
+          receiverBalance.setBalanceAmount(newAmount);
+          balanceRepository.save(receiverBalance);
         }
 
         // Update trade history
@@ -300,7 +302,7 @@ public class FXTokenServiceImpl implements FXTokenService {
         if (remainingAmount.compareTo(BigDecimal.ZERO) < 0) {
           throw new BadRequestException("Insufficient balance for transfer");
         } else {
-          JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, appWalletAddress, client.getWalletAddress(), fxToken, spToken.getFixingAmount().toBigInteger());
+          JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, appWallet.getWalletAddress(), client.getWalletAddress(), fxToken, spToken.getFixingAmount().toBigInteger());
           String txId = jsonRespBO.getTxId();
           TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
           if (txDetail != null) {
