@@ -74,13 +74,11 @@ public class SPTokenServiceImpl implements SPTokenService {
       token.setUser(loggedInUser);
       token.setIssuingAddress(loggedInUser.getWalletAddress());
       token.setCreatedBy(username);
-      token.setStatus(SPTokenStatus.UNCONFIRMED_IN_CHAIN);
+      token.setStatus(SPTokenStatus.CHAIN_UNAVAILABLE);
+      repository.save(token);
       JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, loggedInUser.getWalletAddress(), TokenType.SP_TOKEN, dto.getNotionalAmount());
-      if (jsonRespBO == null) {
-        token.setStatus(SPTokenStatus.CHAIN_UNAVAILABLE);
-        repository.save(token);
-      } else {
-        processAvailableChain(token, jsonRespBO);
+      if (jsonRespBO != null) {
+        processAvailableChain(token, jsonRespBO, username);
       }
     }catch (Exception e){
       LOGGER.error("Exception in createSPToken().", e);
@@ -147,7 +145,7 @@ public class SPTokenServiceImpl implements SPTokenService {
     return repository.findSPTokenByTokenCode(tokenCode);
   }
 
-  public void executeUnconfirmedChain() {
+  public void executeUnconfirmedChain(String username) {
     LOGGER.debug("Entering executeUnconfirmedChain().");
     try {
       List<SPToken> tokens = repository.findByStatus(SPTokenStatus.UNCONFIRMED_IN_CHAIN);
@@ -157,7 +155,15 @@ public class SPTokenServiceImpl implements SPTokenService {
           token.setTokenContractAddress(txDetail.getTokenInfo().getContractAddress());
           token.setBlockHeight(txDetail.getBlockHeight());
           token.setStatus(SPTokenStatus.ACTIVE);
+          token.setUpdatedBy(username);
           repository.save(token);
+          Balance balance = new Balance();
+          balance.setUser(token.getUser());
+          balance.setTokenType(TokenType.SP_TOKEN);
+          balance.setTokenCode(token.getTokenCode());
+          balance.setBalanceAmount(token.getNotionalAmount());
+          balance.setCreatedBy(username);
+          balanceService.createBalance(balance);
         }
       }
     } catch (Exception e) {
@@ -165,14 +171,14 @@ public class SPTokenServiceImpl implements SPTokenService {
     }
   }
 
-  public void executeUnavailableChain() {
+  public void executeUnavailableChain(String username) {
     LOGGER.debug("Entering executeUnavailableChain().");
     try {
       List<SPToken> tokens = repository.findByStatus(SPTokenStatus.CHAIN_UNAVAILABLE);
       for(SPToken token : tokens){
         JsonRespBO jsonRespBO = blockchainService.createToken(token.getUser(), token.getIssuingAddress(), TokenType.SP_TOKEN, token.getNotionalAmount());
         if (jsonRespBO != null) {
-          processAvailableChain(token, jsonRespBO);
+          processAvailableChain(token, jsonRespBO, username);
         }
       }
     } catch (Exception e) {
@@ -180,7 +186,7 @@ public class SPTokenServiceImpl implements SPTokenService {
     }
   }
 
-  void processAvailableChain(SPToken token, JsonRespBO jsonRespBO){
+  void processAvailableChain(SPToken token, JsonRespBO jsonRespBO, String username){
     JsonParser parser = new JsonParser();
     JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
     String txId = txResponse.get("txId").getAsString();
@@ -198,6 +204,7 @@ public class SPTokenServiceImpl implements SPTokenService {
       balance.setTokenType(TokenType.SP_TOKEN);
       balance.setTokenCode(token.getTokenCode());
       balance.setBalanceAmount(token.getNotionalAmount());
+      balance.setCreatedBy(username);
       balanceService.createBalance(balance);
     }
   }
@@ -238,6 +245,7 @@ public class SPTokenServiceImpl implements SPTokenService {
         transactionRepository.save(tx);
 
         balance.setBalanceAmount(BigDecimal.valueOf(0));
+        balance.setUpdatedBy(username);
         balanceRepository.save(balance);
       }
 
@@ -247,7 +255,7 @@ public class SPTokenServiceImpl implements SPTokenService {
     }
   }
 
-  public void checkSPTokenMaturity() throws ServerErrorException {
+  public void checkSPTokenMaturity(String username) throws ServerErrorException {
     List<SPToken> tokens = repository.fetchAllActiveTokens(SPTokenStatus.ACTIVE);
     for (SPToken token: tokens) {
       Date tokenMaturityDate = token.getMaturityDate();
@@ -263,7 +271,7 @@ public class SPTokenServiceImpl implements SPTokenService {
           TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
           if (txDetail != null) {
             token.setBlockHeight(txDetail.getBlockHeight());
-            token.setUpdatedBy(user.getUsername());
+            token.setUpdatedBy(username);
             token.setUpdatedDate(new Date());
             token.setStatus(SPTokenStatus.CONTRACT_MATURITY);
             repository.save(token);
@@ -281,15 +289,18 @@ public class SPTokenServiceImpl implements SPTokenService {
             tx.setTokenId(token.getId());
             tx.setTokenCode(token.getTokenCode());
             tx.setCreatedBy(user.getUsername());
+            tx.setUpdatedBy(username);
             transactionRepository.save(tx);
 
             // update balance table
             balance.setBalanceAmount(BigDecimal.valueOf(0));
+            balance.setUpdatedBy(username);
             balanceRepository.save(balance);
 
             // update FX Token status
             FXToken fxToken = token.getFxToken();
             fxToken.setStatus(FXTokenStatus.MATURED);
+            fxToken.setUpdatedBy(username);
             fxTokenRepository.save(fxToken);
           }
 

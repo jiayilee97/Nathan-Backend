@@ -30,10 +30,10 @@ public interface SPTokenService {
 
   void transferToBurnAddress(String tokenCode) throws ServerErrorException;
 
-  void executeUnconfirmedChain();
+  void executeUnconfirmedChain(String username);
 
-  void executeUnavailableChain();
+  void executeUnavailableChain(String username);
 
-  void checkSPTokenMaturity() throws ServerErrorException;
+  void checkSPTokenMaturity(String username) throws ServerErrorException;
 
 }

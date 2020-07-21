@@ -31,9 +31,9 @@ public interface FXTokenService {
 
     List<FXTokenDataEntryResponseDto> fetchDataEntryHistory();
 
-    void executeUnconfirmedChain();
+    void executeUnconfirmedChain(String username);
 
-    void executeUnavailableChain();
+    void executeUnavailableChain(String username);
 
     String fetchAppWalletAddress();
 

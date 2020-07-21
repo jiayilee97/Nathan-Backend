@@ -9,13 +9,8 @@ import java.util.Date;
 
 @Entity
 @Table(name = "nav")
-public class NAV {
+public class NAV extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name = "id")
-    private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fx_token_id", nullable = false)
@@ -44,22 +39,9 @@ public class NAV {
     @Column(length = 10)
     private NAVType type;
 
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
-    private Date createdDate;
-
     //user_id
     @Column(name = "data_entry_address")
     private String dataEntryAddress;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public FXToken getFxToken() {
         return fxToken;
@@ -123,14 +105,6 @@ public class NAV {
 
     public void setType(NAVType type) {
         this.type = type;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
     }
 
     public String getDataEntryAddress() {

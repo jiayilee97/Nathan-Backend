@@ -2,10 +2,12 @@ package stacs.nathan.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.BCTokenRequestDto;
+import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.request.TransferBCTokenRequestDto;
 import stacs.nathan.dto.response.BCTokenResponseDto;
 import stacs.nathan.dto.response.CreateBCTokenInitDto;
@@ -43,11 +45,19 @@ public class BCTokenController {
     return bcTokenService.fetchTokenByTokenCode(tokenCode);
   }
 
+  @PreAuthorize("hasAuthority('OPS')")
   @GetMapping("/executeUnavailableChain")
   public void executeUnavailableChain() {
-    bcTokenService.executeUnavailableChain();
+    String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    bcTokenService.executeUnavailableChain(username);
   }
 
+  @PreAuthorize("hasAuthority('OPS')")
+  @GetMapping("/executeUnconfirmedChain")
+  public void executeUnconfirmedChain() {
+    String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    bcTokenService.executeUnconfirmedChain(username);
+  }
 
   @PreAuthorize("hasAuthority('OPS')")
   @PostMapping("/transfer")

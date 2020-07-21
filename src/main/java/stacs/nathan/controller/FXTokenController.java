@@ -2,11 +2,13 @@ package stacs.nathan.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
+import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.response.*;
 import stacs.nathan.service.FXTokenService;
 import stacs.nathan.service.UserService;
@@ -80,5 +82,19 @@ public class FXTokenController {
     @GetMapping("/fetch-matured-knockout")
     public List<FXTokenResponseDto> fetchMaturedOrKnockout() {
         return fxTokenService.fetchMaturedOrKnockout();
+    }
+
+    @PreAuthorize("hasAuthority('OPS')")
+    @GetMapping("/executeUnavailableChain")
+    public void executeUnavailableChain() {
+        String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        fxTokenService.executeUnavailableChain(username);
+    }
+
+    @PreAuthorize("hasAuthority('OPS')")
+    @GetMapping("/executeUnconfirmedChain")
+    public void executeUnconfirmedChain() {
+        String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        fxTokenService.executeUnconfirmedChain(username);
     }
 }
