@@ -21,9 +21,7 @@ import stacs.nathan.dto.response.BCTokenResponseDto;
 import stacs.nathan.dto.response.CreateBCTokenInitDto;
 import stacs.nathan.entity.*;
 import stacs.nathan.repository.BCTokenRepository;
-import stacs.nathan.repository.BalanceRepository;
 import stacs.nathan.repository.TradeHistoryRepository;
-import stacs.nathan.repository.TransactionRepository;
 import stacs.nathan.utils.enums.BCTokenStatus;
 import stacs.nathan.utils.enums.CodeType;
 import stacs.nathan.utils.enums.TokenType;
@@ -51,10 +49,7 @@ public class BCTokenServiceImpl implements BCTokenService {
   BalanceService balanceService;
 
   @Autowired
-  BalanceRepository balanceRepository;
-
-  @Autowired
-  TransactionRepository transactionRepository;
+  TransactionHistoryService transactionHistoryService;
 
   @Autowired
   FXTokenService fxTokenService;
@@ -211,7 +206,7 @@ public class BCTokenServiceImpl implements BCTokenService {
         if (txDetail != null) {
           // Save balance for sender wallet
           bcTokenBalance.setBalanceAmount(remainingAmount);
-          balanceRepository.save(bcTokenBalance);
+          balanceService.createBalance(bcTokenBalance);
 
           // Save balance for receiver wallet
           Balance receiverBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), investor.getId());
@@ -221,11 +216,11 @@ public class BCTokenServiceImpl implements BCTokenService {
             newBalance.setTokenCode(dto.getBcTokenCode());
             newBalance.setTokenType(TokenType.BC_TOKEN);
             newBalance.setUser(investor);
-            balanceRepository.save(newBalance);
+            balanceService.createBalance(newBalance);
           } else {
             BigDecimal newAmount = receiverBalance.getBalanceAmount().add(dto.getAmount());
             receiverBalance.setBalanceAmount(newAmount);
-            balanceRepository.save(receiverBalance);
+            balanceService.createBalance(receiverBalance);
           }
 
           // Update transaction history table
@@ -241,7 +236,7 @@ public class BCTokenServiceImpl implements BCTokenService {
           tx.setTokenType(TokenType.BC_TOKEN);
           tx.setTokenId(bcToken.getId());
           tx.setCreatedBy(loggedInUser.getUsername());
-          transactionRepository.save(tx);
+          transactionHistoryService.save(tx);
         }
       }
     } catch (Exception e){
@@ -268,7 +263,7 @@ public class BCTokenServiceImpl implements BCTokenService {
           if (bcTxDetail != null) {
             // Save balance for sender wallet
             bcTokenBalance.setBalanceAmount(bcRemainingAmount);
-            balanceRepository.save(bcTokenBalance);
+            balanceService.createBalance(bcTokenBalance);
 
             // Save balance for receiver wallet
             // Creates new entry in table if not present
@@ -279,11 +274,11 @@ public class BCTokenServiceImpl implements BCTokenService {
               newBalance.setTokenCode(dto.getBcTokenCode());
               newBalance.setTokenType(TokenType.BC_TOKEN);
               newBalance.setUser(loggedInUser);
-              balanceRepository.save(newBalance);
+              balanceService.createBalance(newBalance);
             } else {
               BigDecimal newAmount = receiverBalance.getBalanceAmount().add(dto.getAmount());
               receiverBalance.setBalanceAmount(newAmount);
-              balanceRepository.save(receiverBalance);
+              balanceService.createBalance(receiverBalance);
             }
           }
         }
@@ -301,11 +296,11 @@ public class BCTokenServiceImpl implements BCTokenService {
           newBalance.setTokenCode(dto.getFxTokenCode());
           newBalance.setTokenType(TokenType.FX_TOKEN);
           newBalance.setUser(investor);
-          balanceRepository.save(newBalance);
+          balanceService.createBalance(newBalance);
         } else {
           BigDecimal newAmount = receiverBalance.getBalanceAmount().add(dto.getAmount());
           receiverBalance.setBalanceAmount(newAmount);
-          balanceRepository.save(receiverBalance);
+          balanceService.createBalance(receiverBalance);
         }
 
         // Trade history

@@ -45,19 +45,17 @@ public class SPTokenServiceImpl implements SPTokenService {
   BalanceService balanceService;
 
   @Autowired
-  BalanceRepository balanceRepository;
+  TransactionHistoryService transactionHistoryService;
 
   @Autowired
-  TransactionRepository transactionRepository;
-
-  @Autowired
-  UserRepository userRepository;
-
-  @Autowired
-  FXTokenRepository fxTokenRepository;
+  FXTokenService fxTokenService;
 
   @Value("${stacs.burn.address}")
   String burnAddress;
+
+  public void save(SPToken token){
+    repository.save(token);
+  }
 
   @Transactional(rollbackFor = ServerErrorException.class)
   public void createSPToken(SPTokenRequestDto dto) throws ServerErrorException {
@@ -104,6 +102,10 @@ public class SPTokenServiceImpl implements SPTokenService {
     token.setNotionalAmount(dto.getNotionalAmount());
     token.setStatus(SPTokenStatus.ACTIVE);
     return token;
+  }
+
+  public List<SPToken> fetchTokensByStatus(SPTokenStatus status){
+    return repository.findByStatus(status);
   }
 
   public List <SPTokenResponseDto> fetchAllTokens() {
@@ -242,11 +244,11 @@ public class SPTokenServiceImpl implements SPTokenService {
         tx.setTokenCode(token.getTokenCode());
         tx.setTokenId(token.getId());
         tx.setCreatedBy(loggedInUser.getUsername());
-        transactionRepository.save(tx);
+        transactionHistoryService.save(tx);
 
         balance.setBalanceAmount(BigDecimal.valueOf(0));
         balance.setUpdatedBy(username);
-        balanceRepository.save(balance);
+        balanceService.createBalance(balance);
       }
 
     } catch (Exception e) {
@@ -255,8 +257,12 @@ public class SPTokenServiceImpl implements SPTokenService {
     }
   }
 
+  public SPToken findAvailableSPTokenByTokenCode(String tokenCode){
+    return repository.findAvailableSPTokenByTokenCode(tokenCode);
+  }
+
   public void checkSPTokenMaturity(String username) throws ServerErrorException {
-    List<SPToken> tokens = repository.fetchAllActiveTokens(SPTokenStatus.ACTIVE);
+    List<SPToken> tokens = fetchTokensByStatus(SPTokenStatus.ACTIVE);
     for (SPToken token: tokens) {
       Date tokenMaturityDate = token.getMaturityDate();
       Date currentDate = new Date();
@@ -290,18 +296,18 @@ public class SPTokenServiceImpl implements SPTokenService {
             tx.setTokenCode(token.getTokenCode());
             tx.setCreatedBy(user.getUsername());
             tx.setUpdatedBy(username);
-            transactionRepository.save(tx);
+            transactionHistoryService.save(tx);
 
             // update balance table
             balance.setBalanceAmount(BigDecimal.valueOf(0));
             balance.setUpdatedBy(username);
-            balanceRepository.save(balance);
+            balanceService.createBalance(balance);
 
             // update FX Token status
             FXToken fxToken = token.getFxToken();
             fxToken.setStatus(FXTokenStatus.MATURED);
             fxToken.setUpdatedBy(username);
-            fxTokenRepository.save(fxToken);
+            fxTokenService.save(fxToken);
           }
 
         } catch (Exception e) {

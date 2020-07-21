@@ -6,13 +6,18 @@ import stacs.nathan.dto.response.CreateSPTokenInitDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.SPToken;
 import stacs.nathan.entity.User;
+import stacs.nathan.utils.enums.SPTokenStatus;
 import java.util.List;
 
 public interface SPTokenService {
 
+  void save(SPToken token);
+
   void createSPToken(SPTokenRequestDto token) throws ServerErrorException;
 
   List<SPTokenResponseDto> fetchAllTokens();
+
+  List<SPToken> fetchTokensByStatus(SPTokenStatus status);
 
   List<SPTokenResponseDto> fetchAllOpenPositions(User user);
 
@@ -35,5 +40,7 @@ public interface SPTokenService {
   void executeUnavailableChain(String username);
 
   void checkSPTokenMaturity(String username) throws ServerErrorException;
+
+  SPToken findAvailableSPTokenByTokenCode(String tokenCode);
 
 }

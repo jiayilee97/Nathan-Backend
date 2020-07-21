@@ -15,6 +15,8 @@ public interface FXTokenService {
 
     List<SPTokenResponseDto> fetchAvailableTokens(User user);
 
+    void save(FXToken fxToken);
+
     void createFXToken(FXTokenRequestDto token) throws ServerErrorException, BadRequestException;
 
     void closeFXToken(String tokenCode) throws ServerErrorException;

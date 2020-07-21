@@ -10,6 +10,7 @@ import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.response.TradeHistoryResponseDto;
 import stacs.nathan.entity.SPToken;
+import stacs.nathan.entity.TradeHistory;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.TradeHistoryRepository;
 import java.text.ParseException;
@@ -22,13 +23,17 @@ public class TradeHistoryServiceImpl implements TradeHistoryService{
     private static final Logger LOGGER = LoggerFactory.getLogger(TradeHistoryServiceImpl.class);
 
     @Autowired
-    TradeHistoryRepository tradeHistoryRepository;
+    TradeHistoryRepository repository;
 
     @Autowired
     UserService userService;
 
     @Autowired
     SPTokenService spTokenService;
+
+    public void save(TradeHistory tradeHistory) {
+        repository.save(tradeHistory);
+    }
 
     public List<TradeHistoryResponseDto> fetchAllTradeHistory(String startDate, String endDate) throws ServerErrorException, ParseException {
         LOGGER.debug("Entering fetchAllTradeHistory().");
@@ -38,7 +43,7 @@ public class TradeHistoryServiceImpl implements TradeHistoryService{
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             Date start = DateUtils.addDays(formatter.parse(startDate), -1);
             Date end = DateUtils.addDays(formatter.parse(endDate), 1);
-            return tradeHistoryRepository.findAllByDateRange(start, end);
+            return repository.findAllByDateRange(start, end);
         } catch (Exception e){
             LOGGER.error("Exception in fetchAllTradeHistory().", e);
             throw new ServerErrorException("Exception in fetchAllTradeHistory().", e);
@@ -50,7 +55,7 @@ public class TradeHistoryServiceImpl implements TradeHistoryService{
         try {
             User user = userService.fetchUserByClientId(clientId);
             SPToken spToken = spTokenService.fetchSPTokenByTokenCode(contract);
-            return tradeHistoryRepository.findAllUserAndSPToken(user, spToken);
+            return repository.findAllUserAndSPToken(user, spToken);
         } catch (Exception e){
             LOGGER.error("Exception in fetchByClientAndContract().", e);
             throw new ServerErrorException("Exception in fetchByClientAndContract().", e);
