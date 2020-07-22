@@ -1,11 +1,13 @@
 package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.envers.Audited;
 import stacs.nathan.utils.enums.BCTokenStatus;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
+@Audited
 @Table(name = "base_currency_token")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class BaseCurrencyToken extends BaseTokenEntity {

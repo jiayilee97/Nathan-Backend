@@ -1,11 +1,13 @@
 package stacs.nathan.entity;
 
+import org.hibernate.envers.Audited;
 import stacs.nathan.utils.enums.CodeType;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
+@Audited
 @Table(name = "code_value")
 public class CodeValue {
 

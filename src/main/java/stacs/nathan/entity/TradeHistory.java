@@ -1,11 +1,13 @@
 package stacs.nathan.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.envers.Audited;
 import stacs.nathan.utils.enums.TokenType;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
+@Audited
 @Table(name = "trade_history")
 public class TradeHistory extends BaseEntity {
     private static final long serialVersionUID = 1L;

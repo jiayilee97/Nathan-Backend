@@ -1,11 +1,14 @@
 package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
+@Audited
 @Table(name = "fx_token_data_entry")
 public class FXTokenDataEntry extends BaseEntity {
     private static final long serialVersionUID = 1L;

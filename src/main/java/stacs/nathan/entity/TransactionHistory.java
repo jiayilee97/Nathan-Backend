@@ -1,12 +1,14 @@
 package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.envers.Audited;
 import stacs.nathan.utils.enums.TokenType;
 import stacs.nathan.utils.enums.TransactionStatus;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
+@Audited
 @Table(name = "tx_history")
 public class TransactionHistory extends BaseEntity {
     private static final long serialVersionUID = 1L;

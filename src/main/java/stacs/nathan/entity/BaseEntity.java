@@ -2,10 +2,14 @@ package stacs.nathan.entity;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.util.Date;
 
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
 
   @Id
@@ -13,6 +17,7 @@ public class BaseEntity {
   @Column(name = "id", length = 20)
   private long id;
 
+  @CreatedBy
   @Column(name = "created_by", updatable = false)
   private String createdBy;
 
@@ -21,6 +26,7 @@ public class BaseEntity {
   @Column(name = "created_date", updatable = false)
   private Date createdDate;
 
+  @LastModifiedBy
   @Column(name = "updated_by")
   private String updatedBy;
 
@@ -28,6 +34,9 @@ public class BaseEntity {
   @Temporal(TemporalType.TIMESTAMP)
   @Column(name = "updated_date")
   private Date updatedDate;
+
+  @Column(name = "is_enabled", nullable = false, columnDefinition="boolean DEFAULT true")
+  private boolean isVisible = true;
 
   public long getId() {
     return id;
@@ -67,5 +76,13 @@ public class BaseEntity {
 
   public void setUpdatedDate(Date updatedDate) {
     this.updatedDate = updatedDate;
+  }
+
+  public boolean isVisible() {
+    return isVisible;
+  }
+
+  public void setVisible(boolean visible) {
+    isVisible = visible;
   }
 }

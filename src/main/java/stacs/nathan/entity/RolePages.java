@@ -1,8 +1,11 @@
 package stacs.nathan.entity;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 
 @Entity
+@Audited
 @Table(name = "role_pages")
 public class RolePages extends BaseEntity {
   private static final long serialVersionUID = 1L;
@@ -12,9 +15,6 @@ public class RolePages extends BaseEntity {
 
   @Column(name = "page_name", length = 200)
   private String pageName;
-
-  @Column(name = "is_enabled", nullable = false)
-  private boolean isVisible = true;
 
   public String getRoleName() {
     return roleName;
@@ -32,11 +32,4 @@ public class RolePages extends BaseEntity {
     this.pageName = pageName;
   }
 
-  public boolean isVisible() {
-    return isVisible;
-  }
-
-  public void setVisible(boolean visible) {
-    isVisible = visible;
-  }
 }

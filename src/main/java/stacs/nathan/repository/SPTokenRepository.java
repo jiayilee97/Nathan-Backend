@@ -42,7 +42,6 @@ public interface SPTokenRepository extends JpaRepository<SPToken, Long> {
           "FROM SPToken sp join User u on sp.clientId = u.clientId")
   List<SPTokenResponseDto> fetchAllTokens();
 
-
   // Used by FXTokenService
   @Query("SELECT sp FROM SPToken sp WHERE sp.user = :user and sp.status = :status")
   List<SPToken> fetchAvailableTokens(@Param("user") User user, @Param("status") SPTokenStatus status);

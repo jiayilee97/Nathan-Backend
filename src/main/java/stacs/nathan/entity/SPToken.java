@@ -2,12 +2,14 @@ package stacs.nathan.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.envers.Audited;
 import stacs.nathan.utils.enums.SPTokenStatus;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
+@Audited
 @Table(name = "sp_token")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class SPToken extends BaseTokenEntity {

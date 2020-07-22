@@ -1,5 +1,6 @@
 package stacs.nathan.entity;
 
+import org.hibernate.envers.Audited;
 import stacs.nathan.utils.enums.AccreditedStatus;
 import stacs.nathan.utils.enums.UserRole;
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
+@Audited
 @Table(name = "user")
 public class User extends BaseEntity{
     private static final long serialVersionUID = 1L;

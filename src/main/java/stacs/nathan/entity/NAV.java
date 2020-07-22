@@ -2,12 +2,14 @@ package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.envers.Audited;
 import stacs.nathan.utils.enums.NAVType;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
+@Audited
 @Table(name = "nav")
 public class NAV extends BaseEntity {
     private static final long serialVersionUID = 1L;

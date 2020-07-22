@@ -1,11 +1,13 @@
 package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.envers.Audited;
 import stacs.nathan.utils.enums.TokenType;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
+@Audited
 @Table(name = "balance")
 public class Balance extends BaseEntity {
     private static final long serialVersionUID = 1L;
