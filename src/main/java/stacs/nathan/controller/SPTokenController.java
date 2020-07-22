@@ -2,10 +2,8 @@ package stacs.nathan.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import stacs.nathan.core.exception.ServerErrorException;
-import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.request.SPTokenRequestDto;
 import stacs.nathan.dto.response.CreateSPTokenInitDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
@@ -55,21 +53,18 @@ public class SPTokenController {
     @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/executeUnavailableChain")
     public void executeUnavailableChain() {
-        String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        spTokenService.executeUnavailableChain(username);
+        spTokenService.executeUnavailableChain();
     }
 
     @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/executeUnconfirmedChain")
     public void executeUnconfirmedChain() {
-        String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        spTokenService.executeUnconfirmedChain(username);
+        spTokenService.executeUnconfirmedChain();
     }
 
     @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/executeSPTokenMaturity")
     public void executeSPTokenMaturity() throws ServerErrorException {
-        String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        spTokenService.checkSPTokenMaturity(username);
+        spTokenService.checkSPTokenMaturity();
     }
 }

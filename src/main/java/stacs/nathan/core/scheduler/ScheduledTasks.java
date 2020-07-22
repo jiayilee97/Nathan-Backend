@@ -15,8 +15,6 @@ import java.util.Date;
 public class ScheduledTasks {
   private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledTasks.class);
 
-  private final String system = "SCHEDULAR";
-
   @Autowired
   BCTokenService bcTokenService;
 
@@ -32,13 +30,13 @@ public class ScheduledTasks {
   @Scheduled(fixedRate=60*60*1000)
   public void executeBCTokenUnconfirmedChain() {
     LOGGER.debug("Entering executeBCTokenUnconfirmedChain() method. {}", new Date());
-    bcTokenService.executeUnconfirmedChain(system);
+    bcTokenService.executeUnconfirmedChain();
   }
 
   @Scheduled(fixedRate=60*60*1000)
   public void executeBCTokenUnavailableChain() {
     LOGGER.debug("Entering executeBCTokenUnavailableChain() method. {}", new Date());
-    bcTokenService.executeUnavailableChain(system);
+    bcTokenService.executeUnavailableChain();
   }
 
   /**
@@ -47,19 +45,19 @@ public class ScheduledTasks {
   @Scheduled(fixedRate=60*60*1000)
   public void executeSPTokenUnconfirmedChain() {
     LOGGER.debug("Entering executeSPTokenUnconfirmedChain() method. {}", new Date());
-    spTokenService.executeUnconfirmedChain(system);
+    spTokenService.executeUnconfirmedChain();
   }
 
   @Scheduled(fixedRate=60*60*1000)
   public void executeSPTokenUnavailableChain() {
     LOGGER.debug("Entering executeSPTokenUnavailableChain() method. {}", new Date());
-    spTokenService.executeUnavailableChain(system);
+    spTokenService.executeUnavailableChain();
   }
 
   @Scheduled(fixedRate=1*60*1000)
   public void checkSPTokenMaturity() throws ServerErrorException {
     LOGGER.debug("Entering checkSPTokenMaturity() method. {}", new Date());
-    spTokenService.checkSPTokenMaturity(system);
+    spTokenService.checkSPTokenMaturity();
   }
 
   /**
@@ -68,12 +66,12 @@ public class ScheduledTasks {
   @Scheduled(fixedRate=60*60*1000)
   public void confirmFXTokenUnconfirmedChain() {
     LOGGER.debug("Entering confirmFXTokenUnconfirmedChain() method. {}", new Date());
-    fxTokenService.executeUnconfirmedChain(system);
+    fxTokenService.executeUnconfirmedChain();
   }
 
   @Scheduled(fixedRate=60*60*1000)
   public void executeFXTokenUnavailableChain() {
     LOGGER.debug("Entering executeFXTokenUnavailableChain() method. {}", new Date());
-    fxTokenService.executeUnavailableChain(system);
+    fxTokenService.executeUnavailableChain();
   }
 }

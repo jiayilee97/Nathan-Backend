@@ -99,7 +99,6 @@ public class UserServiceImpl implements UserService {
     public void createClient(CreateClientRequestDto dto) throws ServerErrorException {
         LOGGER.debug("Entering createClient().");
         try{
-            String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
             User user = repository.findByClientId(dto.getClientId());
             if(user != null){
                 throw new BadRequestException("Client ID already exists.");
@@ -112,7 +111,6 @@ public class UserServiceImpl implements UserService {
             user.setNationality(dto.getNationality());
             user.setAccreditedStatus(AccreditedStatus.resolveCode(dto.getAccreditedStatus()));
             user.setRiskToleranceRating(dto.getRiskToleranceRating());
-            user.setCreatedBy(username);
             blockchainService.createWallet(user);
             repository.save(user);
         }catch (Exception e){
@@ -124,10 +122,8 @@ public class UserServiceImpl implements UserService {
     public void createUser(ClientRequestDto dto) throws ServerErrorException {
         LOGGER.debug("Entering createUser().");
         try{
-            String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
             User user =  convertToUser(dto, false);
             user.setUuid(CommonUtils.generateRandomUUID());
-            user.setCreatedBy(username);
             repository.save(user);
         }catch (Exception e){
             LOGGER.error("Exception in createUser().", e);
@@ -138,9 +134,7 @@ public class UserServiceImpl implements UserService {
     public void updateUser(ClientRequestDto dto) throws ServerErrorException {
         LOGGER.debug("Entering updateUser().");
         try{
-            String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
             User user =  convertToUser(dto, true);
-            user.setUpdatedBy(username);
             if(user.getRole() != null && UserRole.CRO != user.getRole()){
                 blockchainService.createWallet(user);
             }

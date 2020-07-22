@@ -18,9 +18,9 @@ public interface BCTokenService {
 
   BCTokenResponseDto fetchTokenByTokenCode(String tokenCode) throws ServerErrorException;
 
-  void executeUnconfirmedChain(String username);
+  void executeUnconfirmedChain();
 
-  void executeUnavailableChain(String username);
+  void executeUnavailableChain();
 
   void transferBCToken(TransferBCTokenRequestDto dto) throws ServerErrorException;
 

@@ -83,12 +83,11 @@ public class BCTokenServiceImpl implements BCTokenService {
       token.setUser(loggedInUser);
       token.setIssuerId(loggedInUser.getUuid());
       token.setIssuerAddress(loggedInUser.getWalletAddress());
-      token.setCreatedBy(username);
       token.setStatus(BCTokenStatus.CHAIN_UNAVAILABLE);
       repository.save(token);
       JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, loggedInUser.getWalletAddress(), TokenType.BC_TOKEN, dto.getAmount());
       if (jsonRespBO != null) {
-        processAvailableChain(token, jsonRespBO, username);
+        processAvailableChain(token, jsonRespBO);
       }
     } catch (Exception e) {
       LOGGER.error("Exception in createBCToken().", e);
@@ -96,7 +95,7 @@ public class BCTokenServiceImpl implements BCTokenService {
     }
   }
 
-  public void processAvailableChain(BaseCurrencyToken token, JsonRespBO jsonRespBO, String username) {
+  public void processAvailableChain(BaseCurrencyToken token, JsonRespBO jsonRespBO) {
     JsonParser parser = new JsonParser();
     JsonObject txResponse = (JsonObject) parser.parse(jsonRespBO.getTxId());
     String txId = txResponse.get("txId").getAsString();
@@ -114,7 +113,6 @@ public class BCTokenServiceImpl implements BCTokenService {
       balance.setTokenType(TokenType.BC_TOKEN);
       balance.setTokenCode(token.getTokenCode());
       balance.setBalanceAmount(token.getAmount());
-      balance.setCreatedBy(username);
       balanceService.createBalance(balance);
     }
   }
@@ -139,7 +137,7 @@ public class BCTokenServiceImpl implements BCTokenService {
     }
   }
 
-  public void executeUnconfirmedChain(String username) {
+  public void executeUnconfirmedChain() {
     LOGGER.debug("Entering executeUnconfirmedChain().");
     try {
       List<BaseCurrencyToken> tokens = repository.findByStatus(BCTokenStatus.UNCONFIRMED_IN_CHAIN);
@@ -155,7 +153,6 @@ public class BCTokenServiceImpl implements BCTokenService {
           balance.setTokenType(TokenType.BC_TOKEN);
           balance.setTokenCode(token.getTokenCode());
           balance.setBalanceAmount(token.getAmount());
-          balance.setCreatedBy(username);
           balanceService.createBalance(balance);
         }
       }
@@ -164,14 +161,14 @@ public class BCTokenServiceImpl implements BCTokenService {
     }
   }
 
-  public void executeUnavailableChain(String username) {
+  public void executeUnavailableChain() {
     LOGGER.debug("Entering executeUnavailableChain().");
     try {
       List<BaseCurrencyToken> tokens = repository.findByStatus(BCTokenStatus.CHAIN_UNAVAILABLE);
       for (BaseCurrencyToken token : tokens) {
         JsonRespBO jsonRespBO = blockchainService.createToken(token.getUser(), token.getIssuerAddress(), TokenType.BC_TOKEN, token.getAmount());
         if (jsonRespBO != null) {
-          processAvailableChain(token, jsonRespBO, username);
+          processAvailableChain(token, jsonRespBO);
         }
       }
     } catch (Exception e) {
@@ -235,7 +232,6 @@ public class BCTokenServiceImpl implements BCTokenService {
           tx.setTokenCode(bcToken.getTokenCode());
           tx.setTokenType(TokenType.BC_TOKEN);
           tx.setTokenId(bcToken.getId());
-          tx.setCreatedBy(loggedInUser.getUsername());
           transactionHistoryService.save(tx);
         }
       }
@@ -312,7 +308,6 @@ public class BCTokenServiceImpl implements BCTokenService {
         tradeHistory.setTokenType(TokenType.BC_TOKEN);
         tradeHistory.setSpToken(fxToken.getSpToken());
         tradeHistory.setUser(investor);
-        tradeHistory.setCreatedBy(username);
         tradeHistoryRepository.save(tradeHistory);
       }
     }  catch (Exception e){

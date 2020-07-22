@@ -35,11 +35,11 @@ public interface SPTokenService {
 
   void transferToBurnAddress(String tokenCode) throws ServerErrorException;
 
-  void executeUnconfirmedChain(String username);
+  void executeUnconfirmedChain();
 
-  void executeUnavailableChain(String username);
+  void executeUnavailableChain();
 
-  void checkSPTokenMaturity(String username) throws ServerErrorException;
+  void checkSPTokenMaturity() throws ServerErrorException;
 
   SPToken findAvailableSPTokenByTokenCode(String tokenCode);
 

@@ -44,8 +44,6 @@ public class RolePagesServiceImpl implements RolePagesService {
   public void createRolePages(RolePages rolePages) throws ServerErrorException {
     LOGGER.debug("Entering createRolePages().");
     try{
-      LoggedInUser loggedInUser = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-      rolePages.setCreatedBy(loggedInUser.getUsername());
       repository.save(rolePages);
     }catch (Exception e){
       LOGGER.error("Exception in createRolePages().", e);
@@ -56,8 +54,6 @@ public class RolePagesServiceImpl implements RolePagesService {
   public void updateRolePages(RolePages rolePages) throws ServerErrorException {
     LOGGER.debug("Entering updateRolePages().");
     try{
-      LoggedInUser loggedInUser = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-      rolePages.setUpdatedBy(loggedInUser.getUsername());
       repository.save(rolePages);
     }catch (Exception e){
       LOGGER.error("Exception in updateRolePages().", e);
@@ -69,8 +65,6 @@ public class RolePagesServiceImpl implements RolePagesService {
     LOGGER.debug("Entering deleteRolePages().");
     try{
       RolePages rolePages = new RolePages();
-      LoggedInUser loggedInUser = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-      rolePages.setUpdatedBy(loggedInUser.getUsername());
       rolePages = repository.findById(id);
       repository.delete(rolePages);
     }catch (Exception e){
