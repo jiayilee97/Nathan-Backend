@@ -207,6 +207,7 @@ public class SPTokenServiceImpl implements SPTokenService {
     }
   }
 
+  @Transactional(rollbackFor = ServerErrorException.class)
   public void transferToBurnAddress(String tokenCode) throws ServerErrorException {
     LOGGER.debug("Entering transferToBurnAddress().");
     try {

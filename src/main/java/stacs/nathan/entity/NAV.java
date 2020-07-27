@@ -1,12 +1,10 @@
 package stacs.nathan.entity;
 
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.envers.Audited;
 import stacs.nathan.utils.enums.NAVType;
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
 @Audited

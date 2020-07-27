@@ -160,6 +160,7 @@ public class FXTokenServiceImpl implements FXTokenService {
     }
   }
 
+  @Transactional(rollbackFor = ServerErrorException.class)
   public void closeFXToken(String tokenCode) throws ServerErrorException {
     LOGGER.debug("Entering closeFXToken().");
     try {
@@ -230,6 +231,7 @@ public class FXTokenServiceImpl implements FXTokenService {
     }
   }
 
+  @Transactional(rollbackFor = ServerErrorException.class)
   public void enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException {
     String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
     User loggedInUser = userService.fetchByUsername(username);

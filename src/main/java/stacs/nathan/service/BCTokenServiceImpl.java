@@ -185,6 +185,7 @@ public class BCTokenServiceImpl implements BCTokenService {
     return token;
   }
 
+  @Transactional(rollbackFor = ServerErrorException.class)
   public void transferBCToken(TransferBCTokenRequestDto dto) throws ServerErrorException {
     LOGGER.debug("Entering transferBCToken().");
     try{

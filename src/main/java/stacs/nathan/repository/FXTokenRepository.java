@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface FXTokenRepository extends JpaRepository<FXToken, Long> {
 
-    List<FXToken> findByStatus(@Param("status") FXTokenStatus status);
+    List<FXToken> findByStatus(FXTokenStatus status);
 
     @Query("SELECT fx FROM FXToken fx WHERE fx.tokenCode =?1")
     FXToken findByTokenCode(@Param("tokenCode") String tokenCode);
