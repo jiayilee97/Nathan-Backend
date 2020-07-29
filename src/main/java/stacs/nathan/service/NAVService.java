@@ -11,4 +11,6 @@ public interface NAVService {
 
   List<NAV> fetchAllNAV(String startDate, String endDate) throws ServerErrorException;
 
+  void save(BigDecimal totalNAV) throws ServerErrorException;
+
 }

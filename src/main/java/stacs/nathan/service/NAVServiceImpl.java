@@ -48,4 +48,16 @@ public class NAVServiceImpl implements NAVService {
     }
   }
 
+  public void save(BigDecimal totalNAV) throws ServerErrorException {
+    LOGGER.debug("Entering save().");
+    try{
+      NAV nav = new NAV();
+      nav.setAssetValue(totalNAV);
+      repository.save(nav);
+    } catch (Exception e){
+      LOGGER.error("Exception in save().", e);
+      throw new ServerErrorException("Exception in save().", e);
+    }
+  }
+
 }

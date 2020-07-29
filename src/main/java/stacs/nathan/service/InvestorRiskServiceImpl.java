@@ -4,9 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.response.ClientResponseDto;
 import stacs.nathan.dto.response.InvestorRiskResponseDto;
+import stacs.nathan.entity.BaseCurrencyToken;
 import stacs.nathan.entity.InvestorRisk;
 import stacs.nathan.entity.SPToken;
 import stacs.nathan.repository.InvestorRiskRepository;
@@ -63,39 +65,45 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
     }
   }
 
-  public InvestorRiskResponseDto calculateInvestorRisk(){
-    List<ClientResponseDto> clients = userService.fetchAllClients();
-    InvestorRiskResponseDto investorRiskResponseDto = new InvestorRiskResponseDto();
-    List<InvestorRisk> investorRisks = new ArrayList<>();
-    BigDecimal totalNAV = BigDecimal.ZERO;
-    for(ClientResponseDto client : clients) {
-      String clientId = client.getClientId();
+  @Transactional(rollbackFor = ServerErrorException.class)
+  public void calculateInvestorRisk() throws ServerErrorException {
+    LOGGER.debug("Entering calculateInvestorRisk().");
+    try{
+      List<ClientResponseDto> clients = userService.fetchAllClients();
+      List<InvestorRisk> investorRisks = new ArrayList<>();
+      BigDecimal totalNAV = BigDecimal.ZERO;
+      for(ClientResponseDto client : clients) {
+        String clientId = client.getClientId();
 
-      // calculating NAV of SP Token
-      // TODO : retrieve the currencyPair list from ExchangeRate table
-      List<String> currencyPairs = new ArrayList<>();
-      InvestorRisk investorRisk = new InvestorRisk();
-      List<SPToken> spTokens = spTokenService.fetchAllOpenPositionsForRisk(clientId, currencyPairs);
-      BigDecimal navSPToken = BigDecimal.ZERO;
-      for(SPToken spToken : spTokens){
-        // TODO : convert notional amount to USD and add to navSPToken
-        navSPToken.add(spToken.getNotionalAmount());
+        // calculating NAV of SP Token
+        // TODO : retrieve the currencyPair list from ExchangeRate table
+        List<String> currencyPairs = new ArrayList<>();
+        InvestorRisk investorRisk = new InvestorRisk();
+        List<SPToken> spTokens = spTokenService.fetchAllOpenPositionsForRisk(clientId, currencyPairs);
+        BigDecimal navSPToken = BigDecimal.ZERO;
+        for(SPToken spToken : spTokens){
+          // TODO : convert notional amount to USD and add to navSPToken
+          navSPToken.add(spToken.getNotionalAmount());
+        }
+        investorRisk.setNavSPToken(navSPToken);
+        totalNAV.add(navSPToken);
+
+        // calculating Investor Risk
+
+
+        // calculating bcToken balance
+
+
+        investorRisks.add(investorRisk);
       }
-      investorRisk.setNavSPToken(navSPToken);
-      totalNAV.add(navSPToken);
-
-      // calculating Investor Risk
-
-
-      // calculating bcToken balance
-
-
-      investorRisks.add(investorRisk);
-      repository.save(investorRisk);
+      // save investor risk
+      repository.saveAll(investorRisks);
+      // save total NAV
+      navService.save(totalNAV);
+    } catch (Exception e){
+      LOGGER.error("Exception in calculateInvestorRisk().", e);
+      throw new ServerErrorException("Exception in calculateInvestorRisk().", e);
     }
-    investorRiskResponseDto.setInvestorRisks(investorRisks);
-    investorRiskResponseDto.setTotalCurrentNAV(totalNAV);
-    return investorRiskResponseDto;
   }
 
 }

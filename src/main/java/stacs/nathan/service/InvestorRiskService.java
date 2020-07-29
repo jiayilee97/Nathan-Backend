@@ -13,6 +13,6 @@ public interface InvestorRiskService {
 
   void saveAll(List<InvestorRisk> list) throws ServerErrorException;
 
-  InvestorRiskResponseDto calculateInvestorRisk();
+  void calculateInvestorRisk() throws ServerErrorException;
 
 }
