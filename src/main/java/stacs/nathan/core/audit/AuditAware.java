@@ -14,7 +14,7 @@ public class AuditAware implements AuditorAware<String> {
         .getAuthentication();
 
     if (authentication == null || !authentication.isAuthenticated()) {
-      return Optional.of("SCHEDULAR");
+      return Optional.of("system");
     }
     return Optional.of(((LoggedInUser) authentication.getPrincipal()).getUsername());
   }

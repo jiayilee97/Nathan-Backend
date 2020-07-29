@@ -119,11 +119,15 @@ public class SPTokenServiceImpl implements SPTokenService {
     return repository.fetchAllClosedPositions(user, Arrays.asList(SPTokenStatus.CONTRACT_MATURITY, SPTokenStatus.KNOCK_OUT));
   }
 
-  public List<SPTokenResponseDto> fetchAllOpenPositionsByClientId(String clientId){
+  public List<SPToken> fetchAllOpenPositionsForRisk(String clientId, List<String> currencyPairs) {
+    return repository.fetchAllOpenPositionsForRisk(clientId, SPTokenStatus.ACTIVE, currencyPairs);
+  }
+
+  public List<SPTokenResponseDto> fetchAllOpenPositionsByClientId(String clientId) {
     return repository.fetchAllOpenPositionsByClientId(clientId, SPTokenStatus.ACTIVE);
   }
 
-  public List<SPTokenResponseDto> fetchAllClosedPositionsByClientId(String clientId){
+  public List<SPTokenResponseDto> fetchAllClosedPositionsByClientId(String clientId) {
     return repository.fetchAllClosedPositionsByClientId(clientId, Arrays.asList(SPTokenStatus.CONTRACT_MATURITY, SPTokenStatus.KNOCK_OUT));
   }
 

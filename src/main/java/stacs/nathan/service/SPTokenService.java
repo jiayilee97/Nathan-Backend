@@ -23,6 +23,9 @@ public interface SPTokenService {
 
   List<SPTokenResponseDto> fetchAllClosedPositions(User user);
 
+  // for risk module calculation
+  List<SPToken> fetchAllOpenPositionsForRisk(String clientId, List<String> currencyPairs);
+
   List<SPTokenResponseDto> fetchAllOpenPositionsByClientId(String clientId);
 
   List<SPTokenResponseDto> fetchAllClosedPositionsByClientId(String clientId);
