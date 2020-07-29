@@ -1,14 +1,15 @@
 package stacs.nathan.dto.response;
 
 import stacs.nathan.entity.InvestorRisk;
-import java.math.BigDecimal;
+import stacs.nathan.entity.NAV;
+
 import java.util.List;
 
 public class InvestorRiskResponseDto {
 
   private List<InvestorRisk> investorRisks;
 
-  private BigDecimal totalCurrentNAV;
+  private NAV totalCurrentNAV;
 
   public List<InvestorRisk> getInvestorRisks() {
     return investorRisks;
@@ -18,11 +19,11 @@ public class InvestorRiskResponseDto {
     this.investorRisks = investorRisks;
   }
 
-  public BigDecimal getTotalCurrentNAV() {
+  public NAV getTotalCurrentNAV() {
     return totalCurrentNAV;
   }
 
-  public void setTotalCurrentNAV(BigDecimal totalCurrentNAV) {
+  public void setTotalCurrentNAV(NAV totalCurrentNAV) {
     this.totalCurrentNAV = totalCurrentNAV;
   }
 }

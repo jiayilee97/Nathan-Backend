@@ -20,14 +20,10 @@ public class NAVServiceImpl implements NAVService {
   @Autowired
   NAVRepository repository;
 
-  public BigDecimal fetchCurrentNAV() throws ServerErrorException {
+  public NAV fetchCurrentNAV() throws ServerErrorException {
     LOGGER.debug("Entering fetchCurrentNAV().");
     try{
-      NAV nav = repository.findFirstByOrderByIdDesc();
-      if(nav == null) {
-        return BigDecimal.ZERO;
-      }
-      return nav.getAssetValue();
+      return repository.findFirstByOrderByIdDesc();
     } catch (Exception e){
       LOGGER.error("Exception in fetchCurrentNAV().", e);
       throw new ServerErrorException("Exception in fetchCurrentNAV().", e);

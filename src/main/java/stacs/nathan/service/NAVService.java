@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface NAVService {
 
-  BigDecimal fetchCurrentNAV() throws ServerErrorException;
+  NAV fetchCurrentNAV() throws ServerErrorException;
 
   List<NAV> fetchAllNAV(String startDate, String endDate) throws ServerErrorException;
 
