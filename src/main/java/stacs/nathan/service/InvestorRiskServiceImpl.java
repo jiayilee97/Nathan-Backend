@@ -7,11 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.response.ClientResponseDto;
+import stacs.nathan.dto.response.ExchangeRateResponseDto;
 import stacs.nathan.dto.response.InvestorRiskResponseDto;
-import stacs.nathan.entity.BaseCurrencyToken;
-import stacs.nathan.entity.InvestorRisk;
-import stacs.nathan.entity.SPToken;
-import stacs.nathan.repository.InvestorRiskRepository;
+import stacs.nathan.entity.*;
+import stacs.nathan.repository.*;
+import stacs.nathan.utils.enums.FxCurrency;
+import stacs.nathan.utils.enums.TokenType;
+import stacs.nathan.utils.enums.UserRole;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +34,21 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
 
   @Autowired
   SPTokenService spTokenService;
+
+  @Autowired
+  FXTokenRepository fxTokenRepository;
+
+  @Autowired
+  ExchangeRateRepository exchangeRateRepository;
+
+  @Autowired
+  BalanceRepository balanceRepository;
+
+  @Autowired
+  UserRepository userRepository;
+
+  @Autowired
+  BCTokenRepository bcTokenRepository;
 
   public InvestorRiskResponseDto fetchAllInvestorRisk() throws ServerErrorException {
     LOGGER.debug("Entering fetchAllInvestorRisk().");
@@ -69,30 +87,48 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
   public void calculateInvestorRisk() throws ServerErrorException {
     LOGGER.debug("Entering calculateInvestorRisk().");
     try{
-      List<ClientResponseDto> clients = userService.fetchAllClients();
+      List<User> clients = userRepository.findByRole(UserRole.CLIENT);
       List<InvestorRisk> investorRisks = new ArrayList<>();
       BigDecimal totalNAV = BigDecimal.ZERO;
-      for(ClientResponseDto client : clients) {
+      for(User  client : clients) {
         String clientId = client.getClientId();
+        List<String> currencyPairs = exchangeRateRepository.findAllUniqueCurrency();
+        List<ExchangeRate> exchangeRates = exchangeRateRepository.fetchCurrentExchangeRates();
+        InvestorRisk investorRisk = new InvestorRisk();
 
         // calculating NAV of SP Token
         // TODO : retrieve the currencyPair list from ExchangeRate table
-        List<String> currencyPairs = new ArrayList<>();
-        InvestorRisk investorRisk = new InvestorRisk();
         List<SPToken> spTokens = spTokenService.fetchAllOpenPositionsForRisk(clientId, currencyPairs);
         BigDecimal navSPToken = BigDecimal.ZERO;
+        BigDecimal navInvestedAmount = BigDecimal.ZERO;
         for(SPToken spToken : spTokens){
           // TODO : convert notional amount to USD and add to navSPToken
-          navSPToken.add(spToken.getNotionalAmount());
+          BigDecimal convertedAmount = convertSPToken(spToken.getNotionalAmount(), spToken.getUnderlyingCurrency(), exchangeRates);
+          navSPToken = navSPToken.add(convertedAmount);
+
+          // calculating Invested amount
+          if (spToken.getFxToken() != null) {
+            Balance fxBalance = balanceRepository.findByTokenCodeAndId(spToken.getFxToken().getTokenCode(), client.getId());
+            BigDecimal convertedInvestment = convertInvestedAmount(fxBalance.getBalanceAmount(), spToken.getFxToken().getFxCurrency(), exchangeRates);
+            navInvestedAmount = navInvestedAmount.add(convertedInvestment);
+          }
         }
-        investorRisk.setNavSPToken(navSPToken);
-        totalNAV.add(navSPToken);
-
-        // calculating Investor Risk
-
 
         // calculating bcToken balance
-
+        List<Balance> bcTokens = balanceRepository.findByTokenTypeAndUser(TokenType.BC_TOKEN, client);
+        BigDecimal navBcToken = BigDecimal.ZERO;
+        for (Balance bcBalance: bcTokens) {
+          BaseCurrencyToken baseCurrencyToken = bcTokenRepository.findByTokenCode(bcBalance.getTokenCode());
+          BigDecimal convertedBcAmount = convertToUSD(bcBalance.getBalanceAmount(), baseCurrencyToken.getUnderlyingCurrency(), exchangeRates);
+          navBcToken = navBcToken.add(convertedBcAmount);
+        }
+        investorRisk.setNavSPToken(navSPToken);
+        investorRisk.setInvestedAmount(navInvestedAmount);
+        investorRisk.setClientId(clientId);
+        investorRisk.setBcTokenBalance(navBcToken);
+        totalNAV = totalNAV.add(navSPToken);
+        totalNAV = totalNAV.add(navInvestedAmount);
+        totalNAV = totalNAV.add(navBcToken);
 
         investorRisks.add(investorRisk);
       }
@@ -104,6 +140,73 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
       LOGGER.error("Exception in calculateInvestorRisk().", e);
       throw new ServerErrorException("Exception in calculateInvestorRisk().", e);
     }
+  }
+
+  public BigDecimal convertToUSD(BigDecimal balance, String currency, List<ExchangeRate> exchangeRates) {
+    BigDecimal newNav = BigDecimal.ZERO;
+    BigDecimal exchangeRate = BigDecimal.ONE;
+    for (ExchangeRate rate: exchangeRates) {
+      if (currency.compareTo(rate.getCurrency()) == 0) {
+        exchangeRate = rate.getPrice();
+        break;
+      }
+    }
+
+    switch (currency) {
+      case "AUD" :
+      case "EUR" :
+      case "GBP" : newNav = balance.multiply(exchangeRate); break;
+      case "USD" : newNav = balance; break;
+      case "JPY" :
+      case "CHF" : newNav = balance.divide(exchangeRate); break;
+    }
+
+    return newNav;
+  }
+
+  public BigDecimal convertInvestedAmount(BigDecimal balance, String currency, List<ExchangeRate> exchangeRates) {
+    BigDecimal newNav = BigDecimal.ZERO;
+    BigDecimal exchangeRate = BigDecimal.ONE;
+    for (ExchangeRate rate: exchangeRates) {
+      if (currency.compareTo(rate.getCurrency()) == 0) {
+        exchangeRate = rate.getPrice();
+        break;
+      }
+    }
+    switch (currency) {
+      case "AUD" :
+      case "EUR" :
+      case "GBP" : newNav = balance.multiply(exchangeRate); break;
+      case "USD" :
+      case "JPY" :
+      case "CHF" : newNav = balance; break;
+    }
+
+    return newNav;
+  }
+
+  public BigDecimal convertSPToken(BigDecimal balance, String currencyPair, List<ExchangeRate> exchangeRates) {
+    BigDecimal newNav = BigDecimal.ZERO;
+    FxCurrency fxCurrency = FxCurrency.valueOf(currencyPair.replace("/", "_"));
+    String currency = fxCurrency.getValue();
+    BigDecimal exchangeRate = BigDecimal.ONE;
+    for (ExchangeRate rate: exchangeRates) {
+      if (currency.compareTo(rate.getCurrency()) == 0) {
+        exchangeRate = rate.getPrice();
+        break;
+      }
+    }
+
+    switch (currency) {
+      case "AUD" :
+      case "EUR" :
+      case "GBP" : newNav = balance.multiply(exchangeRate); break;
+      case "USD" :
+      case "JPY" :
+      case "CHF" : newNav = balance; break;
+    }
+
+    return newNav;
   }
 
 }
