@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import stacs.nathan.dto.response.BalanceResponseDto;
 import stacs.nathan.entity.Balance;
 import stacs.nathan.entity.User;
+import stacs.nathan.utils.enums.TokenType;
+
 import java.util.List;
 
 @Repository
@@ -26,5 +28,9 @@ public interface BalanceRepository extends JpaRepository<Balance, Long> {
 
   @Query("SELECT b from Balance b WHERE b.user.id = :id AND b.tokenCode = :tokenCode")
   Balance findByTokenCodeAndId(@Param("tokenCode") String tokenCode, @Param("id") Long id);
+
+  List<Balance> findByTokenType(TokenType tokenType);
+
+  List<Balance> findByTokenTypeAndUser(TokenType tokenType, User user);
 
 }

@@ -1,5 +1,8 @@
 package stacs.nathan.service;
 
-public interface ExchangeRateService {
+import stacs.nathan.core.exception.ServerErrorException;
+import stacs.nathan.dto.request.ExchangeRateEntryRequestDto;
 
+public interface ExchangeRateService {
+    void enterExchangeRate(ExchangeRateEntryRequestDto dto) throws ServerErrorException;
 }

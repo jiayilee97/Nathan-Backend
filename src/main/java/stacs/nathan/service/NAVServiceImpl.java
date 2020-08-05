@@ -47,6 +47,7 @@ public class NAVServiceImpl implements NAVService {
     try{
       NAV nav = new NAV();
       nav.setAssetValue(totalNAV);
+      System.out.println("totalNav" + totalNAV);
       repository.save(nav);
     } catch (Exception e){
       LOGGER.error("Exception in save().", e);
