@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 public class NAV extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "asset_value", precision = 20, scale = 10)
+    @Column(name = "asset_value", precision = 20, scale = 5)
     @ColumnDefault("0.0")
     private BigDecimal assetValue = BigDecimal.ZERO;
 

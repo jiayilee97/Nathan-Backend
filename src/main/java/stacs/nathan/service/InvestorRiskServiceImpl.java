@@ -17,6 +17,8 @@ import stacs.nathan.utils.enums.UserRole;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -54,7 +56,23 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
     LOGGER.debug("Entering fetchAllInvestorRisk().");
     try{
       InvestorRiskResponseDto dto = new InvestorRiskResponseDto();
-      dto.setInvestorRisks(repository.findAll());
+      List<InvestorRisk> investorRisks = repository.findAll();
+      HashMap<String, InvestorRisk> clientDataMap = new HashMap<>();
+      for (InvestorRisk risk : investorRisks) {
+        if (!clientDataMap.containsKey(risk.getClientId())) {
+          clientDataMap.put(risk.getClientId(), risk);
+        } else {
+          Date latestDate = clientDataMap.get(risk.getClientId()).getUpdatedDate();
+          if (risk.getUpdatedDate().after(latestDate)) {
+            clientDataMap.replace(risk.getClientId(), risk);
+          }
+        }
+      }
+
+      List<InvestorRisk> latestData = new ArrayList<InvestorRisk>(clientDataMap.values());
+
+
+      dto.setInvestorRisks(latestData);
       dto.setTotalCurrentNAV(navService.fetchCurrentNAV());
       return dto;
     } catch (Exception e){

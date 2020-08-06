@@ -20,4 +20,5 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long
 
     ExchangeRate findByCurrencyPair(String currencyPair);
 
+
 }
