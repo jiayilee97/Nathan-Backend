@@ -1,6 +1,5 @@
 package stacs.nathan.service;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +7,8 @@ import org.springframework.stereotype.Service;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.entity.NAV;
 import stacs.nathan.repository.NAVRepository;
+import stacs.nathan.utils.CommonUtils;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -34,9 +33,8 @@ public class NAVServiceImpl implements NAVService {
   public List<NAV> fetchAllNAV(String startDate, String endDate) throws ServerErrorException {
     LOGGER.debug("Entering fetchAllNAV().");
     try{
-      SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-      Date start = DateUtils.addDays(formatter.parse(startDate), -1);
-      Date end = DateUtils.addDays(formatter.parse(endDate), 1);
+      Date start = CommonUtils.formatDate(startDate, -1);
+      Date end = CommonUtils.formatDate(endDate, 1);
       return repository.fetchAllNAV(start, end);
     } catch (Exception e){
       LOGGER.error("Exception in fetchAllNAV().", e);

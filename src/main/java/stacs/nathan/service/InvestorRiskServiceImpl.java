@@ -6,15 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stacs.nathan.core.exception.ServerErrorException;
-import stacs.nathan.dto.response.ClientResponseDto;
-import stacs.nathan.dto.response.ExchangeRateResponseDto;
 import stacs.nathan.dto.response.InvestorRiskResponseDto;
 import stacs.nathan.entity.*;
 import stacs.nathan.repository.*;
 import stacs.nathan.utils.enums.FxCurrency;
 import stacs.nathan.utils.enums.TokenType;
 import stacs.nathan.utils.enums.UserRole;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,13 +29,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
   NAVService navService;
 
   @Autowired
-  UserService userService;
-
-  @Autowired
   SPTokenService spTokenService;
-
-  @Autowired
-  FXTokenRepository fxTokenRepository;
 
   @Autowired
   ExchangeRateRepository exchangeRateRepository;
@@ -115,12 +106,10 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
         InvestorRisk investorRisk = new InvestorRisk();
 
         // calculating NAV of SP Token
-        // TODO : retrieve the currencyPair list from ExchangeRate table
         List<SPToken> spTokens = spTokenService.fetchAllOpenPositionsForRisk(clientId, currencyPairs);
         BigDecimal navSPToken = BigDecimal.ZERO;
         BigDecimal navInvestedAmount = BigDecimal.ZERO;
         for(SPToken spToken : spTokens){
-          // TODO : convert notional amount to USD and add to navSPToken
           BigDecimal convertedAmount = convertSPToken(spToken.getNotionalAmount(), spToken.getUnderlyingCurrency(), exchangeRates);
           navSPToken = navSPToken.add(convertedAmount);
 
@@ -137,7 +126,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
         BigDecimal navBcToken = BigDecimal.ZERO;
         for (Balance bcBalance: bcTokens) {
           BaseCurrencyToken baseCurrencyToken = bcTokenRepository.findByTokenCode(bcBalance.getTokenCode());
-          BigDecimal convertedBcAmount = convertToUSD(bcBalance.getBalanceAmount(), baseCurrencyToken.getUnderlyingCurrency(), exchangeRates);
+          BigDecimal convertedBcAmount = convertBCToken(bcBalance.getBalanceAmount(), baseCurrencyToken.getUnderlyingCurrency(), exchangeRates);
           navBcToken = navBcToken.add(convertedBcAmount);
         }
         investorRisk.setNavSPToken(navSPToken);
@@ -160,7 +149,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
     }
   }
 
-  public BigDecimal convertToUSD(BigDecimal balance, String currency, List<ExchangeRate> exchangeRates) {
+  public BigDecimal convertBCToken(BigDecimal balance, String currency, List<ExchangeRate> exchangeRates) {
     BigDecimal newNav = BigDecimal.ZERO;
     BigDecimal exchangeRate = BigDecimal.ONE;
     for (ExchangeRate rate: exchangeRates) {
@@ -171,12 +160,15 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
     }
 
     switch (currency) {
-      case "AUD" :
-      case "EUR" :
-      case "GBP" : newNav = balance.multiply(exchangeRate); break;
-      case "USD" : newNav = balance; break;
-      case "JPY" :
-      case "CHF" : newNav = balance.divide(exchangeRate); break;
+      case "AUD" : case "EUR" : case "GBP" :
+        newNav = balance.multiply(exchangeRate);
+        break;
+      case "USD" :
+        newNav = balance;
+        break;
+      case "JPY" : case "CHF" :
+        newNav = balance.divide(exchangeRate);
+        break;
     }
 
     return newNav;
@@ -192,12 +184,12 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
       }
     }
     switch (currency) {
-      case "AUD" :
-      case "EUR" :
-      case "GBP" : newNav = balance.multiply(exchangeRate); break;
-      case "USD" :
-      case "JPY" :
-      case "CHF" : newNav = balance; break;
+      case "AUD" : case "EUR" : case "GBP" :
+        newNav = balance.multiply(exchangeRate);
+        break;
+      case "USD" : case "JPY" : case "CHF" :
+        newNav = balance;
+        break;
     }
 
     return newNav;
@@ -216,12 +208,12 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
     }
 
     switch (currency) {
-      case "AUD" :
-      case "EUR" :
-      case "GBP" : newNav = balance.multiply(exchangeRate); break;
-      case "USD" :
-      case "JPY" :
-      case "CHF" : newNav = balance; break;
+      case "AUD" : case "EUR" : case "GBP" :
+        newNav = balance.multiply(exchangeRate);
+        break;
+      case "USD" : case "JPY" : case "CHF" :
+        newNav = balance;
+        break;
     }
 
     return newNav;

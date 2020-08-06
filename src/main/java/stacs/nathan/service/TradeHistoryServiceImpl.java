@@ -1,6 +1,5 @@
 package stacs.nathan.service;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +12,7 @@ import stacs.nathan.entity.SPToken;
 import stacs.nathan.entity.TradeHistory;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.TradeHistoryRepository;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import stacs.nathan.utils.CommonUtils;
 import java.util.Date;
 import java.util.List;
 
@@ -35,14 +33,12 @@ public class TradeHistoryServiceImpl implements TradeHistoryService{
         repository.save(tradeHistory);
     }
 
-    public List<TradeHistoryResponseDto> fetchAllTradeHistory(String startDate, String endDate) throws ServerErrorException, ParseException {
+    public List<TradeHistoryResponseDto> fetchAllTradeHistory(String startDate, String endDate) throws ServerErrorException {
         LOGGER.debug("Entering fetchAllTradeHistory().");
         try{
             String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-            User loggedInUser = userService.fetchByUsername(username);
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            Date start = DateUtils.addDays(formatter.parse(startDate), -1);
-            Date end = DateUtils.addDays(formatter.parse(endDate), 1);
+            Date start = CommonUtils.formatDate(startDate, -1);
+            Date end = CommonUtils.formatDate(endDate, 1);
             return repository.findAllByDateRange(start, end);
         } catch (Exception e){
             LOGGER.error("Exception in fetchAllTradeHistory().", e);
