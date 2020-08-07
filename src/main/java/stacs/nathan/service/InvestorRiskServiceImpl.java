@@ -102,7 +102,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
       for(User  client : clients) {
         String clientId = client.getClientId();
         List<String> currencyPairs = exchangeRateRepository.findAllUniqueCurrency();
-        List<ExchangeRate> exchangeRates = exchangeRateRepository.fetchCurrentExchangeRates();
+        List<ExchangeRate> exchangeRates = exchangeRateRepository.findAll();
         InvestorRisk investorRisk = new InvestorRisk();
 
         // calculating NAV of SP Token

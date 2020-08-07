@@ -23,13 +23,13 @@ public class InvestorRiskController {
   @Autowired
   NAVService navService;
 
-  @PreAuthorize("hasAuthority('OPS')")
+  @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO')")
   @GetMapping("/fetch-all")
   public InvestorRiskResponseDto fetchAll() throws ServerErrorException {
     return investorRiskService.fetchAllInvestorRisk();
   }
 
-  @PreAuthorize("hasAuthority('OPS')")
+  @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO')")
   @GetMapping("/nav/fetch-all")
   public List<NAV> fetchNAVHistory(@RequestParam String startDate, @RequestParam String endDate) throws ServerErrorException {
     return navService.fetchAllNAV(startDate, endDate);
