@@ -102,7 +102,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
       for(User  client : clients) {
         String clientId = client.getClientId();
         List<String> currencyPairs = exchangeRateRepository.findAllUniqueCurrency();
-        List<ExchangeRate> exchangeRates = exchangeRateRepository.fetchCurrentExchangeRates();
+        List<ExchangeRate> exchangeRates = exchangeRateRepository.fetchUpdatedExchangeRates();
         InvestorRisk investorRisk = new InvestorRisk();
 
         // calculating NAV of SP Token
@@ -116,7 +116,13 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
           // calculating Invested amount
           if (spToken.getFxToken() != null) {
             Balance fxBalance = balanceRepository.findByTokenCodeAndId(spToken.getFxToken().getTokenCode(), client.getId());
-            BigDecimal convertedInvestment = convertInvestedAmount(fxBalance.getBalanceAmount(), spToken.getFxToken().getFxCurrency(), exchangeRates);
+
+            BigDecimal convertedInvestment;
+            if (fxBalance != null) {
+              convertedInvestment = convertInvestedAmount(fxBalance.getBalanceAmount(), spToken.getFxToken().getFxCurrency(), exchangeRates);
+            } else {
+              convertedInvestment = convertInvestedAmount(BigDecimal.ZERO, spToken.getFxToken().getFxCurrency(), exchangeRates);
+            }
             navInvestedAmount = navInvestedAmount.add(convertedInvestment);
           }
         }
@@ -190,6 +196,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
       case "USD" : case "JPY" : case "CHF" :
         newNav = balance;
         break;
+      default: newNav = balance; break;
     }
 
     return newNav;

@@ -10,5 +10,7 @@ import java.util.List;
 public interface ExchangeRateService {
     void enterExchangeRate(List<ExchangeRateEntryRequestDto> dto) throws ServerErrorException;
 
-    List<ExchangeRate> fetchExchangeRate();
+    List<ExchangeRate> fetchExchangeRate(String startDate, String endDate) throws ServerErrorException;
+
+    List<ExchangeRate> fetchLatestExchangeRate();
 }
