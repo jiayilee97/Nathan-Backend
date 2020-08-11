@@ -140,8 +140,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
         investorRisk.setClientId(clientId);
         investorRisk.setBcTokenBalance(navBcToken);
         totalNAV = totalNAV.add(navSPToken);
-        totalNAV = totalNAV.add(navInvestedAmount);
-        totalNAV = totalNAV.add(navBcToken);
+
 
         investorRisks.add(investorRisk);
       }
