@@ -172,6 +172,9 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
         newNav = balance;
         break;
       case "JPY" : case "CHF" :
+        System.out.println("balance:" + balance);
+        System.out.println("exchangeRate: " + exchangeRate);
+        System.out.println("currency: " + currency);
         newNav = balance.divide(exchangeRate);
         break;
       default: newNav = balance; break;
