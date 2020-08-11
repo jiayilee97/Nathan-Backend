@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.ExchangeRateEntryRequestDto;
@@ -26,8 +27,12 @@ public class ExchangeRateController {
 
   @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO')")
   @RequestMapping("/fetch-all")
-  public List<ExchangeRate> fetchExchangeRate() {
-    return exchangeRateService.fetchExchangeRate();
+  public List<ExchangeRate> fetchExchangeRate(@RequestParam String startDate, @RequestParam String endDate) throws ServerErrorException {
+    return exchangeRateService.fetchExchangeRate(startDate, endDate);
   }
+
+  @PreAuthorize("hasAuthority('OPS')")
+  @RequestMapping("/fetch-updated")
+  public List<ExchangeRate> fetchLatestExchangeRate() { return exchangeRateService.fetchLatestExchangeRate(); }
 
 }

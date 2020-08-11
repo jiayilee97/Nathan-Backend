@@ -8,7 +8,9 @@ import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.ExchangeRateEntryRequestDto;
 import stacs.nathan.entity.*;
 import stacs.nathan.repository.*;
+import stacs.nathan.utils.CommonUtils;
 import stacs.nathan.utils.enums.FxCurrency;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -26,21 +28,15 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         LOGGER.debug("Entering enterExchangeRate().");
         try {
           for (ExchangeRateEntryRequestDto dto : exchangeRateList) {
-            ExchangeRate exchangeRate = repository.findByCurrencyPair(dto.getCurrencyPair());
+            //ExchangeRate exchangeRate = repository.findByCurrencyPair(dto.getCurrencyPair());
             String currencyPair = dto.getCurrencyPair().replace("/", "_");
             FxCurrency currency = FxCurrency.valueOf(currencyPair);
-            if (exchangeRate != null) {
-              exchangeRate.setCurrency(currency.getValue());
-              exchangeRate.setCurrencyPair(dto.getCurrencyPair());
-              exchangeRate.setPrice(dto.getPrice());
-              repository.save(exchangeRate);
-            } else {
-              ExchangeRate newExchangeRate = new ExchangeRate();
-              newExchangeRate.setCurrency(currency.getValue());
-              newExchangeRate.setCurrencyPair(dto.getCurrencyPair());
-              newExchangeRate.setPrice(dto.getPrice());
-              repository.save(newExchangeRate);
-            }
+
+            ExchangeRate newExchangeRate = new ExchangeRate();
+            newExchangeRate.setCurrency(currency.getValue());
+            newExchangeRate.setCurrencyPair(dto.getCurrencyPair());
+            newExchangeRate.setPrice(dto.getPrice());
+            repository.save(newExchangeRate);
           }
 
           investorRiskService.calculateInvestorRisk();
@@ -51,8 +47,22 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         }
   }
 
-  public List<ExchangeRate> fetchExchangeRate() {
-    return repository.findAll();
+  public List<ExchangeRate> fetchLatestExchangeRate() {
+    return repository.fetchUpdatedExchangeRates();
+  }
+
+
+  public List<ExchangeRate> fetchExchangeRate(String startDate, String endDate) throws ServerErrorException {
+    LOGGER.debug("Entering fetchExchangeRate().");
+    try {
+      Date start = CommonUtils.formatDate(startDate, -1);
+      Date end = CommonUtils.formatDate(endDate, 1);
+      return repository.fetchCurrentExchangeRates(start, end);
+    }
+    catch (Exception e) {
+      LOGGER.error("Exception in fetchExchangeRate().", e);
+      throw new ServerErrorException("Exception in fetchExchangeRate().", e);
+    }
   }
 
 }
