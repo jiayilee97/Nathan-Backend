@@ -174,6 +174,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
       case "JPY" : case "CHF" :
         newNav = balance.divide(exchangeRate);
         break;
+      default: newNav = balance; break;
     }
 
     return newNav;
@@ -220,6 +221,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
       case "USD" : case "JPY" : case "CHF" :
         newNav = balance;
         break;
+      default: newNav = balance; break;
     }
 
     return newNav;
