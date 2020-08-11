@@ -1,11 +1,13 @@
 package stacs.nathan.service;
 
+import stacs.nathan.core.audit.action.AudibleActionImplementation;
 import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.response.*;
 import stacs.nathan.entity.FXToken;
+import stacs.nathan.entity.FXTokenDataEntry;
 import stacs.nathan.entity.User;
 import java.util.List;
 
@@ -17,7 +19,7 @@ public interface FXTokenService {
 
     void save(FXToken fxToken);
 
-    void createFXToken(FXTokenRequestDto token) throws ServerErrorException, BadRequestException;
+    AudibleActionImplementation<FXToken> createFXToken(FXTokenRequestDto token) throws ServerErrorException, BadRequestException;
 
     void closeFXToken(String tokenCode) throws ServerErrorException;
 
@@ -27,7 +29,7 @@ public interface FXTokenService {
 
     FXTokenResponseDto fetchTokenById(String tokenCode);
 
-    void enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException;
+    AudibleActionImplementation<FXTokenDataEntry> enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException;
 
     List<FXTokenResponseDto> fetchAvailableFXTokens();
 

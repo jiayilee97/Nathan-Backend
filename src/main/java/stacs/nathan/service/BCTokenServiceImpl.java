@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stacs.nathan.core.audit.action.AudibleActionImplementation;
+import stacs.nathan.core.audit.action.annotation.AudibleActionTrail;
 import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.BCTokenRequestDto;
@@ -22,6 +24,7 @@ import stacs.nathan.dto.response.CreateBCTokenInitDto;
 import stacs.nathan.entity.*;
 import stacs.nathan.repository.BCTokenRepository;
 import stacs.nathan.repository.TradeHistoryRepository;
+import stacs.nathan.utils.constancs.AuditActionConstants;
 import stacs.nathan.utils.enums.BCTokenStatus;
 import stacs.nathan.utils.enums.CodeType;
 import stacs.nathan.utils.enums.TokenType;
@@ -70,7 +73,8 @@ public class BCTokenServiceImpl implements BCTokenService {
   }
 
   @Transactional(rollbackFor = ServerErrorException.class)
-  public void createBCToken(BCTokenRequestDto dto) throws ServerErrorException, BadRequestException {
+  @AudibleActionTrail(module = AuditActionConstants.BC_TOKEN_MODULE, action = AuditActionConstants.CREATE_BC_TOKEN)
+  public AudibleActionImplementation<BaseCurrencyToken> createBCToken(BCTokenRequestDto dto) throws ServerErrorException, BadRequestException {
     LOGGER.debug("Entering createBCToken().");
     BaseCurrencyToken token = repository.findByTokenCode(dto.getTokenCode());
     if(token != null){
@@ -89,6 +93,7 @@ public class BCTokenServiceImpl implements BCTokenService {
       if (jsonRespBO != null) {
         processAvailableChain(token, jsonRespBO);
       }
+      return new AudibleActionImplementation<>(token);
     } catch (Exception e) {
       LOGGER.error("Exception in createBCToken().", e);
       throw new ServerErrorException("Exception in createBCToken().", e);

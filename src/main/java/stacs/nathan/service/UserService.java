@@ -1,5 +1,6 @@
 package stacs.nathan.service;
 
+import stacs.nathan.core.audit.action.AudibleActionImplementation;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.ClientRequestDto;
 import stacs.nathan.dto.request.CreateClientRequestDto;
@@ -29,7 +30,7 @@ public interface UserService {
 
     List<String> fetchAllClientIds();
 
-    void createClient(CreateClientRequestDto dto) throws ServerErrorException;
+    AudibleActionImplementation<User> createClient(CreateClientRequestDto dto) throws ServerErrorException;
 
     void createUser(ClientRequestDto dto) throws ServerErrorException;
 

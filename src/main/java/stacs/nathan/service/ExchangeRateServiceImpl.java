@@ -10,7 +10,6 @@ import stacs.nathan.entity.*;
 import stacs.nathan.repository.*;
 import stacs.nathan.utils.CommonUtils;
 import stacs.nathan.utils.enums.FxCurrency;
-
 import java.util.Date;
 import java.util.List;
 
@@ -38,7 +37,6 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             newExchangeRate.setCurrencyPair(dto.getCurrencyPair());
             newExchangeRate.setPrice(dto.getPrice());
             repository.save(newExchangeRate);
-
           }
 
           investorRiskService.calculateInvestorRisk();
