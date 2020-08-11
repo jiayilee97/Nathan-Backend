@@ -13,6 +13,7 @@ import stacs.nathan.utils.enums.FxCurrency;
 import stacs.nathan.utils.enums.TokenType;
 import stacs.nathan.utils.enums.UserRole;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -172,10 +173,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
         newNav = balance;
         break;
       case "JPY" : case "CHF" :
-        System.out.println("balance:" + balance);
-        System.out.println("exchangeRate: " + exchangeRate);
-        System.out.println("currency: " + currency);
-        newNav = balance.divide(exchangeRate);
+        newNav = balance.divide(exchangeRate,2, RoundingMode.HALF_UP);
         break;
       default: newNav = balance; break;
     }
