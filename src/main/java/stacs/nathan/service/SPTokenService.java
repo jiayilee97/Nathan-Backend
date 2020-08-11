@@ -1,5 +1,6 @@
 package stacs.nathan.service;
 
+import stacs.nathan.core.audit.action.AudibleActionImplementation;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.SPTokenRequestDto;
 import stacs.nathan.dto.response.CreateSPTokenInitDto;
@@ -13,7 +14,7 @@ public interface SPTokenService {
 
   void save(SPToken token);
 
-  void createSPToken(SPTokenRequestDto token) throws ServerErrorException;
+  AudibleActionImplementation<SPToken> createSPToken(SPTokenRequestDto token) throws ServerErrorException;
 
   List<SPTokenResponseDto> fetchAllTokens();
 

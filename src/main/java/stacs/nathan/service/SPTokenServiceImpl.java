@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stacs.nathan.core.audit.action.annotation.AudibleActionTrail;
+import stacs.nathan.core.audit.action.AudibleActionImplementation;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.request.SPTokenRequestDto;
@@ -19,6 +21,7 @@ import stacs.nathan.dto.response.CreateSPTokenInitDto;
 import stacs.nathan.dto.response.SPTokenResponseDto;
 import stacs.nathan.entity.*;
 import stacs.nathan.repository.*;
+import stacs.nathan.utils.constancs.AuditActionConstants;
 import stacs.nathan.utils.enums.*;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -58,7 +61,8 @@ public class SPTokenServiceImpl implements SPTokenService {
   }
 
   @Transactional(rollbackFor = ServerErrorException.class)
-  public void createSPToken(SPTokenRequestDto dto) throws ServerErrorException {
+  @AudibleActionTrail(module = AuditActionConstants.SP_TOKEN_MODULE, action = AuditActionConstants.CREATE_SP_TOKEN)
+  public AudibleActionImplementation<SPToken> createSPToken(SPTokenRequestDto dto) throws ServerErrorException {
     LOGGER.debug("Entering createSPToken().");
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
@@ -77,6 +81,7 @@ public class SPTokenServiceImpl implements SPTokenService {
       if (jsonRespBO != null) {
         processAvailableChain(token, jsonRespBO);
       }
+      return new AudibleActionImplementation<>(token);
     }catch (Exception e){
       LOGGER.error("Exception in createSPToken().", e);
       throw new ServerErrorException("Exception in createSPToken().", e);
@@ -107,7 +112,8 @@ public class SPTokenServiceImpl implements SPTokenService {
     return repository.findByStatus(status);
   }
 
-  public List <SPTokenResponseDto> fetchAllTokens() {
+
+  public List<SPTokenResponseDto> fetchAllTokens() {
     return repository.fetchAllTokens();
   }
 

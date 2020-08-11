@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import stacs.nathan.core.audit.action.AudibleActionImplementation;
+import stacs.nathan.core.audit.action.annotation.AudibleActionTrail;
 import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.response.*;
@@ -12,6 +14,7 @@ import stacs.nathan.dto.request.ClientRequestDto;
 import stacs.nathan.dto.request.CreateClientRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.utils.CommonUtils;
+import stacs.nathan.utils.constancs.AuditActionConstants;
 import stacs.nathan.utils.enums.AccreditedStatus;
 import stacs.nathan.utils.enums.CodeType;
 import stacs.nathan.utils.enums.UserRole;
@@ -96,7 +99,8 @@ public class UserServiceImpl implements UserService {
         return repository.fetchAllClientIds(UserRole.CLIENT);
     }
 
-    public void createClient(CreateClientRequestDto dto) throws ServerErrorException {
+    @AudibleActionTrail(module = AuditActionConstants.CLIENT_MODULE, action = AuditActionConstants.CREATE_CLIENT)
+    public AudibleActionImplementation<User> createClient(CreateClientRequestDto dto) throws ServerErrorException {
         LOGGER.debug("Entering createClient().");
         try{
             User user = repository.findByClientId(dto.getClientId());
@@ -113,6 +117,7 @@ public class UserServiceImpl implements UserService {
             user.setRiskToleranceRating(dto.getRiskToleranceRating());
             blockchainService.createWallet(user);
             repository.save(user);
+            return new AudibleActionImplementation<>(user);
         }catch (Exception e){
             LOGGER.error("Exception in createClient().", e);
             throw new ServerErrorException("Exception in createClient().", e);

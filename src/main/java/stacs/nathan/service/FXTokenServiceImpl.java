@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stacs.nathan.core.audit.action.AudibleActionImplementation;
+import stacs.nathan.core.audit.action.annotation.AudibleActionTrail;
 import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
@@ -20,6 +22,7 @@ import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.response.*;
 import stacs.nathan.entity.*;
 import stacs.nathan.repository.*;
+import stacs.nathan.utils.constancs.AuditActionConstants;
 import stacs.nathan.utils.enums.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -90,7 +93,8 @@ public class FXTokenServiceImpl implements FXTokenService {
   }
 
   @Transactional(rollbackFor = ServerErrorException.class)
-  public void createFXToken(FXTokenRequestDto dto) throws ServerErrorException, BadRequestException {
+  @AudibleActionTrail(module = AuditActionConstants.FX_TOKEN_MODULE, action = AuditActionConstants.CREATE_FX_TOKEN)
+  public AudibleActionImplementation<FXToken> createFXToken(FXTokenRequestDto dto) throws ServerErrorException, BadRequestException {
     LOGGER.debug("Entering createFXToken().");
     FXToken token = fetchByTokenCode(dto.getTokenCode());
     if(token != null){
@@ -111,6 +115,7 @@ public class FXTokenServiceImpl implements FXTokenService {
       if (jsonRespBO != null) {
         processAvailableChain(token, jsonRespBO);
       }
+      return new AudibleActionImplementation<>(token);
     } catch (Exception e){
       LOGGER.error("Exception in createFXToken().", e);
       throw new ServerErrorException("Exception in createFXToken().", e);
@@ -232,7 +237,8 @@ public class FXTokenServiceImpl implements FXTokenService {
   }
 
   @Transactional(rollbackFor = ServerErrorException.class)
-  public void enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException {
+  @AudibleActionTrail(module = AuditActionConstants.SPOT_PRICE_MODULE, action = AuditActionConstants.SUBMIT_SPOT_PRICE)
+  public AudibleActionImplementation<FXTokenDataEntry> enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException {
     String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
     User loggedInUser = userService.fetchByUsername(username);
     User appWallet = userService.fetchAppAddress();
@@ -309,8 +315,9 @@ public class FXTokenServiceImpl implements FXTokenService {
           }
         }
       }
-        // TODO: Transfer FX Tokens if below knockout price
-        fxTokenDataEntryRepository.save(data);
+      // TODO: Transfer FX Tokens if below knockout price
+      fxTokenDataEntryRepository.save(data);
+      return new AudibleActionImplementation<>(data);
     } catch (Exception e) {
       LOGGER.error("Exception in enterSpotPrice().", e);
       throw new ServerErrorException("Exception in enterSpotPrice().", e);
