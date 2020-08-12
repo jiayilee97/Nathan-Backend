@@ -1,5 +1,6 @@
 package stacs.nathan.service;
 
+import stacs.nathan.core.audit.action.AudibleActionImplementation;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.response.InvestorRiskResponseDto;
 import stacs.nathan.entity.InvestorRisk;
@@ -11,8 +12,6 @@ public interface InvestorRiskService {
 
   void save(InvestorRisk investorRisks) throws ServerErrorException;
 
-  void saveAll(List<InvestorRisk> list) throws ServerErrorException;
-
-  void calculateInvestorRisk() throws ServerErrorException;
+  AudibleActionImplementation<List<InvestorRisk>> calculateInvestorRisk() throws ServerErrorException;
 
 }

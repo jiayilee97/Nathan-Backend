@@ -31,8 +31,8 @@ public class ExchangeRateController {
     return exchangeRateService.fetchExchangeRate(startDate, endDate);
   }
 
-  @PreAuthorize("hasAuthority('OPS')")
+  @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO')")
   @RequestMapping("/fetch-updated")
-  public List<ExchangeRate> fetchLatestExchangeRate() { return exchangeRateService.fetchLatestExchangeRate(); }
+  public List<ExchangeRate> fetchLatestExchangeRate() throws ServerErrorException { return exchangeRateService.fetchLatestExchangeRate(); }
 
 }

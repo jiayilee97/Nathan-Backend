@@ -5,18 +5,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stacs.nathan.core.audit.action.AudibleActionImplementation;
+import stacs.nathan.core.audit.action.annotation.AudibleActionTrail;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.response.InvestorRiskResponseDto;
 import stacs.nathan.entity.*;
 import stacs.nathan.repository.*;
+import stacs.nathan.utils.constancs.AuditActionConstants;
 import stacs.nathan.utils.enums.FxCurrency;
 import stacs.nathan.utils.enums.TokenType;
 import stacs.nathan.utils.enums.UserRole;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class InvestorRiskServiceImpl implements InvestorRiskService {
@@ -60,8 +60,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
         }
       }
 
-      List<InvestorRisk> latestData = new ArrayList<InvestorRisk>(clientDataMap.values());
-
+      List<InvestorRisk> latestData = new ArrayList<>(clientDataMap.values());
 
       dto.setInvestorRisks(latestData);
       dto.setTotalCurrentNAV(navService.fetchCurrentNAV());
@@ -82,18 +81,9 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
     }
   }
 
-  public void saveAll(List<InvestorRisk> investorRisks) throws ServerErrorException {
-    LOGGER.debug("Entering saveAll().");
-    try{
-      repository.saveAll(investorRisks);
-    } catch (Exception e){
-      LOGGER.error("Exception in saveAll().", e);
-      throw new ServerErrorException("Exception in saveAll().", e);
-    }
-  }
-
   @Transactional(rollbackFor = ServerErrorException.class)
-  public void calculateInvestorRisk() throws ServerErrorException {
+  @AudibleActionTrail(module = AuditActionConstants.NAV_MODULE, action = AuditActionConstants.CALCULATE_NAV)
+  public AudibleActionImplementation<List<InvestorRisk>> calculateInvestorRisk() throws ServerErrorException {
     LOGGER.debug("Entering calculateInvestorRisk().");
     try{
       List<User> clients = userRepository.findByRole(UserRole.CLIENT);
@@ -149,6 +139,8 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
       repository.saveAll(investorRisks);
       // save total NAV
       navService.save(totalNAV);
+
+      return new AudibleActionImplementation<>(investorRisks);
     } catch (Exception e){
       LOGGER.error("Exception in calculateInvestorRisk().", e);
       throw new ServerErrorException("Exception in calculateInvestorRisk().", e);

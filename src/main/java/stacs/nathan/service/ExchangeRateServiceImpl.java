@@ -23,34 +23,39 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
   @Autowired
   InvestorRiskService investorRiskService;
 
-
   public void enterExchangeRate(List<ExchangeRateEntryRequestDto> exchangeRateList) throws ServerErrorException {
-        LOGGER.debug("Entering enterExchangeRate().");
-        try {
-          for (ExchangeRateEntryRequestDto dto : exchangeRateList) {
-            //ExchangeRate exchangeRate = repository.findByCurrencyPair(dto.getCurrencyPair());
-            String currencyPair = dto.getCurrencyPair().replace("/", "_");
-            FxCurrency currency = FxCurrency.valueOf(currencyPair);
+    LOGGER.debug("Entering enterExchangeRate().");
+    try {
+      for (ExchangeRateEntryRequestDto dto : exchangeRateList) {
+        //ExchangeRate exchangeRate = repository.findByCurrencyPair(dto.getCurrencyPair());
+        String currencyPair = dto.getCurrencyPair().replace("/", "_");
+        FxCurrency currency = FxCurrency.valueOf(currencyPair);
 
-            ExchangeRate newExchangeRate = new ExchangeRate();
-            newExchangeRate.setCurrency(currency.getValue());
-            newExchangeRate.setCurrencyPair(dto.getCurrencyPair());
-            newExchangeRate.setPrice(dto.getPrice());
-            repository.save(newExchangeRate);
-          }
+        ExchangeRate newExchangeRate = new ExchangeRate();
+        newExchangeRate.setCurrency(currency.getValue());
+        newExchangeRate.setCurrencyPair(dto.getCurrencyPair());
+        newExchangeRate.setPrice(dto.getPrice());
+        repository.save(newExchangeRate);
+      }
 
-          investorRiskService.calculateInvestorRisk();
+      investorRiskService.calculateInvestorRisk();
 
-        } catch (Exception e) {
-          LOGGER.error("Exception in enterExchangeRate().", e);
-          throw new ServerErrorException("Exception in enterExchangeRate().", e);
-        }
+    } catch (Exception e) {
+      LOGGER.error("Exception in enterExchangeRate().", e);
+      throw new ServerErrorException("Exception in enterExchangeRate().", e);
+    }
   }
 
-  public List<ExchangeRate> fetchLatestExchangeRate() {
-    return repository.fetchUpdatedExchangeRates();
+  public List<ExchangeRate> fetchLatestExchangeRate() throws ServerErrorException {
+    LOGGER.debug("Entering fetchLatestExchangeRate().");
+    try {
+      return repository.fetchUpdatedExchangeRates();
+    }
+    catch (Exception e) {
+      LOGGER.error("Exception in fetchLatestExchangeRate().", e);
+      throw new ServerErrorException("Exception in fetchLatestExchangeRate().", e);
+    }
   }
-
 
   public List<ExchangeRate> fetchExchangeRate(String startDate, String endDate) throws ServerErrorException {
     LOGGER.debug("Entering fetchExchangeRate().");
