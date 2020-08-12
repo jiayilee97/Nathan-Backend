@@ -16,6 +16,11 @@ import stacs.nathan.utils.enums.FxCurrency;
 import stacs.nathan.utils.enums.TokenType;
 import stacs.nathan.utils.enums.UserRole;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.*;
 
 @Service
@@ -130,8 +135,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
         investorRisk.setClientId(clientId);
         investorRisk.setBcTokenBalance(navBcToken);
         totalNAV = totalNAV.add(navSPToken);
-        totalNAV = totalNAV.add(navInvestedAmount);
-        totalNAV = totalNAV.add(navBcToken);
+
 
         investorRisks.add(investorRisk);
       }
@@ -165,8 +169,9 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
         newNav = balance;
         break;
       case "JPY" : case "CHF" :
-        newNav = balance.divide(exchangeRate);
+        newNav = balance.divide(exchangeRate,2, RoundingMode.HALF_UP);
         break;
+      default: newNav = balance; break;
     }
 
     return newNav;
@@ -213,6 +218,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
       case "USD" : case "JPY" : case "CHF" :
         newNav = balance;
         break;
+      default: newNav = balance; break;
     }
 
     return newNav;
