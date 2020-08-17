@@ -19,6 +19,7 @@ import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.BCTokenRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.request.TransferBCTokenRequestDto;
+import stacs.nathan.dto.request.TransferBCTokenToOpsRequestDto;
 import stacs.nathan.dto.response.BCTokenResponseDto;
 import stacs.nathan.dto.response.CreateBCTokenInitDto;
 import stacs.nathan.entity.*;
@@ -246,6 +247,65 @@ public class BCTokenServiceImpl implements BCTokenService {
       throw new ServerErrorException("Exception in transferBCToken().", e);
     }
   }
+
+  @Transactional(rollbackFor = ServerErrorException.class)
+  public void transferBCTokenToOpsWallet(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
+    LOGGER.debug("Entering transferBCToken().");
+    try{
+      String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+      User loggedInUser = userService.fetchByUsername(username);
+      BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
+      User sender = userService.fetchByWalletAddress(dto.getSenderAddress());
+      User recepient = userService.fetchByWalletAddress(dto.getRecepientAddress());
+      Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), sender.getId());
+      BigDecimal remainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
+      if (remainingAmount.compareTo(BigDecimal.ZERO) < 0) {
+        throw new BadRequestException("Insufficient balance for transfer");
+      } else {
+        JsonRespBO jsonRespBO = blockchainService.transferToken(sender, sender.getWalletAddress(), recepient.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
+        String txId = jsonRespBO.getTxId();
+        TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
+        if (txDetail != null) {
+          // Save balance for sender wallet
+          bcTokenBalance.setBalanceAmount(remainingAmount);
+          balanceService.createBalance(bcTokenBalance);
+
+          // Save balance for receiver wallet
+          Balance receiverBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), recepient.getId());
+          if (receiverBalance == null) {
+            Balance newBalance = new Balance();
+            newBalance.setBalanceAmount(dto.getAmount());
+            newBalance.setTokenCode(dto.getBcTokenCode());
+            newBalance.setTokenType(TokenType.BC_TOKEN);
+            newBalance.setUser(recepient);
+            balanceService.createBalance(newBalance);
+          } else {
+            BigDecimal newAmount = receiverBalance.getBalanceAmount().add(dto.getAmount());
+            receiverBalance.setBalanceAmount(newAmount);
+            balanceService.createBalance(receiverBalance);
+          }
+
+          // Update transaction history table
+          TransactionHistory tx = new TransactionHistory();
+          tx.setTokenContractAddress(bcToken.getTokenContractAddress());
+          tx.setAmount(dto.getAmount());
+          tx.setFromAddress(sender.getWalletAddress());
+          tx.setToAddress(recepient.getWalletAddress());
+          tx.setBlockHeight(txDetail.getBlockHeight());
+          tx.setStatus(TransactionStatus.DEPOSIT);
+          tx.setCtxId(txId);
+          tx.setTokenCode(bcToken.getTokenCode());
+          tx.setTokenType(TokenType.BC_TOKEN);
+          tx.setTokenId(bcToken.getId());
+          transactionHistoryService.save(tx);
+        }
+      }
+    } catch (Exception e){
+      LOGGER.error("Exception in transferBCToken().", e);
+      throw new ServerErrorException("Exception in transferBCToken().", e);
+    }
+  }
+
 
   @Transactional(rollbackFor = ServerErrorException.class)
   public void tradeBCTokenWithFXToken(TransferBCTokenRequestDto dto) throws ServerErrorException {
