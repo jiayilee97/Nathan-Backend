@@ -22,6 +22,8 @@ public class AudibleActionTrailAspect {
     ActionAuditTrailEntity entity = new ActionAuditTrailEntity();
     entity.setModule(trail.module());
     entity.setAction(trail.action());
+    entity.setTokenCode(action.getTokenCode());
+    entity.setAmount(action.getAmount());
     entity.setSerializedJson(action.toJsonString());
     actionAuditTrailService.create(entity);
   }

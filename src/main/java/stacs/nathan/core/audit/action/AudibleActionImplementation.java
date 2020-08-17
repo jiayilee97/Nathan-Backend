@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.math.BigDecimal;
 
 public class AudibleActionImplementation<T> implements AudibleActionInterface {
 
@@ -11,8 +12,18 @@ public class AudibleActionImplementation<T> implements AudibleActionInterface {
 
   protected T audited;
 
+  private String tokenCode;
+
+  private BigDecimal amount;
+
   public AudibleActionImplementation(T audited) {
     setAudited(audited);
+  }
+
+  public AudibleActionImplementation(T audited, String tokenCode, BigDecimal amount) {
+    setAudited(audited);
+    setTokenCode(tokenCode);
+    setAmount(amount);
   }
 
   public String toJsonString() {
@@ -34,4 +45,20 @@ public class AudibleActionImplementation<T> implements AudibleActionInterface {
     audited = newAudited;
   }
 
+  @Override
+  public String getTokenCode() {
+    return tokenCode;
+  }
+
+  public void setTokenCode(String tokenCode) {
+    this.tokenCode = tokenCode;
+  }
+
+  public BigDecimal getAmount() {
+    return amount;
+  }
+
+  public void setAmount(BigDecimal amount) {
+    this.amount = amount;
+  }
 }

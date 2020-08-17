@@ -115,7 +115,7 @@ public class FXTokenServiceImpl implements FXTokenService {
       if (jsonRespBO != null) {
         processAvailableChain(token, jsonRespBO);
       }
-      return new AudibleActionImplementation<>(token);
+      return new AudibleActionImplementation<>(token, token.getTokenCode(), token.getAmount());
     } catch (Exception e){
       LOGGER.error("Exception in createFXToken().", e);
       throw new ServerErrorException("Exception in createFXToken().", e);
