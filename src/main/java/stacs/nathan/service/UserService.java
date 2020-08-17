@@ -40,4 +40,6 @@ public interface UserService {
 
     User fetchAppAddress();
 
+    String fetchOpsWalletAddress();
+
 }

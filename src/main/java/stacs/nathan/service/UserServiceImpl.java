@@ -173,4 +173,9 @@ public class UserServiceImpl implements UserService {
     public User fetchAppAddress() {
         return repository.fetchAppAddress(UserRole.APP);
     }
+
+    public String fetchOpsWalletAddress() {
+        User ops = repository.findByRole(UserRole.OPS).get(0);
+        return ops.getWalletAddress();
+    }
 }

@@ -54,4 +54,8 @@ public class UserController {
     return userService.fetchInitForm();
   }
 
+  @PreAuthorize("hasAuthority('CRO')")
+  @GetMapping("/fetch/ops-wallet")
+  public String fetchOpsWalletAddress() { return userService.fetchOpsWalletAddress(); }
+
 }
