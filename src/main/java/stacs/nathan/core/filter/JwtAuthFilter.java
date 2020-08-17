@@ -24,6 +24,7 @@ import java.util.List;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 import org.json.JSONObject;
+import stacs.nathan.utils.enums.UserRole;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -61,9 +62,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       if(this.organizationCode.equals(loggedInUserOrg) || (trinityOrg && issuerName.equals(loggedInUserOrg))){
         String loggedInUserName = json.getString(AwsServiceConstants.USERNAME);
         List<String> loggedInUserRoles = trinityOrg ? Arrays.asList(TRINITY_ADMIN) : Arrays.asList(json.getString(AwsServiceConstants.ROLES).split(","));
+        if(UserRole.MASTER.getCode().equals(loggedInUserRoles.get(0))) {
+          loggedInUserRoles = Arrays.asList(UserRole.CRO.getCode(), UserRole.MKT.getCode(), UserRole.OPS.getCode(), UserRole.CP.getCode());
+        }
         LoggedInUser loggedInUser = new LoggedInUser(loggedInUserName, loggedInUserOrg, loggedInUserRoles);
         List<SimpleGrantedAuthority> roles = new ArrayList<>();
-        for(String role: loggedInUserRoles){
+        for(String role: loggedInUserRoles) {
           roles.add(new SimpleGrantedAuthority((role)));
         }
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loggedInUser, null, roles);

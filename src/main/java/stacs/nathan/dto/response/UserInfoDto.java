@@ -1,6 +1,5 @@
 package stacs.nathan.dto.response;
 
-import stacs.nathan.entity.RolePages;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -34,10 +33,10 @@ public class UserInfoDto {
     return pageNames;
   }
 
-  public void setPageNames(List<RolePages> rolePages) {
+  public void setPageNames(List<String> rolePages) {
     StringJoiner pageNames = new StringJoiner(",");
-    for (RolePages rolePage : rolePages) {
-      pageNames.add(rolePage.getPageName());
+    for (String pageName : rolePages) {
+      pageNames.add(pageName);
     }
     this.pageNames = pageNames.toString();
   }

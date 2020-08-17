@@ -10,8 +10,8 @@ import java.util.List;
 @Repository
 public interface RolePagesRepository extends JpaRepository<RolePages, Long> {
 
-  @Query("SELECT r FROM RolePages r WHERE r.roleName IN :roles")
-  List<RolePages> findByRoles(@Param("roles") List<String> roles);
+  @Query("SELECT r.pageName FROM RolePages r WHERE r.roleName IN :roles group by pageName")
+  List<String> findByRoles(@Param("roles") List<String> roles);
 
   RolePages findById(long id);
 
