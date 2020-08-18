@@ -31,7 +31,7 @@ public interface FXTokenService {
 
     AudibleActionImplementation<FXTokenDataEntry> enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException;
 
-    List<FXTokenResponseDto> fetchAvailableFXTokens();
+    FxSpotPriceInitDto initSpotPriceForm();
 
     List<FXTokenDataEntryResponseDto> fetchDataEntryHistory();
 

@@ -236,6 +236,13 @@ public class FXTokenServiceImpl implements FXTokenService {
     }
   }
 
+  public FxSpotPriceInitDto initSpotPriceForm() {
+    FxSpotPriceInitDto dto = new FxSpotPriceInitDto();
+    dto.setOpenFXTokens(repository.fetchAvailableFXTokenCodes());
+    dto.setCurrency(codeValueService.findByType(CodeType.UNDERLYING));
+    return dto;
+  }
+
   @Transactional(rollbackFor = ServerErrorException.class)
   @AudibleActionTrail(module = AuditActionConstants.SPOT_PRICE_MODULE, action = AuditActionConstants.SUBMIT_SPOT_PRICE)
   public AudibleActionImplementation<FXTokenDataEntry> enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException {
@@ -348,10 +355,6 @@ public class FXTokenServiceImpl implements FXTokenService {
   }
 
   public FXTokenResponseDto fetchTokenById(String tokenCode) { return repository.fetchTokenById(tokenCode); }
-
-  public List<FXTokenResponseDto> fetchAvailableFXTokens() {
-    return repository.fetchAvailableFXTokens();
-  }
 
   public List<FXTokenDataEntryResponseDto> fetchDataEntryHistory() {
     return fxTokenDataEntryRepository.fetchAll();

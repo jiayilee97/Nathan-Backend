@@ -65,9 +65,9 @@ public class FXTokenController {
     }
 
     @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP') or hasAuthority('CRO')")
-    @GetMapping("/fetch-all-open")
-    public List<FXTokenResponseDto> fetchAllOpenTokens() {
-        return fxTokenService.fetchAvailableFXTokens();
+    @GetMapping("/init-spot-price")
+    public FxSpotPriceInitDto initSpotPriceForm() {
+        return fxTokenService.initSpotPriceForm();
     }
 
     @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP')")
