@@ -104,8 +104,8 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
         BigDecimal navSPToken = BigDecimal.ZERO;
         BigDecimal navInvestedAmount = BigDecimal.ZERO;
         for(SPToken spToken : spTokens){
-          BigDecimal convertedAmount = convertSPToken(spToken.getNotionalAmount(), spToken.getUnderlyingCurrency(), exchangeRates);
-          navSPToken = navSPToken.add(convertedAmount);
+//          BigDecimal convertedAmount = convertSPToken(spToken.getNotionalAmount(), spToken.getUnderlyingCurrency(), exchangeRates);
+//          navSPToken = navSPToken.add(convertedAmount);
 
           // calculating Invested amount
           if (spToken.getFxToken() != null) {
@@ -118,6 +118,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
               convertedInvestment = convertInvestedAmount(BigDecimal.ZERO, spToken.getFxToken().getFxCurrency(), exchangeRates);
             }
             navInvestedAmount = navInvestedAmount.add(convertedInvestment);
+            navSPToken = navSPToken.add(navInvestedAmount);
           }
         }
 
