@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface CodeValueRepository extends JpaRepository<CodeValue, Long> {
 
-  List<CodeValue> findByType(CodeType type);
+  List<CodeValue> findByTypeAndIsVisible(CodeType type, Boolean isVisible);
 
 }

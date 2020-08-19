@@ -4,7 +4,6 @@ import org.hibernate.envers.Audited;
 import stacs.nathan.utils.enums.CodeType;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Entity
 @Audited
@@ -26,6 +25,9 @@ public class CodeValue {
   @Enumerated(EnumType.STRING)
   @Column(length = 50)
   protected CodeType type;
+
+  @Column(name = "is_enabled", nullable = false, columnDefinition="boolean DEFAULT true")
+  private boolean isVisible = true;
 
   public CodeValue(){
 
@@ -61,4 +63,11 @@ public class CodeValue {
     this.type = type;
   }
 
+  public boolean isVisible() {
+    return isVisible;
+  }
+
+  public void setVisible(boolean visible) {
+    isVisible = visible;
+  }
 }

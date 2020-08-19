@@ -14,7 +14,7 @@ public class CodeValueServiceImpl implements CodeValueService {
   CodeValueRepository repository;
 
   public List<CodeValue> findByType(CodeType type){
-    return repository.findByType(type);
+    return repository.findByTypeAndIsVisible(type, true);
   }
 
 }
