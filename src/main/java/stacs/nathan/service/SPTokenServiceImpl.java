@@ -139,6 +139,7 @@ public class SPTokenServiceImpl implements SPTokenService {
 
   public CreateSPTokenInitDto fetchInitForm() {
     String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    System.out.println(username);
     User loggedInUser = userService.fetchByUsername(username);
     CreateSPTokenInitDto dto = new CreateSPTokenInitDto();
     dto.setClientIds(userService.fetchAllClientIds());
@@ -227,7 +228,7 @@ public class SPTokenServiceImpl implements SPTokenService {
       //TransactionHistory transaction = initTransactionHistory(token);
       //retrieve balance and transfer all
       // TODO: get balance from table instead
-      Balance balance = balanceService.fetchBalanceByTokenCode(token.getTokenCode());
+      Balance balance = balanceService.fetchBalanceByTokenCodeAndTokenType(token.getTokenCode(), TokenType.SP_TOKEN);
       JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, loggedInUser.getWalletAddress(), burnAddress, token, balance.getBalanceAmount().toBigInteger());
       String txId = jsonRespBO.getTxId();
       TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);

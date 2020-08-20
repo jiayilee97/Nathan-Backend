@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import stacs.nathan.dto.response.BalanceResponseDto;
 import stacs.nathan.entity.Balance;
 import stacs.nathan.repository.BalanceRepository;
+import stacs.nathan.utils.enums.TokenType;
+
 import java.util.List;
 
 @Service
@@ -26,4 +28,6 @@ public class BalanceServiceImpl implements BalanceService {
   }
 
   public Balance fetchBalanceByTokenCodeAndId(String tokenCode, Long id) { return repository.findByTokenCodeAndId(tokenCode, id); }
+
+  public Balance fetchBalanceByTokenCodeAndTokenType(String tokenCode, TokenType tokenType) { return repository.findByTokenCodeAndTokenType(tokenCode, tokenType); }
 }
