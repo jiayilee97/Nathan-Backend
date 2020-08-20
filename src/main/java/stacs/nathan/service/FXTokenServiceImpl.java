@@ -84,6 +84,10 @@ public class FXTokenServiceImpl implements FXTokenService {
     return responseDtoList;
   }
 
+  public List<FXTokenResponseDto> fetchAvailableFXTokens() {
+    return repository.fetchAvailableFXTokens();
+  }
+
   public String fetchAppWalletAddress() {
     return appWalletAddress;
   }
