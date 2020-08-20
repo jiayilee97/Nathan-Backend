@@ -2,6 +2,8 @@ package stacs.nathan.service;
 
 import stacs.nathan.dto.response.BalanceResponseDto;
 import stacs.nathan.entity.Balance;
+import stacs.nathan.utils.enums.TokenType;
+
 import java.util.List;
 
 public interface BalanceService {
@@ -13,4 +15,6 @@ public interface BalanceService {
   Balance fetchBalanceByTokenCode(String tokenCode);
 
   Balance fetchBalanceByTokenCodeAndId(String tokenCode, Long id);
+
+  Balance fetchBalanceByTokenCodeAndTokenType(String tokenCode, TokenType tokenType);
 }
