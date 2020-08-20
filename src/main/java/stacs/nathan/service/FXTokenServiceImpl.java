@@ -273,6 +273,7 @@ public class FXTokenServiceImpl implements FXTokenService {
         fxTokenBalance.setBalanceAmount(remainingAmount);
         balanceService.createBalance(fxTokenBalance);
 
+
         // Save balance for receiver wallet
         Balance receiverBalance = balanceService.fetchBalanceByTokenCodeAndId(fxToken.getTokenCode(), client.getId());
         if (receiverBalance == null) {
@@ -301,7 +302,8 @@ public class FXTokenServiceImpl implements FXTokenService {
 
         if (remainingAmount.compareTo(BigDecimal.ZERO) < 0) {
           throw new BadRequestException("Insufficient balance for transfer");
-        } else {
+        }
+        else {
           JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, appWallet.getWalletAddress(), client.getWalletAddress(), fxToken, spToken.getFixingAmount().toBigInteger());
           String txId = jsonRespBO.getTxId();
           TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
@@ -319,6 +321,40 @@ public class FXTokenServiceImpl implements FXTokenService {
             tx.setTokenType(TokenType.FX_TOKEN);
             tx.setTokenId(fxToken.getId());
             transactionHistoryService.save(tx);
+          }
+          if (remainingAmount.compareTo(BigDecimal.ZERO) == 0) {
+            User user = spToken.getUser();
+            Balance balance = balanceService.fetchBalanceByTokenCodeAndTokenType(spToken.getTokenCode(), TokenType.SP_TOKEN);
+            if (balance != null) {
+              JsonRespBO jsonRespBO1 = blockchainService.transferToken(user, user.getWalletAddress(), burnAddress, spToken, balance.getBalanceAmount().toBigInteger());
+              String burnTxId = jsonRespBO1.getTxId();
+              TransferQueryRespBO burnTxDetail = blockchainService.getTransferDetails(burnTxId);
+              if (burnTxDetail != null) {
+                spToken.setStatus(SPTokenStatus.CONTRACT_MATURITY);
+                spTokenService.save(spToken);
+
+                TransactionHistory tx = new TransactionHistory();
+                tx.setTokenContractAddress(spToken.getTokenContractAddress());
+                tx.setAmount(balance.getBalanceAmount());
+                tx.setFromAddress(user.getWalletAddress());
+                tx.setToAddress(burnAddress);
+                tx.setBlockHeight(burnTxDetail.getBlockHeight());
+                tx.setStatus(TransactionStatus.CONTRACT_MATURITY);
+                tx.setCtxId(burnTxId);
+                tx.setTokenType(TokenType.SP_TOKEN);
+                tx.setTokenId(spToken.getId());
+                tx.setTokenCode(spToken.getTokenCode());
+                transactionHistoryService.save(tx);
+
+                // update balance table
+                balance.setBalanceAmount(BigDecimal.valueOf(0));
+                balanceService.createBalance(balance);
+
+                // update FX Token status
+                fxToken.setStatus(FXTokenStatus.MATURED);
+                repository.save(fxToken);
+              }
+            }
           }
         }
       }
