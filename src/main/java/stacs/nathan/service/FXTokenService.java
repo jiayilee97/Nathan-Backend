@@ -45,4 +45,5 @@ public interface FXTokenService {
 
     List<FXTokenResponseDto> fetchMaturedOrKnockout();
 
+    List<FXTokenResponseDto> fetchAvailableFXTokens();
 }

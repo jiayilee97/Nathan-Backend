@@ -292,7 +292,7 @@ public class BCTokenServiceImpl implements BCTokenService {
           tx.setFromAddress(sender.getWalletAddress());
           tx.setToAddress(recepient.getWalletAddress());
           tx.setBlockHeight(txDetail.getBlockHeight());
-          tx.setStatus(TransactionStatus.DEPOSIT);
+          tx.setStatus(TransactionStatus.FUND_TRANSFER);
           tx.setCtxId(txId);
           tx.setTokenCode(bcToken.getTokenCode());
           tx.setTokenType(TokenType.BC_TOKEN);
@@ -306,20 +306,19 @@ public class BCTokenServiceImpl implements BCTokenService {
     }
   }
 
-
   @Transactional(rollbackFor = ServerErrorException.class)
-  public void tradeBCTokenWithFXToken(TransferBCTokenRequestDto dto) throws ServerErrorException {
-    LOGGER.debug("Entering tradeBCTokenWithFXToken().");
+  public void opsTrade(TransferBCTokenRequestDto dto) throws ServerErrorException {
+    LOGGER.debug("Entering opsTrade().");
     try {
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
       BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
       User investor = userService.fetchByWalletAddress(dto.getInvestorWalletAddress());
-      Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), investor.getId());
+      Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), loggedInUser.getId());
       if (bcTokenBalance != null) {
         BigDecimal bcRemainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
         if (bcRemainingAmount.compareTo(BigDecimal.ZERO) > 0) {
-          JsonRespBO jsonRespBO = blockchainService.transferToken(investor, investor.getWalletAddress(), loggedInUser.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
+          JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, loggedInUser.getWalletAddress(), investor.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
           String bcTxId = jsonRespBO.getTxId();
           TransferQueryRespBO bcTxDetail = blockchainService.getTransferDetails(bcTxId);
           if (bcTxDetail != null) {
@@ -329,13 +328,13 @@ public class BCTokenServiceImpl implements BCTokenService {
 
             // Save balance for receiver wallet
             // Creates new entry in table if not present
-            Balance receiverBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), loggedInUser.getId());
+            Balance receiverBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), investor.getId());
             if (receiverBalance == null) {
               Balance newBalance = new Balance();
               newBalance.setBalanceAmount(dto.getAmount());
               newBalance.setTokenCode(dto.getBcTokenCode());
               newBalance.setTokenType(TokenType.BC_TOKEN);
-              newBalance.setUser(loggedInUser);
+              newBalance.setUser(investor);
               balanceService.createBalance(newBalance);
             } else {
               BigDecimal newAmount = receiverBalance.getBalanceAmount().add(dto.getAmount());
@@ -343,42 +342,83 @@ public class BCTokenServiceImpl implements BCTokenService {
               balanceService.createBalance(receiverBalance);
             }
           }
-        }
-      }
 
-      FXToken fxToken = fxTokenService.fetchByTokenCode(dto.getFxTokenCode());
-      JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, appAddress, investor.getWalletAddress(), fxToken, dto.getAmount().toBigInteger());
-      String fxTxId = jsonRespBO.getTxId();
-      TransferQueryRespBO fxTxDetail = blockchainService.getTransferDetails(fxTxId);
-      if (fxTxDetail != null) {
-        Balance receiverBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getFxTokenCode(), investor.getId());
-        if (receiverBalance == null) {
-          Balance newBalance = new Balance();
-          newBalance.setBalanceAmount(dto.getAmount());
-          newBalance.setTokenCode(dto.getFxTokenCode());
-          newBalance.setTokenType(TokenType.FX_TOKEN);
-          newBalance.setUser(investor);
-          balanceService.createBalance(newBalance);
-        } else {
-          BigDecimal newAmount = receiverBalance.getBalanceAmount().add(dto.getAmount());
-          receiverBalance.setBalanceAmount(newAmount);
-          balanceService.createBalance(receiverBalance);
+          TransactionHistory tx = new TransactionHistory();
+          tx.setTokenContractAddress(bcToken.getTokenContractAddress());
+          tx.setAmount(dto.getAmount());
+          tx.setFromAddress(loggedInUser.getWalletAddress());
+          tx.setToAddress(investor.getWalletAddress());
+          tx.setBlockHeight(bcTxDetail.getBlockHeight());
+          // Transaction type?
+          tx.setStatus(TransactionStatus.REDEMPTION);
+          tx.setCtxId(bcTxId);
+          tx.setTokenCode(bcToken.getTokenCode());
+          tx.setTokenType(TokenType.BC_TOKEN);
+          tx.setTokenId(bcToken.getId());
+          transactionHistoryService.save(tx);
         }
-
-        // Trade history
-        TradeHistory tradeHistory = new TradeHistory();
-        tradeHistory.setSide("BUY");
-        tradeHistory.setQuantity(dto.getAmount());
-        tradeHistory.setTokenId(bcToken.getId());
-        tradeHistory.setUnderlying(fxToken.getFxCurrency());
-        tradeHistory.setTokenType(TokenType.BC_TOKEN);
-        tradeHistory.setSpToken(fxToken.getSpToken());
-        tradeHistory.setUser(investor);
-        tradeHistoryRepository.save(tradeHistory);
       }
     }  catch (Exception e){
-      LOGGER.error("Exception in tradeBCTokenWithFXToken().", e);
-      throw new ServerErrorException("Exception in tradeBCTokenWithFXToken().", e);
+      LOGGER.error("Exception in opsTrade().", e);
+      throw new ServerErrorException("Exception in opsTrade().", e);
+    }
+  }
+
+  @Transactional(rollbackFor = ServerErrorException.class)
+  public void croTrade(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
+    LOGGER.debug("Entering croTrade().");
+    try {
+      String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+      User loggedInUser = userService.fetchByUsername(username);
+      BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
+      User sender = userService.fetchByWalletAddress(dto.getSenderAddress());
+      User recipient = userService.fetchByWalletAddress(dto.getRecepientAddress());
+      Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), sender.getId());
+      if (bcTokenBalance != null) {
+        BigDecimal bcRemainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
+        if (bcRemainingAmount.compareTo(BigDecimal.ZERO) > 0) {
+          JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, sender.getWalletAddress(), recipient.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
+          String bcTxId = jsonRespBO.getTxId();
+          TransferQueryRespBO bcTxDetail = blockchainService.getTransferDetails(bcTxId);
+          if (bcTxDetail != null) {
+            // Save balance for sender wallet
+            bcTokenBalance.setBalanceAmount(bcRemainingAmount);
+            balanceService.createBalance(bcTokenBalance);
+
+            // Save balance for receiver wallet
+            // Creates new entry in table if not present
+            Balance receiverBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), recipient.getId());
+            if (receiverBalance == null) {
+              Balance newBalance = new Balance();
+              newBalance.setBalanceAmount(dto.getAmount());
+              newBalance.setTokenCode(dto.getBcTokenCode());
+              newBalance.setTokenType(TokenType.BC_TOKEN);
+              newBalance.setUser(recipient);
+              balanceService.createBalance(newBalance);
+            } else {
+              BigDecimal newAmount = receiverBalance.getBalanceAmount().add(dto.getAmount());
+              receiverBalance.setBalanceAmount(newAmount);
+              balanceService.createBalance(receiverBalance);
+            }
+          }
+
+          TransactionHistory tx = new TransactionHistory();
+          tx.setTokenContractAddress(bcToken.getTokenContractAddress());
+          tx.setAmount(dto.getAmount());
+          tx.setFromAddress(sender.getWalletAddress());
+          tx.setToAddress(recipient.getWalletAddress());
+          tx.setBlockHeight(bcTxDetail.getBlockHeight());
+          tx.setStatus(TransactionStatus.FUND_TRANSFER);
+          tx.setCtxId(bcTxId);
+          tx.setTokenCode(bcToken.getTokenCode());
+          tx.setTokenType(TokenType.BC_TOKEN);
+          tx.setTokenId(bcToken.getId());
+          transactionHistoryService.save(tx);
+        }
+      }
+    }  catch (Exception e){
+      LOGGER.error("Exception in croTrade().", e);
+      throw new ServerErrorException("Exception in croTrade().", e);
     }
   }
 

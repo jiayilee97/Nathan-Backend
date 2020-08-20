@@ -28,7 +28,9 @@ public interface BCTokenService {
 
   void transferBCToken(TransferBCTokenRequestDto dto) throws ServerErrorException;
 
-  void tradeBCTokenWithFXToken(TransferBCTokenRequestDto dto) throws ServerErrorException;
+  void opsTrade(TransferBCTokenRequestDto dto) throws ServerErrorException;
+
+  void croTrade(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException;
 
   void transferBCTokenToOpsWallet(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException;
 
