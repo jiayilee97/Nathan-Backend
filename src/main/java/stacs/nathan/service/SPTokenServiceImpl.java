@@ -275,38 +275,40 @@ public class SPTokenServiceImpl implements SPTokenService {
         try {
           //String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
           User user = token.getUser();
-          Balance balance = balanceService.fetchBalanceByTokenCode(token.getTokenCode());
-          JsonRespBO jsonRespBO = blockchainService.transferToken(user, user.getWalletAddress(), burnAddress, token, balance.getBalanceAmount().toBigInteger());
-          String txId = jsonRespBO.getTxId();
-          TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
-          if (txDetail != null) {
-            token.setBlockHeight(txDetail.getBlockHeight());
-            token.setUpdatedDate(new Date());
-            token.setStatus(SPTokenStatus.CONTRACT_MATURITY);
-            repository.save(token);
+          Balance balance = balanceService.fetchBalanceByTokenCodeAndTokenType(token.getTokenCode(), TokenType.SP_TOKEN);
+          if (balance != null) {
+            JsonRespBO jsonRespBO = blockchainService.transferToken(user, user.getWalletAddress(), burnAddress, token, balance.getBalanceAmount().toBigInteger());
+            String txId = jsonRespBO.getTxId();
+            TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
+            if (txDetail != null) {
+              token.setBlockHeight(txDetail.getBlockHeight());
+              token.setUpdatedDate(new Date());
+              token.setStatus(SPTokenStatus.CONTRACT_MATURITY);
+              repository.save(token);
 
-            // update tx_history table
-            TransactionHistory tx = new TransactionHistory();
-            tx.setTokenContractAddress(token.getTokenContractAddress());
-            tx.setAmount(balance.getBalanceAmount());
-            tx.setFromAddress(user.getWalletAddress());
-            tx.setToAddress(burnAddress);
-            tx.setBlockHeight(txDetail.getBlockHeight());
-            tx.setStatus(TransactionStatus.CONTRACT_MATURITY);
-            tx.setCtxId(txId);
-            tx.setTokenType(TokenType.SP_TOKEN);
-            tx.setTokenId(token.getId());
-            tx.setTokenCode(token.getTokenCode());
-            transactionHistoryService.save(tx);
+              // update tx_history table
+              TransactionHistory tx = new TransactionHistory();
+              tx.setTokenContractAddress(token.getTokenContractAddress());
+              tx.setAmount(balance.getBalanceAmount());
+              tx.setFromAddress(user.getWalletAddress());
+              tx.setToAddress(burnAddress);
+              tx.setBlockHeight(txDetail.getBlockHeight());
+              tx.setStatus(TransactionStatus.CONTRACT_MATURITY);
+              tx.setCtxId(txId);
+              tx.setTokenType(TokenType.SP_TOKEN);
+              tx.setTokenId(token.getId());
+              tx.setTokenCode(token.getTokenCode());
+              transactionHistoryService.save(tx);
 
-            // update balance table
-            balance.setBalanceAmount(BigDecimal.valueOf(0));
-            balanceService.createBalance(balance);
+              // update balance table
+              balance.setBalanceAmount(BigDecimal.valueOf(0));
+              balanceService.createBalance(balance);
 
-            // update FX Token status
-            FXToken fxToken = token.getFxToken();
-            fxToken.setStatus(FXTokenStatus.MATURED);
-            fxTokenService.save(fxToken);
+              // update FX Token status
+              FXToken fxToken = token.getFxToken();
+              fxToken.setStatus(FXTokenStatus.MATURED);
+              fxTokenService.save(fxToken);
+            }
           }
 
         } catch (Exception e) {
