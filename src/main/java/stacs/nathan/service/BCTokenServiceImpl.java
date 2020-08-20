@@ -123,10 +123,26 @@ public class BCTokenServiceImpl implements BCTokenService {
     }
   }
 
+//  public List<BCTokenResponseDto> fetchBalanceByIssuerAddress(String issuerAddress) throws ServerErrorException {
+//    LOGGER.debug("Entering fetchBalanceByIssuerAddress().");
+//    try {
+//      return repository.fetchAllByIssuerAddress(issuerAddress, BCTokenStatus.OPEN);
+//    } catch (Exception e) {
+//      LOGGER.error("Exception in fetchBalanceByIssuerAddress().", e);
+//      throw new ServerErrorException("Exception in fetchBalanceByIssuerAddress().", e);
+//    }
+//  }
+
   public List<BCTokenResponseDto> fetchAllByIssuerAddress(String issuerAddress) throws ServerErrorException {
     LOGGER.debug("Entering fetchAllBCTokens().");
     try {
-      return repository.fetchAllByIssuerAddress(issuerAddress, BCTokenStatus.OPEN);
+      List<BCTokenResponseDto> tokenList = repository.fetchAllByIssuerAddress(issuerAddress, BCTokenStatus.OPEN);
+      for (BCTokenResponseDto token : tokenList) {
+        User issuer = userService.fetchByWalletAddress(issuerAddress);
+        Balance tokenBalance = balanceService.fetchBalanceByTokenCodeAndId(token.getTokenCode(), issuer.getId());
+        token.setBalance(tokenBalance.getBalanceAmount());
+      }
+      return tokenList;
     } catch (Exception e) {
       LOGGER.error("Exception in fetchAllBCTokens().", e);
       throw new ServerErrorException("Exception in fetchAllBCTokens().", e);
