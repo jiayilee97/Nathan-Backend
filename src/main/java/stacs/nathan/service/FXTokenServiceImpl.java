@@ -170,7 +170,8 @@ public class FXTokenServiceImpl implements FXTokenService {
   }
 
   @Transactional(rollbackFor = ServerErrorException.class)
-  public void closeFXToken(String tokenCode) throws ServerErrorException {
+  @AudibleActionTrail(module = AuditActionConstants.FX_TOKEN_MODULE, action = AuditActionConstants.CLOSE_FX_TOKEN)
+  public AudibleActionImplementation<FXToken> closeFXToken(String tokenCode) throws ServerErrorException {
     LOGGER.debug("Entering closeFXToken().");
     try {
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
@@ -234,6 +235,7 @@ public class FXTokenServiceImpl implements FXTokenService {
         tx.setTokenId(fxToken.getId());
         transactionHistoryService.save(tx);
       }
+      return new AudibleActionImplementation<>(fxToken, fxToken.getTokenCode());
     } catch (Exception e) {
       LOGGER.error("Exception in closeFXToken().", e);
       throw new ServerErrorException("Exception in closeFXToken().", e);
@@ -364,7 +366,7 @@ public class FXTokenServiceImpl implements FXTokenService {
       }
       // TODO: Transfer FX Tokens if below knockout price
       fxTokenDataEntryRepository.save(data);
-      return new AudibleActionImplementation<>(data);
+      return new AudibleActionImplementation<>(data, fxToken.getTokenCode());
     } catch (Exception e) {
       LOGGER.error("Exception in enterSpotPrice().", e);
       throw new ServerErrorException("Exception in enterSpotPrice().", e);

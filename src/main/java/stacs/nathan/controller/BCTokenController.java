@@ -59,7 +59,7 @@ public class BCTokenController {
   @PreAuthorize("hasAuthority('OPS')")
   @PostMapping("/ops-transfer")
   public void transferBCToken(@RequestBody TransferBCTokenRequestDto dto) throws ServerErrorException {
-    bcTokenService.transferBCToken(dto);
+    bcTokenService.opsTransfer(dto);
   }
 
   @PreAuthorize("hasAuthority('OPS')")
@@ -77,7 +77,7 @@ public class BCTokenController {
   @PreAuthorize("hasAuthority('CRO')")
   @PostMapping("/cro-transfer")
   public void transferBCTokenToOps(@RequestBody TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
-    bcTokenService.transferBCTokenToOpsWallet(dto);
+    bcTokenService.croTransfer(dto);
   }
 
 }

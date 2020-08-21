@@ -20,6 +20,11 @@ public class AudibleActionImplementation<T> implements AudibleActionInterface {
     setAudited(audited);
   }
 
+  public AudibleActionImplementation(T audited, String tokenCode) {
+    setAudited(audited);
+    setTokenCode(tokenCode);
+  }
+
   public AudibleActionImplementation(T audited, String tokenCode, BigDecimal amount) {
     setAudited(audited);
     setTokenCode(tokenCode);

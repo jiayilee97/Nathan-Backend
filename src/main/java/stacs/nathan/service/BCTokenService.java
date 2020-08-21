@@ -1,5 +1,6 @@
 package stacs.nathan.service;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import stacs.nathan.core.audit.action.AudibleActionImplementation;
 import stacs.nathan.core.exception.BadRequestException;
 import stacs.nathan.core.exception.ServerErrorException;
@@ -26,12 +27,12 @@ public interface BCTokenService {
 
   void executeUnavailableChain();
 
-  void transferBCToken(TransferBCTokenRequestDto dto) throws ServerErrorException;
+  AudibleActionImplementation<BaseCurrencyToken> opsTransfer(TransferBCTokenRequestDto dto) throws ServerErrorException;
 
   void opsTrade(TransferBCTokenRequestDto dto) throws ServerErrorException;
 
   void croTrade(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException;
 
-  void transferBCTokenToOpsWallet(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException;
+  AudibleActionImplementation<BaseCurrencyToken> croTransfer(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException;
 
 }
