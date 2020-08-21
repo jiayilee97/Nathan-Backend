@@ -21,7 +21,7 @@ public interface FXTokenService {
 
     AudibleActionImplementation<FXToken> createFXToken(FXTokenRequestDto token) throws ServerErrorException, BadRequestException;
 
-    void closeFXToken(String tokenCode) throws ServerErrorException;
+    AudibleActionImplementation<FXToken> closeFXToken(String tokenCode) throws ServerErrorException;
 
     List<ClientOpenPositionResponseDto> fetchClientOpenPosition(String clientId);
 
@@ -45,4 +45,5 @@ public interface FXTokenService {
 
     List<FXTokenResponseDto> fetchMaturedOrKnockout();
 
+    List<FXTokenResponseDto> fetchAvailableFXTokens();
 }

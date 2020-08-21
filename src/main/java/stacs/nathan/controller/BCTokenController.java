@@ -56,22 +56,28 @@ public class BCTokenController {
     bcTokenService.executeUnconfirmedChain();
   }
 
-  @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO')")
-  @PostMapping("/transfer")
+  @PreAuthorize("hasAuthority('OPS')")
+  @PostMapping("/ops-transfer")
   public void transferBCToken(@RequestBody TransferBCTokenRequestDto dto) throws ServerErrorException {
-    bcTokenService.transferBCToken(dto);
+    bcTokenService.opsTransfer(dto);
   }
 
-  @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO')")
-  @PostMapping("/trade")
-  public void tradeBCTokenForFXToken(@RequestBody TransferBCTokenRequestDto dto) throws ServerErrorException {
-    bcTokenService.tradeBCTokenWithFXToken(dto);
+  @PreAuthorize("hasAuthority('OPS')")
+  @PostMapping("/ops-trade")
+  public void opsTrade(@RequestBody TransferBCTokenRequestDto dto) throws ServerErrorException {
+    bcTokenService.opsTrade(dto);
   }
 
   @PreAuthorize("hasAuthority('CRO')")
-  @PostMapping("/transferToOps")
+  @PostMapping("/cro-trade")
+  public void croTrade(@RequestBody TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
+    bcTokenService.croTrade(dto);
+  }
+
+  @PreAuthorize("hasAuthority('CRO')")
+  @PostMapping("/cro-transfer")
   public void transferBCTokenToOps(@RequestBody TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
-    bcTokenService.transferBCTokenToOpsWallet(dto);
+    bcTokenService.croTransfer(dto);
   }
 
 }

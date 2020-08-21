@@ -33,4 +33,6 @@ public interface BalanceRepository extends JpaRepository<Balance, Long> {
 
   List<Balance> findByTokenTypeAndUser(TokenType tokenType, User user);
 
+//  @Query("SELECT b from Balance b WHERE b.tokenCode = :tokenCode AND b.tokenType =: tokenType")
+  Balance findByTokenCodeAndTokenTypeAndIsVisible(String tokenCode, TokenType tokenType, Boolean isVisible);
 }
