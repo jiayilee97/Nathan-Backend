@@ -94,7 +94,7 @@ public class BCTokenServiceImpl implements BCTokenService {
       if (jsonRespBO != null) {
         processAvailableChain(token, jsonRespBO);
       }
-      return new AudibleActionImplementation<>(token);
+      return new AudibleActionImplementation<>(token, token.getTokenCode(), token.getAmount());
     } catch (Exception e) {
       LOGGER.error("Exception in createBCToken().", e);
       throw new ServerErrorException("Exception in createBCToken().", e);
@@ -208,8 +208,9 @@ public class BCTokenServiceImpl implements BCTokenService {
   }
 
   @Transactional(rollbackFor = ServerErrorException.class)
-  public void transferBCToken(TransferBCTokenRequestDto dto) throws ServerErrorException {
-    LOGGER.debug("Entering transferBCToken().");
+  @AudibleActionTrail(module = AuditActionConstants.BC_TOKEN_MODULE, action = AuditActionConstants.TRANSFER)
+  public AudibleActionImplementation<BaseCurrencyToken> opsTransfer(TransferBCTokenRequestDto dto) throws ServerErrorException {
+    LOGGER.debug("Entering opsTransfer().");
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
@@ -258,15 +259,17 @@ public class BCTokenServiceImpl implements BCTokenService {
           transactionHistoryService.save(tx);
         }
       }
+      return new AudibleActionImplementation<>(bcToken, bcToken.getTokenCode(), dto.getAmount());
     } catch (Exception e){
-      LOGGER.error("Exception in transferBCToken().", e);
-      throw new ServerErrorException("Exception in transferBCToken().", e);
+      LOGGER.error("Exception in opsTransfer().", e);
+      throw new ServerErrorException("Exception in opsTransfer().", e);
     }
   }
 
   @Transactional(rollbackFor = ServerErrorException.class)
-  public void transferBCTokenToOpsWallet(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
-    LOGGER.debug("Entering transferBCToken().");
+  @AudibleActionTrail(module = AuditActionConstants.BC_TOKEN_MODULE, action = AuditActionConstants.TRANSFER)
+  public AudibleActionImplementation<BaseCurrencyToken> croTransfer(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
+    LOGGER.debug("Entering croTransfer().");
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
@@ -316,9 +319,10 @@ public class BCTokenServiceImpl implements BCTokenService {
           transactionHistoryService.save(tx);
         }
       }
+      return new AudibleActionImplementation<>(bcToken, bcToken.getTokenCode(), dto.getAmount());
     } catch (Exception e){
-      LOGGER.error("Exception in transferBCToken().", e);
-      throw new ServerErrorException("Exception in transferBCToken().", e);
+      LOGGER.error("Exception in croTransfer().", e);
+      throw new ServerErrorException("Exception in croTransfer().", e);
     }
   }
 
