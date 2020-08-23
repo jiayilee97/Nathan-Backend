@@ -50,25 +50,29 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
   public InvestorRiskResponseDto fetchAllInvestorRisk() throws ServerErrorException {
     LOGGER.debug("Entering fetchAllInvestorRisk().");
     try{
-      InvestorRiskResponseDto dto = new InvestorRiskResponseDto();
-      List<InvestorRisk> investorRisks = repository.findAll();
-      HashMap<String, InvestorRisk> clientDataMap = new HashMap<>();
-      for (InvestorRisk risk : investorRisks) {
-        if (!clientDataMap.containsKey(risk.getClientId())) {
-          clientDataMap.put(risk.getClientId(), risk);
-        } else {
-          Date latestDate = clientDataMap.get(risk.getClientId()).getUpdatedDate();
-          if (risk.getUpdatedDate().after(latestDate)) {
-            clientDataMap.replace(risk.getClientId(), risk);
+      try {
+        calculateInvestorRisk();
+      } finally {
+        InvestorRiskResponseDto dto = new InvestorRiskResponseDto();
+        List<InvestorRisk> investorRisks = repository.findAll();
+        HashMap<String, InvestorRisk> clientDataMap = new HashMap<>();
+        for (InvestorRisk risk : investorRisks) {
+          if (!clientDataMap.containsKey(risk.getClientId())) {
+            clientDataMap.put(risk.getClientId(), risk);
+          } else {
+            Date latestDate = clientDataMap.get(risk.getClientId()).getUpdatedDate();
+            if (risk.getUpdatedDate().after(latestDate)) {
+              clientDataMap.replace(risk.getClientId(), risk);
+            }
           }
         }
+
+        List<InvestorRisk> latestData = new ArrayList<>(clientDataMap.values());
+
+        dto.setInvestorRisks(latestData);
+        dto.setTotalCurrentNAV(navService.fetchCurrentNAV());
+        return dto;
       }
-
-      List<InvestorRisk> latestData = new ArrayList<>(clientDataMap.values());
-
-      dto.setInvestorRisks(latestData);
-      dto.setTotalCurrentNAV(navService.fetchCurrentNAV());
-      return dto;
     } catch (Exception e){
       LOGGER.error("Exception in fetchAllInvestorRisk().", e);
       throw new ServerErrorException("Exception in fetchAllInvestorRisk().", e);
