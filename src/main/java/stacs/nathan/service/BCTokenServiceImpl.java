@@ -27,10 +27,8 @@ import stacs.nathan.entity.*;
 import stacs.nathan.repository.BCTokenRepository;
 import stacs.nathan.repository.TradeHistoryRepository;
 import stacs.nathan.utils.constancs.AuditActionConstants;
-import stacs.nathan.utils.enums.BCTokenStatus;
-import stacs.nathan.utils.enums.CodeType;
-import stacs.nathan.utils.enums.TokenType;
-import stacs.nathan.utils.enums.TransactionStatus;
+import stacs.nathan.utils.enums.*;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -129,7 +127,7 @@ public class BCTokenServiceImpl implements BCTokenService {
     try {
       List<BCTokenResponseDto> tokenList = repository.fetchAllByIssuerAddress(issuerAddress, BCTokenStatus.OPEN);
       for (BCTokenResponseDto token : tokenList) {
-        User issuer = userService.fetchByWalletAddress(issuerAddress);
+        User issuer = userService.fetchByWalletAddressAndRole(issuerAddress, UserRole.OPS);
         Balance tokenBalance = balanceService.fetchBalanceByTokenCodeAndId(token.getTokenCode(), issuer.getId());
         token.setBalance(tokenBalance.getBalanceAmount());
       }
@@ -207,7 +205,7 @@ public class BCTokenServiceImpl implements BCTokenService {
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
       BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
-      User investor = userService.fetchByWalletAddress(dto.getInvestorWalletAddress());
+      User investor = userService.fetchByWalletAddressAndRole(dto.getInvestorWalletAddress(), UserRole.CLIENT);
       Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), loggedInUser.getId());
       BigDecimal remainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
       if (remainingAmount.compareTo(BigDecimal.ZERO) < 0) {
@@ -266,8 +264,11 @@ public class BCTokenServiceImpl implements BCTokenService {
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
       BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
-      User sender = userService.fetchByWalletAddress(dto.getSenderAddress());
-      User recepient = userService.fetchByWalletAddress(dto.getRecepientAddress());
+      User sender = userService.fetchByWalletAddressAndRole(dto.getSenderAddress(), UserRole.CLIENT);
+      User recepient = userService.fetchByWalletAddressAndRole(dto.getRecepientAddress(), UserRole.CLIENT);
+      if (recepient == null) {
+        recepient = userService.fetchByWalletAddressAndRole(dto.getRecepientAddress(), UserRole.OPS);
+      }
       Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), sender.getId());
       BigDecimal remainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
       if (remainingAmount.compareTo(BigDecimal.ZERO) < 0) {
@@ -326,7 +327,7 @@ public class BCTokenServiceImpl implements BCTokenService {
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
       BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
-      User investor = userService.fetchByWalletAddress(dto.getInvestorWalletAddress());
+      User investor = userService.fetchByWalletAddressAndRole(dto.getInvestorWalletAddress(), UserRole.CLIENT);
       Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), loggedInUser.getId());
       if (bcTokenBalance != null) {
         BigDecimal bcRemainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
@@ -386,8 +387,11 @@ public class BCTokenServiceImpl implements BCTokenService {
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
       BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
-      User sender = userService.fetchByWalletAddress(dto.getSenderAddress());
-      User recipient = userService.fetchByWalletAddress(dto.getRecepientAddress());
+      User sender = userService.fetchByWalletAddressAndRole(dto.getSenderAddress(), UserRole.CLIENT);
+      User recipient = userService.fetchByWalletAddressAndRole(dto.getRecepientAddress(), UserRole.CLIENT);
+      if (recipient == null) {
+        recipient = userService.fetchByWalletAddressAndRole(dto.getRecepientAddress(), UserRole.OPS);
+      }
       Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), sender.getId());
       if (bcTokenBalance != null) {
         BigDecimal bcRemainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());

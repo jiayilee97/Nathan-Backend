@@ -29,8 +29,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u.clientId FROM User u where u.role = :role")
     List<String> fetchAllClientIds(@Param("role") UserRole role);
 
-    @Query("SELECT u FROM User u where u.walletAddress = :walletAddress")
-    User fetchIdByWalletAddress(@Param("walletAddress") String walletAddress);
+    @Query("SELECT u FROM User u where u.walletAddress = :walletAddress and u.role = :role")
+    User fetchIdByWalletAddressAndRole(@Param("walletAddress") String walletAddress, @Param("role") UserRole role);
 
     @Query("SELECT u FROM User u WHERE u.clientId = :clientId")
     User fetchByClientId(@Param("clientId") String clientId);

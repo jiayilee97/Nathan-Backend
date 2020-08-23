@@ -8,6 +8,8 @@ import stacs.nathan.dto.response.ClientResponseDto;
 import stacs.nathan.dto.response.ClientSPPositionResponseDto;
 import stacs.nathan.dto.response.CreateClientInitDto;
 import stacs.nathan.entity.User;
+import stacs.nathan.utils.enums.UserRole;
+
 import java.util.List;
 
 public interface UserService {
@@ -36,7 +38,7 @@ public interface UserService {
 
     void updateUser(ClientRequestDto dto) throws ServerErrorException;
 
-    User fetchByWalletAddress(String walletAddress);
+    User fetchByWalletAddressAndRole(String walletAddress, UserRole userRole);
 
     User fetchAppAddress();
 
