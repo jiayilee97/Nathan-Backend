@@ -21,6 +21,7 @@ import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.request.TransferBCTokenRequestDto;
 import stacs.nathan.dto.request.TransferBCTokenToOpsRequestDto;
 import stacs.nathan.dto.response.BCTokenResponseDto;
+import stacs.nathan.dto.response.BalanceResponseDto;
 import stacs.nathan.dto.response.CreateBCTokenInitDto;
 import stacs.nathan.entity.*;
 import stacs.nathan.repository.BCTokenRepository;
@@ -123,16 +124,6 @@ public class BCTokenServiceImpl implements BCTokenService {
     }
   }
 
-//  public List<BCTokenResponseDto> fetchBalanceByIssuerAddress(String issuerAddress) throws ServerErrorException {
-//    LOGGER.debug("Entering fetchBalanceByIssuerAddress().");
-//    try {
-//      return repository.fetchAllByIssuerAddress(issuerAddress, BCTokenStatus.OPEN);
-//    } catch (Exception e) {
-//      LOGGER.error("Exception in fetchBalanceByIssuerAddress().", e);
-//      throw new ServerErrorException("Exception in fetchBalanceByIssuerAddress().", e);
-//    }
-//  }
-
   public List<BCTokenResponseDto> fetchAllByIssuerAddress(String issuerAddress) throws ServerErrorException {
     LOGGER.debug("Entering fetchAllBCTokens().");
     try {
@@ -148,6 +139,7 @@ public class BCTokenServiceImpl implements BCTokenService {
       throw new ServerErrorException("Exception in fetchAllBCTokens().", e);
     }
   }
+
 
   public BCTokenResponseDto fetchTokenByTokenCode(String tokenCode) throws ServerErrorException {
     LOGGER.debug("Entering fetchTokenById().");
@@ -327,7 +319,8 @@ public class BCTokenServiceImpl implements BCTokenService {
   }
 
   @Transactional(rollbackFor = ServerErrorException.class)
-  public void opsTrade(TransferBCTokenRequestDto dto) throws ServerErrorException {
+  @AudibleActionTrail(module = AuditActionConstants.BC_TOKEN_MODULE, action = AuditActionConstants.TRANSFER)
+  public AudibleActionImplementation<BaseCurrencyToken> opsTrade(TransferBCTokenRequestDto dto) throws ServerErrorException {
     LOGGER.debug("Entering opsTrade().");
     try {
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
@@ -378,6 +371,7 @@ public class BCTokenServiceImpl implements BCTokenService {
           transactionHistoryService.save(tx);
         }
       }
+      return new AudibleActionImplementation<>(bcToken, bcToken.getTokenCode(), dto.getAmount());
     }  catch (Exception e){
       LOGGER.error("Exception in opsTrade().", e);
       throw new ServerErrorException("Exception in opsTrade().", e);
@@ -385,7 +379,8 @@ public class BCTokenServiceImpl implements BCTokenService {
   }
 
   @Transactional(rollbackFor = ServerErrorException.class)
-  public void croTrade(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
+  @AudibleActionTrail(module = AuditActionConstants.BC_TOKEN_MODULE, action = AuditActionConstants.TRANSFER)
+  public AudibleActionImplementation<BaseCurrencyToken> croTrade(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
     LOGGER.debug("Entering croTrade().");
     try {
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
@@ -436,6 +431,8 @@ public class BCTokenServiceImpl implements BCTokenService {
           transactionHistoryService.save(tx);
         }
       }
+      return new AudibleActionImplementation<>(bcToken, bcToken.getTokenCode(), dto.getAmount());
+
     }  catch (Exception e){
       LOGGER.error("Exception in croTrade().", e);
       throw new ServerErrorException("Exception in croTrade().", e);
