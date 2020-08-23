@@ -277,11 +277,16 @@ public class FXTokenServiceImpl implements FXTokenService {
         Balance fxTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(fxToken.getTokenCode(), appWallet.getId());
         BigDecimal remainingAmount = fxTokenBalance.getBalanceAmount().subtract(spToken.getFixingAmount());
         BigDecimal amountToTransfer = spToken.getFixingAmount();
+        System.out.println("remainingAmount: " + remainingAmount);
+        System.out.println("remainder: " + remainingAmount.compareTo(spToken.getFixingAmount()));
+        System.out.println("is remainder 0: " + remainingAmount.compareTo(BigDecimal.ZERO));
 
         // Transfer remainder if notional amount is not divisible by number of fixing.
         if ((remainingAmount.compareTo(BigDecimal.ZERO) > 0) && (remainingAmount.compareTo(spToken.getFixingAmount()) < 0)) {
           remainingAmount = remainingAmount.subtract(remainingAmount);
           amountToTransfer = amountToTransfer.add(remainingAmount);
+          System.out.println("remainingAmount: " + remainingAmount);
+          System.out.println("amountToTransfer: " + amountToTransfer);
         }
         fxTokenBalance.setBalanceAmount(remainingAmount);
         balanceService.createBalance(fxTokenBalance);
