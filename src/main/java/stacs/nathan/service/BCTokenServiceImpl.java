@@ -83,13 +83,14 @@ public class BCTokenServiceImpl implements BCTokenService {
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
+      User opsUser = userService.fetchByWalletAddressAndRole(loggedInUser.getWalletAddress(), UserRole.OPS);
       token = convertToBCToken(dto);
-      token.setUser(loggedInUser);
-      token.setIssuerId(loggedInUser.getUuid());
-      token.setIssuerAddress(loggedInUser.getWalletAddress());
+      token.setUser(opsUser);
+      token.setIssuerId(opsUser.getUuid());
+      token.setIssuerAddress(opsUser.getWalletAddress());
       token.setStatus(BCTokenStatus.CHAIN_UNAVAILABLE);
       repository.save(token);
-      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, loggedInUser.getWalletAddress(), TokenType.BC_TOKEN, dto.getAmount());
+      JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, opsUser.getWalletAddress(), TokenType.BC_TOKEN, dto.getAmount());
       if (jsonRespBO != null) {
         processAvailableChain(token, jsonRespBO);
       }
@@ -204,14 +205,15 @@ public class BCTokenServiceImpl implements BCTokenService {
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
+      User opsUser = userService.fetchByWalletAddressAndRole(loggedInUser.getWalletAddress(), UserRole.OPS);
       BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
       User investor = userService.fetchByWalletAddressAndRole(dto.getInvestorWalletAddress(), UserRole.CLIENT);
-      Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), loggedInUser.getId());
+      Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), opsUser.getId());
       BigDecimal remainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
       if (remainingAmount.compareTo(BigDecimal.ZERO) < 0) {
         throw new BadRequestException("Insufficient balance for transfer");
       } else {
-        JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, loggedInUser.getWalletAddress(), investor.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
+        JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, opsUser.getWalletAddress(), investor.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
         String txId = jsonRespBO.getTxId();
         TransferQueryRespBO txDetail = blockchainService.getTransferDetails(txId);
         if (txDetail != null) {
@@ -238,7 +240,7 @@ public class BCTokenServiceImpl implements BCTokenService {
           TransactionHistory tx = new TransactionHistory();
           tx.setTokenContractAddress(bcToken.getTokenContractAddress());
           tx.setAmount(dto.getAmount());
-          tx.setFromAddress(loggedInUser.getWalletAddress());
+          tx.setFromAddress(opsUser.getWalletAddress());
           tx.setToAddress(investor.getWalletAddress());
           tx.setBlockHeight(txDetail.getBlockHeight());
           tx.setStatus(TransactionStatus.DEPOSIT);
@@ -326,13 +328,14 @@ public class BCTokenServiceImpl implements BCTokenService {
     try {
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
+      User opsUser = userService.fetchByWalletAddressAndRole(loggedInUser.getWalletAddress(), UserRole.OPS);
       BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
       User investor = userService.fetchByWalletAddressAndRole(dto.getInvestorWalletAddress(), UserRole.CLIENT);
-      Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), loggedInUser.getId());
+      Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), opsUser.getId());
       if (bcTokenBalance != null) {
         BigDecimal bcRemainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
         if (bcRemainingAmount.compareTo(BigDecimal.ZERO) > 0) {
-          JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, loggedInUser.getWalletAddress(), investor.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
+          JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, opsUser.getWalletAddress(), investor.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
           String bcTxId = jsonRespBO.getTxId();
           TransferQueryRespBO bcTxDetail = blockchainService.getTransferDetails(bcTxId);
           if (bcTxDetail != null) {
@@ -360,10 +363,9 @@ public class BCTokenServiceImpl implements BCTokenService {
           TransactionHistory tx = new TransactionHistory();
           tx.setTokenContractAddress(bcToken.getTokenContractAddress());
           tx.setAmount(dto.getAmount());
-          tx.setFromAddress(loggedInUser.getWalletAddress());
+          tx.setFromAddress(opsUser.getWalletAddress());
           tx.setToAddress(investor.getWalletAddress());
           tx.setBlockHeight(bcTxDetail.getBlockHeight());
-          // Transaction type?
           tx.setStatus(TransactionStatus.REDEMPTION);
           tx.setCtxId(bcTxId);
           tx.setTokenCode(bcToken.getTokenCode());
