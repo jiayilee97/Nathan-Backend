@@ -29,9 +29,9 @@ public interface BCTokenService {
 
   AudibleActionImplementation<BaseCurrencyToken> opsTransfer(TransferBCTokenRequestDto dto) throws ServerErrorException;
 
-  void opsTrade(TransferBCTokenRequestDto dto) throws ServerErrorException;
+  AudibleActionImplementation<BaseCurrencyToken> opsTrade(TransferBCTokenRequestDto dto) throws ServerErrorException;
 
-  void croTrade(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException;
+  AudibleActionImplementation<BaseCurrencyToken> croTrade(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException;
 
   AudibleActionImplementation<BaseCurrencyToken> croTransfer(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException;
 

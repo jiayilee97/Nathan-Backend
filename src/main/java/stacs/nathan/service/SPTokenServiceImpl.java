@@ -81,7 +81,7 @@ public class SPTokenServiceImpl implements SPTokenService {
       if (jsonRespBO != null) {
         processAvailableChain(token, jsonRespBO);
       }
-      return new AudibleActionImplementation<>(token);
+      return new AudibleActionImplementation<>(token, token.getTokenCode(), token.getNotionalAmount());
     }catch (Exception e){
       LOGGER.error("Exception in createSPToken().", e);
       throw new ServerErrorException("Exception in createSPToken().", e);

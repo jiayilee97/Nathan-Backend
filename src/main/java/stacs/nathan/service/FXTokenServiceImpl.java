@@ -276,9 +276,15 @@ public class FXTokenServiceImpl implements FXTokenService {
       else {
         Balance fxTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(fxToken.getTokenCode(), appWallet.getId());
         BigDecimal remainingAmount = fxTokenBalance.getBalanceAmount().subtract(spToken.getFixingAmount());
+        BigDecimal amountToTransfer = spToken.getFixingAmount();
+
+        // Transfer remainder if notional amount is not divisible by number of fixing.
+        if ((remainingAmount.compareTo(BigDecimal.ZERO) > 0) && (remainingAmount.compareTo(spToken.getFixingAmount()) < 0)) {
+          remainingAmount = remainingAmount.subtract(remainingAmount);
+          amountToTransfer = amountToTransfer.add(remainingAmount);
+        }
         fxTokenBalance.setBalanceAmount(remainingAmount);
         balanceService.createBalance(fxTokenBalance);
-
 
         // Save balance for receiver wallet
         Balance receiverBalance = balanceService.fetchBalanceByTokenCodeAndId(fxToken.getTokenCode(), client.getId());
@@ -290,7 +296,7 @@ public class FXTokenServiceImpl implements FXTokenService {
           newBalance.setUser(client);
           balanceService.createBalance(newBalance);
         } else {
-          BigDecimal newAmount = receiverBalance.getBalanceAmount().add(spToken.getFixingAmount());
+          BigDecimal newAmount = receiverBalance.getBalanceAmount().add(amountToTransfer);
           receiverBalance.setBalanceAmount(newAmount);
           balanceService.createBalance(receiverBalance);
         }
@@ -298,7 +304,7 @@ public class FXTokenServiceImpl implements FXTokenService {
         // Update trade history
         TradeHistory tradeHistory = new TradeHistory();
         tradeHistory.setSide("BUY");
-        tradeHistory.setQuantity(spToken.getFixingAmount());
+        tradeHistory.setQuantity(amountToTransfer);
         tradeHistory.setTokenId(fxToken.getId());
         tradeHistory.setUnderlying(fxToken.getFxCurrency());
         tradeHistory.setTokenType(TokenType.FX_TOKEN);
@@ -317,7 +323,7 @@ public class FXTokenServiceImpl implements FXTokenService {
             // Update Transaction history
             TransactionHistory tx = new TransactionHistory();
             tx.setTokenContractAddress(fxToken.getTokenContractAddress());
-            tx.setAmount(spToken.getFixingAmount());
+            tx.setAmount(amountToTransfer);
             tx.setFromAddress(appWallet.getWalletAddress());
             tx.setToAddress(client.getWalletAddress());
             tx.setBlockHeight(txDetail.getBlockHeight());
@@ -328,6 +334,8 @@ public class FXTokenServiceImpl implements FXTokenService {
             tx.setTokenId(fxToken.getId());
             transactionHistoryService.save(tx);
           }
+
+          // Set token to maturity if remaining amount is 0
           if (remainingAmount.compareTo(BigDecimal.ZERO) == 0) {
             User user = spToken.getUser();
             Balance balance = balanceService.fetchBalanceByTokenCodeAndTokenType(spToken.getTokenCode(), TokenType.SP_TOKEN);
@@ -364,7 +372,6 @@ public class FXTokenServiceImpl implements FXTokenService {
           }
         }
       }
-      // TODO: Transfer FX Tokens if below knockout price
       fxTokenDataEntryRepository.save(data);
       return new AudibleActionImplementation<>(data, fxToken.getTokenCode());
     } catch (Exception e) {
