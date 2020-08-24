@@ -12,6 +12,10 @@ public class CreateSPTokenInitDto {
 
   List<CodeValue> underlying;
 
+  Select fixingType;
+
+  Select tenorType;
+
   String issuingAddress; //login ops wallet address
 
   public List<String> getClientIds() {
@@ -36,6 +40,22 @@ public class CreateSPTokenInitDto {
 
   public void setUnderlying(List<CodeValue> underlying) {
     this.underlying = underlying;
+  }
+
+  public Select getFixingType() {
+    return fixingType;
+  }
+
+  public void setFixingType(Select fixingType) {
+    this.fixingType = fixingType;
+  }
+
+  public Select getTenorType() {
+    return tenorType;
+  }
+
+  public void setTenorType(Select tenorType) {
+    this.tenorType = tenorType;
   }
 
   public String getIssuingAddress() {
