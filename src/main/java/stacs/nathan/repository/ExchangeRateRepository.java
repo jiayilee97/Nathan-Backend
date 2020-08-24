@@ -15,7 +15,7 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long
     @Query("SELECT DISTINCT er.currencyPair from ExchangeRate er")
     List<String> findAllUniqueCurrency();
 
-    @Query("SELECT er FROM ExchangeRate er WHERE er.updatedDate >= :startDate and er.updatedDate <= :endDate")
+    @Query("SELECT er FROM ExchangeRate er WHERE er.updatedDate >= :startDate and er.updatedDate <= :endDate and er.isVisible = true")
     List<ExchangeRate> fetchCurrentExchangeRates(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     @Query("select e from ExchangeRate e where e.currencyPair = :currencyPair and e.updatedDate in (select max(updatedDate) from ExchangeRate r where e.currency = r.currency)")

@@ -76,7 +76,7 @@ public class BCTokenServiceImpl implements BCTokenService {
   @AudibleActionTrail(module = AuditActionConstants.BC_TOKEN_MODULE, action = AuditActionConstants.CREATE_BC_TOKEN)
   public AudibleActionImplementation<BaseCurrencyToken> createBCToken(BCTokenRequestDto dto) throws ServerErrorException, BadRequestException {
     LOGGER.debug("Entering createBCToken().");
-    BaseCurrencyToken token = repository.findByTokenCode(dto.getTokenCode());
+    BaseCurrencyToken token = repository.findByTokenCodeAndIsVisible(dto.getTokenCode(), true);
     if(token != null){
       throw new BadRequestException("Token Code already exists.");
     }
@@ -206,7 +206,7 @@ public class BCTokenServiceImpl implements BCTokenService {
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
       User opsUser = userService.fetchByWalletAddressAndRole(loggedInUser.getWalletAddress(), UserRole.OPS);
-      BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
+      BaseCurrencyToken bcToken = repository.findByTokenCodeAndIsVisible(dto.getBcTokenCode(), true);
       User investor = userService.fetchByWalletAddressAndRole(dto.getInvestorWalletAddress(), UserRole.CLIENT);
       Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), opsUser.getId());
       BigDecimal remainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
@@ -265,7 +265,7 @@ public class BCTokenServiceImpl implements BCTokenService {
     try{
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
-      BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
+      BaseCurrencyToken bcToken = repository.findByTokenCodeAndIsVisible(dto.getBcTokenCode(), true);
       User sender = userService.fetchByWalletAddressAndRole(dto.getSenderAddress(), UserRole.CLIENT);
       User recepient = userService.fetchByWalletAddressAndRole(dto.getRecepientAddress(), UserRole.CLIENT);
       if (recepient == null) {
@@ -329,7 +329,7 @@ public class BCTokenServiceImpl implements BCTokenService {
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
       User opsUser = userService.fetchByWalletAddressAndRole(loggedInUser.getWalletAddress(), UserRole.OPS);
-      BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
+      BaseCurrencyToken bcToken = repository.findByTokenCodeAndIsVisible(dto.getBcTokenCode(), true);
       User investor = userService.fetchByWalletAddressAndRole(dto.getInvestorWalletAddress(), UserRole.CLIENT);
       Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), opsUser.getId());
       if (bcTokenBalance != null) {
@@ -388,7 +388,7 @@ public class BCTokenServiceImpl implements BCTokenService {
     try {
       String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
       User loggedInUser = userService.fetchByUsername(username);
-      BaseCurrencyToken bcToken = repository.findByTokenCode(dto.getBcTokenCode());
+      BaseCurrencyToken bcToken = repository.findByTokenCodeAndIsVisible(dto.getBcTokenCode(), true);
       User sender = userService.fetchByWalletAddressAndRole(dto.getSenderAddress(), UserRole.CLIENT);
       User recipient = userService.fetchByWalletAddressAndRole(dto.getRecepientAddress(), UserRole.CLIENT);
       if (recipient == null) {

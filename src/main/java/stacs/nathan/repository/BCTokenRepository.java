@@ -13,15 +13,15 @@ import java.util.List;
 public interface BCTokenRepository extends JpaRepository<BaseCurrencyToken, Long> {
 
   @Query("SELECT NEW stacs.nathan.dto.response.BCTokenResponseDto(bc.id, bc.underlyingCurrency, bc.tokenCode, bc.currencyCode, bc.amount) " +
-      "FROM BaseCurrencyToken bc WHERE bc.issuerAddress = :issuerAddress AND bc.status = :status")
+      "FROM BaseCurrencyToken bc WHERE bc.issuerAddress = :issuerAddress AND bc.status = :status and bc.isVisible = true")
   List<BCTokenResponseDto> fetchAllByIssuerAddress(@Param("issuerAddress") String issuerAddress, @Param("status")BCTokenStatus status);
 
   @Query("SELECT NEW stacs.nathan.dto.response.BCTokenResponseDto(bc.id, bc.underlyingCurrency, bc.tokenCode, bc.currencyCode, bc.amount) " +
-      "FROM BaseCurrencyToken bc WHERE bc.tokenCode = :tokenCode")
+      "FROM BaseCurrencyToken bc WHERE bc.tokenCode = :tokenCode and bc.isVisible = true")
   BCTokenResponseDto fetchByTokenCode(@Param("tokenCode") String tokenCode);
 
   List<BaseCurrencyToken> findByStatus(BCTokenStatus status);
 
-  BaseCurrencyToken findByTokenCode(String tokenCode);
+  BaseCurrencyToken findByTokenCodeAndIsVisible(String tokenCode, Boolean isVisible);
 
 }

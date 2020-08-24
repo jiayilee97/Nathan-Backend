@@ -15,6 +15,6 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<TransactionHistory, Long> {
 
     @Query("SELECT NEW stacs.nathan.dto.response.TransactionHistoryResponseDto(tx.tokenCode, tx.amount, tx.toAddress, tx.status, tx.ctxId, tx.updatedDate)" +
-            "FROM TransactionHistory tx WHERE tx.updatedDate >= :startDate AND tx.updatedDate <= :endDate")
+            "FROM TransactionHistory tx WHERE tx.updatedDate >= :startDate AND tx.updatedDate <= :endDate AND tx.isVisible = true")
     List<TransactionHistoryResponseDto> findAllByCreatedBy(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }

@@ -94,7 +94,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
   public AudibleActionImplementation<List<InvestorRisk>> calculateInvestorRisk() throws ServerErrorException {
     LOGGER.debug("Entering calculateInvestorRisk().");
     try{
-      List<User> clients = userRepository.findByRole(UserRole.CLIENT);
+      List<User> clients = userRepository.findByRoleAndIsVisible(UserRole.CLIENT, true);
       List<InvestorRisk> investorRisks = new ArrayList<>();
       BigDecimal totalNAV = BigDecimal.ZERO;
       for(User  client : clients) {
@@ -130,7 +130,7 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
         List<Balance> bcTokens = balanceRepository.findByTokenTypeAndUser(TokenType.BC_TOKEN, client);
         BigDecimal navBcToken = BigDecimal.ZERO;
         for (Balance bcBalance: bcTokens) {
-          BaseCurrencyToken baseCurrencyToken = bcTokenRepository.findByTokenCode(bcBalance.getTokenCode());
+          BaseCurrencyToken baseCurrencyToken = bcTokenRepository.findByTokenCodeAndIsVisible(bcBalance.getTokenCode(), true);
           BigDecimal convertedBcAmount = convertBCToken(bcBalance.getBalanceAmount(), baseCurrencyToken.getUnderlyingCurrency(), exchangeRates);
           navBcToken = navBcToken.add(convertedBcAmount);
         }
