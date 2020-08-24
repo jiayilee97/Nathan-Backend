@@ -3,7 +3,9 @@ package stacs.nathan.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.envers.Audited;
+import stacs.nathan.utils.enums.FixingType;
 import stacs.nathan.utils.enums.SPTokenStatus;
+import stacs.nathan.utils.enums.TenorType;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -69,6 +71,17 @@ public class SPToken extends BaseTokenEntity {
 
     @Column(name = "num_fixing")
     private int numberOfFixing;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "fixing_type", length = 30)
+    private FixingType fixingType;
+
+    @Column(name = "tenor")
+    private int tenor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tenor_type", length = 30)
+    private TenorType tenorType;
 
     @Column(name = "cp_id")
     private String cpId;
@@ -182,6 +195,30 @@ public class SPToken extends BaseTokenEntity {
 
     public void setNumberOfFixing(int numberOfFixing) {
         this.numberOfFixing = numberOfFixing;
+    }
+
+    public FixingType getFixingType() {
+        return fixingType;
+    }
+
+    public void setFixingType(FixingType fixingType) {
+        this.fixingType = fixingType;
+    }
+
+    public int getTenor() {
+        return tenor;
+    }
+
+    public void setTenor(int tenor) {
+        this.tenor = tenor;
+    }
+
+    public TenorType getTenorType() {
+        return tenorType;
+    }
+
+    public void setTenorType(TenorType tenorType) {
+        this.tenorType = tenorType;
     }
 
     public String getCpId() {

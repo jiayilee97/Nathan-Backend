@@ -104,6 +104,9 @@ public class SPTokenServiceImpl implements SPTokenService {
     token.setSpotPrice(dto.getIndicativeSpotPrice());
     token.setStrikeRate(dto.getStrikeRate());
     token.setNotionalAmount(dto.getNotionalAmount());
+    token.setFixingType(FixingType.resolveCode(dto.getFixingType()));
+    token.setTenor(dto.getTenor());
+    token.setTenorType(TenorType.resolveCode(dto.getTenorType()));
     token.setStatus(SPTokenStatus.ACTIVE);
     return token;
   }
@@ -145,6 +148,8 @@ public class SPTokenServiceImpl implements SPTokenService {
     dto.setClientIds(userService.fetchAllClientIds());
     dto.setProductType(ProductType.getValuesSelection());
     dto.setUnderlying(codeValueService.findByType(CodeType.UNDERLYING));
+    dto.setFixingType(FixingType.getValuesSelection());
+    dto.setTenorType(TenorType.getValuesSelection());
     dto.setIssuingAddress(loggedInUser.getWalletAddress());
     return dto;
   }

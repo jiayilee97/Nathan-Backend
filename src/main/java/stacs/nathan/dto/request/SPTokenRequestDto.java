@@ -31,6 +31,12 @@ public class SPTokenRequestDto {
 
     private int numFixing;
 
+    private String fixingType;
+
+    private int tenor;
+
+    private String tenorType;
+
     private String counterPartyId;
 
     private String issuingAddress;
@@ -145,6 +151,30 @@ public class SPTokenRequestDto {
 
     public void setCounterPartyId(String counterPartyId) {
         this.counterPartyId = counterPartyId;
+    }
+
+    public String getFixingType() {
+        return fixingType;
+    }
+
+    public void setFixingType(String fixingType) {
+        this.fixingType = fixingType;
+    }
+
+    public int getTenor() {
+        return tenor;
+    }
+
+    public void setTenor(int tenor) {
+        this.tenor = tenor;
+    }
+
+    public String getTenorType() {
+        return tenorType;
+    }
+
+    public void setTenorType(String tenorType) {
+        this.tenorType = tenorType;
     }
 
     public String getIssuingAddress() {

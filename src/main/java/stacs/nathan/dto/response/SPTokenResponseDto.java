@@ -1,9 +1,10 @@
 package stacs.nathan.dto.response;
 
-import stacs.nathan.entity.FXToken;
 import stacs.nathan.entity.SPToken;
+import stacs.nathan.utils.enums.FixingType;
 import stacs.nathan.utils.enums.ProductType;
 import stacs.nathan.utils.enums.SPTokenStatus;
+import stacs.nathan.utils.enums.TenorType;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -46,34 +47,13 @@ public class SPTokenResponseDto {
 
     private String issuingAddress;
 
-    private String fxTokenCode;
+    private String fixingType;
 
-    public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress, SPTokenStatus status, String issuer, String clientId, FXToken fxToken) {
-        setTokenCode(tokenCode);
-        setProductType(ProductType.resolveCode(productType).getValue());
-        setContractInceptionDate(contractInceptionDate);
-        setUnderlyingCurrency(underlyingCurrency);
-        setNotionalAmount(notionalAmount);
-        setAmountPerFixing(amountPerFixing);
-        setIndicativeSpotPrice(indicativeSpotPrice);
-        setStrikeRate(strikeRate);
-        setKnockoutPrice(knockoutPrice);
-        setMaturityDate(maturityDate);
-        setFixingPage(fixingPage);
-        setNumFixing(numFixing);
-        setCounterPartyId(counterPartyId);
-        setOpsId(opsId);
-        setIssuingAddress(issuingAddress);
-        setIssuer(issuer);
-        setClientId(clientId);
-        setStatus(status.getValue());
-        System.out.println(tokenCode);
-        if (fxToken != null) {
-            setFxTokenCode(fxToken.getTokenCode());
-        } else {
-            setFxTokenCode(null);
-        }
-    }
+    private int tenor = 0;
+
+    private String tenorType;
+
+    public SPTokenResponseDto() {}
 
     public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress, SPTokenStatus status, String issuer, String clientName, String clientId) {
         setTokenCode(tokenCode);
@@ -97,7 +77,6 @@ public class SPTokenResponseDto {
         setStatus(status.getValue());
     }
 
-
     public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress, SPTokenStatus status, String issuer, String clientId) {
         setTokenCode(tokenCode);
         setProductType(ProductType.resolveCode(productType).getValue());
@@ -117,6 +96,34 @@ public class SPTokenResponseDto {
         setIssuer(issuer);
         setClientId(clientId);
         setStatus(status.getValue());
+    }
+
+    public SPTokenResponseDto(String tokenCode, String productType, Date contractInceptionDate, String underlyingCurrency, BigDecimal notionalAmount, BigDecimal amountPerFixing, BigDecimal indicativeSpotPrice, BigDecimal strikeRate, BigDecimal knockoutPrice, Date maturityDate, String fixingPage, int numFixing, String counterPartyId, String opsId, String issuingAddress, SPTokenStatus status, String issuer, String clientId, FixingType fixingType, int tenor, TenorType tenorType) {
+        setTokenCode(tokenCode);
+        setProductType(ProductType.resolveCode(productType).getValue());
+        setContractInceptionDate(contractInceptionDate);
+        setUnderlyingCurrency(underlyingCurrency);
+        setNotionalAmount(notionalAmount);
+        setAmountPerFixing(amountPerFixing);
+        setIndicativeSpotPrice(indicativeSpotPrice);
+        setStrikeRate(strikeRate);
+        setKnockoutPrice(knockoutPrice);
+        setMaturityDate(maturityDate);
+        setFixingPage(fixingPage);
+        setNumFixing(numFixing);
+        setCounterPartyId(counterPartyId);
+        setOpsId(opsId);
+        setIssuingAddress(issuingAddress);
+        setIssuer(issuer);
+        setClientId(clientId);
+        setStatus(status.getValue());
+        if(fixingType != null) {
+            setFixingType(fixingType.getValue());
+        }
+        if(tenorType != null) {
+            setTenor(tenor);
+            setTenorType(tenorType.getValue());
+        }
     }
 
     public SPTokenResponseDto(SPToken spToken) {
@@ -292,11 +299,27 @@ public class SPTokenResponseDto {
         this.status = status;
     }
 
-    public String getFxTokenCode() {
-        return fxTokenCode;
+    public String getFixingType() {
+        return fixingType;
     }
 
-    public void setFxTokenCode(String fxTokenCode) {
-        this.fxTokenCode = fxTokenCode;
+    public void setFixingType(String fixingType) {
+        this.fixingType = fixingType;
+    }
+
+    public int getTenor() {
+        return tenor;
+    }
+
+    public void setTenor(int tenor) {
+        this.tenor = tenor;
+    }
+
+    public String getTenorType() {
+        return tenorType;
+    }
+
+    public void setTenorType(String tenorType) {
+        this.tenorType = tenorType;
     }
 }
