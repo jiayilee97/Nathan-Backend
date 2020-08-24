@@ -12,29 +12,29 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    List<User> findByRole(UserRole role);
+    List<User> findByRoleAndIsVisible(UserRole role, Boolean isVisible);
 
-    User findByUsername(String username);
+    User findByUsernameAndIsVisible(String username, Boolean isVisible);
 
-    User findById(long id);
+    User findByIdAndIsVisible(long id, Boolean isVisible);
 
-    User findByClientId(String clientId);
+    User findByClientIdAndIsVisible(String clientId, Boolean isVisible);
 
-    @Query("SELECT NEW stacs.nathan.dto.response.ClientResponseDto(u.clientId, u.displayName, u.nationality, u.accreditedStatus, u.riskToleranceRating, u.walletAddress) FROM User u where u.role = :role")
+    @Query("SELECT NEW stacs.nathan.dto.response.ClientResponseDto(u.clientId, u.displayName, u.nationality, u.accreditedStatus, u.riskToleranceRating, u.walletAddress) FROM User u where u.role = :role and u.isVisible = true")
     List<ClientResponseDto> fetchByRole(@Param("role") UserRole role);
 
-    @Query("SELECT NEW stacs.nathan.dto.response.ClientResponseDto(u.clientId, u.displayName, u.nationality, u.accreditedStatus, u.riskToleranceRating, u.walletAddress) FROM User u where u.clientId = :clientId")
+    @Query("SELECT NEW stacs.nathan.dto.response.ClientResponseDto(u.clientId, u.displayName, u.nationality, u.accreditedStatus, u.riskToleranceRating, u.walletAddress) FROM User u where u.clientId = :clientId and u.isVisible = true")
     ClientResponseDto findClientById(@Param("clientId") String clientId);
 
-    @Query("SELECT u.clientId FROM User u where u.role = :role")
+    @Query("SELECT u.clientId FROM User u where u.role = :role and u.isVisible = true")
     List<String> fetchAllClientIds(@Param("role") UserRole role);
 
-    @Query("SELECT u FROM User u where u.walletAddress = :walletAddress and u.role = :role")
+    @Query("SELECT u FROM User u where u.walletAddress = :walletAddress and u.role = :role and u.isVisible = true")
     User fetchIdByWalletAddressAndRole(@Param("walletAddress") String walletAddress, @Param("role") UserRole role);
 
-    @Query("SELECT u FROM User u WHERE u.clientId = :clientId")
+    @Query("SELECT u FROM User u WHERE u.clientId = :clientId and u.isVisible = true")
     User fetchByClientId(@Param("clientId") String clientId);
 
-    @Query("SELECT u FROM User u WHERE u.role = :role")
+    @Query("SELECT u FROM User u WHERE u.role = :role and u.isVisible = true")
     User fetchAppAddress(@Param("role") UserRole role);
 }

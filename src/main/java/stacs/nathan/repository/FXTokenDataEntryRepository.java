@@ -11,6 +11,6 @@ import java.util.List;
 public interface FXTokenDataEntryRepository extends JpaRepository<FXTokenDataEntry, Long> {
 
     @Query("SELECT NEW stacs.nathan.dto.response.FXTokenDataEntryResponseDto(fxd.fxToken.spToken.clientId, fxd.fxToken.tokenCode, fxd.price, fxd.fxCurrency, fxd.entryDate)" +
-            "FROM FXTokenDataEntry fxd")
+            "FROM FXTokenDataEntry fxd where fxd.isVisible = true")
     List<FXTokenDataEntryResponseDto> fetchAll();
 }

@@ -17,7 +17,7 @@ public interface BalanceRepository extends JpaRepository<Balance, Long> {
   List<Balance> findByUser(User user);
 
   @Query("SELECT NEW stacs.nathan.dto.response.BalanceResponseDto(b.tokenCode, b.tokenType, b.balanceAmount) " +
-      "FROM Balance b where b.user.clientId = :clientId")
+      "FROM Balance b where b.user.clientId = :clientId  and b.isVisible = true")
   List<BalanceResponseDto> findByClientId(@Param("clientId") String clientId);
 
 //  @Query("SELECT NEW stacs.nathan.dto.response.BalanceResponseDto(b.tokenCode, b.tokenType, b.balanceAmount)" +
@@ -26,7 +26,7 @@ public interface BalanceRepository extends JpaRepository<Balance, Long> {
 
   Balance findByTokenCode(@Param("tokenCode") String tokenCode);
 
-  @Query("SELECT b from Balance b WHERE b.user.id = :id AND b.tokenCode = :tokenCode")
+  @Query("SELECT b from Balance b WHERE b.user.id = :id AND b.tokenCode = :tokenCode  and b.isVisible = true")
   Balance findByTokenCodeAndId(@Param("tokenCode") String tokenCode, @Param("id") Long id);
 
   List<Balance> findByTokenType(TokenType tokenType);

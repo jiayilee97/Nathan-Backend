@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     public List<ClientSPPositionResponseDto> fetchClientSPPositions() {
         LOGGER.debug("Entering fetchClientSPPositions().");
         List<ClientSPPositionResponseDto> clientResponseDtos = new ArrayList<>();
-        List<User> users = repository.findByRole(UserRole.CLIENT);
+        List<User> users = repository.findByRoleAndIsVisible(UserRole.CLIENT, true);
         for(User user : users) {
             ClientSPPositionResponseDto dto = new ClientSPPositionResponseDto();
             dto.setId(user.getId());
@@ -65,11 +65,11 @@ public class UserServiceImpl implements UserService {
     }
 
     public User fetchByUsername(String username) {
-        return repository.findByUsername(username);
+        return repository.findByUsernameAndIsVisible(username, true);
     }
 
     public User fetchById(long id) {
-        return repository.findById(id);
+        return repository.findByIdAndIsVisible(id, true);
     }
 
     public List<ClientResponseDto> fetchAllClients(){
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public User fetchUserByClientId(String clientId) {
-        return repository.findByClientId(clientId);
+        return repository.findByClientIdAndIsVisible(clientId, true);
     }
 
     public CreateClientInitDto fetchInitForm(){
@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
     public AudibleActionImplementation<User> createClient(CreateClientRequestDto dto) throws ServerErrorException {
         LOGGER.debug("Entering createClient().");
         try{
-            User user = repository.findByClientId(dto.getClientId());
+            User user = repository.findByClientIdAndIsVisible(dto.getClientId(), true);
             if(user != null){
                 throw new BadRequestException("Client ID already exists.");
             }
@@ -153,7 +153,7 @@ public class UserServiceImpl implements UserService {
     private User convertToUser(ClientRequestDto dto, boolean existingUser) {
         User user = new User();
         if(existingUser){
-            user = repository.findByUsername(dto.getUsername());
+            user = repository.findByUsernameAndIsVisible(dto.getUsername(), true);
         }else{
             user.setUsername(dto.getUsername());
         }
@@ -175,7 +175,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public String fetchOpsWalletAddress() {
-        User ops = repository.findByRole(UserRole.OPS).get(0);
+        User ops = repository.findByRoleAndIsVisible(UserRole.OPS, true).get(0);
         return ops.getWalletAddress();
     }
 }
