@@ -202,7 +202,7 @@ public class FXTokenServiceImpl implements FXTokenService {
         tx.setFromAddress(appWallet.getWalletAddress());
         tx.setToAddress(burnAddress);
         tx.setBlockHeight(appWalletTxDetail.getBlockHeight());
-        tx.setStatus(TransactionStatus.KNOCK_OUT);
+        tx.setStatus(TransactionStatus.CLOSED);
         tx.setCtxId(appWalletTxId);
         tx.setTokenType(TokenType.FX_TOKEN);
         tx.setTokenCode(fxToken.getTokenCode());
@@ -228,7 +228,7 @@ public class FXTokenServiceImpl implements FXTokenService {
         tx.setFromAddress(investor.getWalletAddress());
         tx.setToAddress(burnAddress);
         tx.setBlockHeight(investorWalletTxDetail.getBlockHeight());
-        tx.setStatus(TransactionStatus.KNOCK_OUT);
+        tx.setStatus(TransactionStatus.CLOSED);
         tx.setCtxId(investorWalletTxId);
         tx.setTokenType(TokenType.FX_TOKEN);
         tx.setTokenCode(fxToken.getTokenCode());

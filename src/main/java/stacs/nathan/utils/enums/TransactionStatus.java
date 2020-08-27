@@ -2,7 +2,7 @@ package stacs.nathan.utils.enums;
 
 public enum  TransactionStatus {
 
-    DEPOSIT("Deposit"), WITHDRAW("Withdraw"), KNOCK_OUT("Knock Out"), CONTRACT_MATURITY("Contract Maturity"), FUND_TRANSFER("Fund Transfer"), REDEMPTION("Redemption");
+    DEPOSIT("Deposit"), WITHDRAW("Withdraw"), KNOCK_OUT("Knock Out"), CONTRACT_MATURITY("Contract Maturity"), FUND_TRANSFER("Fund Transfer"), REDEMPTION("Redemption"), CLOSED("Closed");
 
     private String value;
 
