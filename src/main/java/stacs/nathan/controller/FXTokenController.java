@@ -96,7 +96,7 @@ public class FXTokenController {
 
     @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP')")
     @GetMapping("/fetch-all-open")
-    public List<FXTokenResponseDto> fetchAllOpenTokens() {
+    public List<FXTokenResponseDto> fetchAllAvailableTokens() {
         return fxTokenService.fetchAvailableFXTokens();
     }
 }
