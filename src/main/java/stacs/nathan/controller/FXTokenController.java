@@ -94,7 +94,7 @@ public class FXTokenController {
         fxTokenService.executeUnconfirmedChain();
     }
 
-    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP')")
+    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP') or hasAuthority('CRO')")
     @GetMapping("/fetch-all-open")
     public List<FXTokenResponseDto> fetchAllAvailableTokens() {
         return fxTokenService.fetchAvailableFXTokens();
