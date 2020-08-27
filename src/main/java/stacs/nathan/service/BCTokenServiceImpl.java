@@ -306,7 +306,7 @@ public class BCTokenServiceImpl implements BCTokenService {
           tx.setFromAddress(sender.getWalletAddress());
           tx.setToAddress(recepient.getWalletAddress());
           tx.setBlockHeight(txDetail.getBlockHeight());
-          tx.setStatus(TransactionStatus.FUND_TRANSFER);
+          tx.setStatus(TransactionStatus.NORMAL_TRANSFER);
           tx.setCtxId(txId);
           tx.setTokenCode(bcToken.getTokenCode());
           tx.setTokenType(TokenType.BC_TOKEN);
@@ -398,7 +398,7 @@ public class BCTokenServiceImpl implements BCTokenService {
       if (bcTokenBalance != null) {
         BigDecimal bcRemainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
         if (bcRemainingAmount.compareTo(BigDecimal.ZERO) > 0) {
-          JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, sender.getWalletAddress(), recipient.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
+          JsonRespBO jsonRespBO = blockchainService.transferToken(sender, sender.getWalletAddress(), recipient.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
           String bcTxId = jsonRespBO.getTxId();
           TransferQueryRespBO bcTxDetail = blockchainService.getTransferDetails(bcTxId);
           if (bcTxDetail != null) {
