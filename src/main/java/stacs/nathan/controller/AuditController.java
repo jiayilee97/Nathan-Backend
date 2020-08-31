@@ -18,7 +18,7 @@ public class AuditController {
     @Autowired
     private ActionAuditTrailService actionAuditTrailService;
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAuthority('OPS') or hasAuthority('RISK')")
     @GetMapping("/fetch-all")
     public List<ActionAuditTrailEntity> fetchAllAuditActions() throws ServerErrorException { return actionAuditTrailService.findAll(); }
 }
