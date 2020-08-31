@@ -17,7 +17,7 @@ public class BalanceController {
   @Autowired
   BalanceService balanceService;
 
-  @PreAuthorize("hasAuthority('CRO')")
+  @PreAuthorize("hasAuthority('CRO') or hasAuthority('RISK')")
   @GetMapping("/fetch/{clientId}")
   public List<BalanceResponseDto> fetchBalanceByClient(@PathVariable String clientId){
     return balanceService.fetchBalanceByClient(clientId);
