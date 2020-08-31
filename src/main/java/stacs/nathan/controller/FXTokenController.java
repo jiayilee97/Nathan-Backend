@@ -70,7 +70,7 @@ public class FXTokenController {
         return fxTokenService.initSpotPriceForm();
     }
 
-    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP')")
+    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP')  or hasAuthority('RISK')")
     @GetMapping("/data-entry-history")
     public List<FXTokenDataEntryResponseDto> fetchDataEntryHistory() {
         return fxTokenService.fetchDataEntryHistory();

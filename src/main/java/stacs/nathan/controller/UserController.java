@@ -36,13 +36,13 @@ public class UserController {
     userService.createClient(dto);
   }
 
-  @PreAuthorize("hasAuthority('CRO') or hasAuthority('OPS')")
+  @PreAuthorize("hasAuthority('CRO') or hasAuthority('OPS')  or hasAuthority('RISK')")
   @GetMapping("/fetch/clients")
   public List<ClientResponseDto> fetchAllClients(){
     return userService.fetchAllClients();
   }
 
-  @PreAuthorize("hasAuthority('CRO')")
+  @PreAuthorize("hasAuthority('CRO') or hasAuthority('RISK')")
   @GetMapping("/fetch/client/{id}")
   public ClientResponseDto fetchByClientId(@PathVariable("id") String clientId){
     return userService.fetchByClientId(clientId);
