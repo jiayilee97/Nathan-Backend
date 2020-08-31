@@ -7,7 +7,8 @@ public enum UserRole {
     MKT("Marketing"),
     OPS("Operation"),
     CP("Counter Party"),
-    APP("App");
+    APP("App"),
+    RISK("Risk");
 
     private String value;
 
