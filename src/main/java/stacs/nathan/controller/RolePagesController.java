@@ -21,19 +21,19 @@ public class RolePagesController {
     return rolePagesService.fetchUserInfo();
   }
 
-  @PostMapping("/create")
-  public void createRolePages(@RequestBody RolePages rolePages) throws ServerErrorException {
-    rolePagesService.createRolePages(rolePages);
-  }
-
-  @PostMapping("/update")
-  public void updateRolePages(@RequestBody RolePages rolePages) throws ServerErrorException {
-    rolePagesService.updateRolePages(rolePages);
-  }
-
-  @PostMapping("/delete")
-  public void deleteRolePages(@RequestBody long id) throws ServerErrorException {
-    rolePagesService.deleteRolePages(id);
-  }
+//  @PostMapping("/create")
+//  public void createRolePages(@RequestBody RolePages rolePages) throws ServerErrorException {
+//    rolePagesService.createRolePages(rolePages);
+//  }
+//
+//  @PostMapping("/update")
+//  public void updateRolePages(@RequestBody RolePages rolePages) throws ServerErrorException {
+//    rolePagesService.updateRolePages(rolePages);
+//  }
+//
+//  @PostMapping("/delete")
+//  public void deleteRolePages(@RequestBody long id) throws ServerErrorException {
+//    rolePagesService.deleteRolePages(id);
+//  }
 
 }

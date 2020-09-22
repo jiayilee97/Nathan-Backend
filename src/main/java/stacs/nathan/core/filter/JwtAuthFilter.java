@@ -58,14 +58,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
     if (!StringUtils.isEmpty(idToken)) {
       JSONObject json = decode(idToken);
-      String loggedInUserOrg = json.getString(AwsServiceConstants.ORGANIZATION);
-      if(this.organizationCode.equals(loggedInUserOrg) || (trinityOrg && issuerName.equals(loggedInUserOrg))){
+      List<String> loggedInUserOrgs = Arrays.asList(json.getString(AwsServiceConstants.ORGANIZATION).split(","));
+      if(loggedInUserOrgs.contains(this.organizationCode) || (trinityOrg && loggedInUserOrgs.contains(issuerName))){
         String loggedInUserName = json.getString(AwsServiceConstants.USERNAME);
         List<String> loggedInUserRoles = trinityOrg ? Arrays.asList(TRINITY_ADMIN) : Arrays.asList(json.getString(AwsServiceConstants.ROLES).split(","));
         if(UserRole.MASTER.getCode().equals(loggedInUserRoles.get(0))) {
           loggedInUserRoles = Arrays.asList(UserRole.CRO.getCode(), UserRole.MKT.getCode(), UserRole.OPS.getCode(), UserRole.CP.getCode(), UserRole.RISK.getCode());
         }
-        LoggedInUser loggedInUser = new LoggedInUser(loggedInUserName, loggedInUserOrg, loggedInUserRoles);
+        LoggedInUser loggedInUser = new LoggedInUser(loggedInUserName, loggedInUserOrgs, loggedInUserRoles);
         List<SimpleGrantedAuthority> roles = new ArrayList<>();
         for(String role: loggedInUserRoles) {
           roles.add(new SimpleGrantedAuthority((role)));

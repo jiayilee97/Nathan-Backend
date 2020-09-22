@@ -6,16 +6,16 @@ public class LoggedInUser {
 
     private String username;
 
-    private String organization;
+    private List<String> organizations;
 
     private List<String> roles;
 
     private LoggedInUser() {
     }
 
-    public LoggedInUser(String username, String organization, List<String> roles) {
+    public LoggedInUser(String username, List<String> organizations, List<String> roles) {
         this.username = username;
-        this.organization = organization;
+        this.organizations = organizations;
         this.roles = roles;
     }
 
@@ -23,8 +23,8 @@ public class LoggedInUser {
         return username;
     }
 
-    public String getOrganization() {
-        return organization;
+    public List<String> getOrganizations() {
+        return organizations;
     }
 
     public List<String> getRoles() {
