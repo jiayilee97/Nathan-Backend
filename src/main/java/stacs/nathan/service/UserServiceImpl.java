@@ -128,6 +128,9 @@ public class UserServiceImpl implements UserService {
         LOGGER.debug("Entering createUser().");
         try{
             User user =  convertToUser(dto, false);
+            if(user.getRole() != null && UserRole.CRO != user.getRole()){
+                blockchainService.createWallet(user);
+            }
             user.setUuid(CommonUtils.generateRandomUUID());
             repository.save(user);
         }catch (Exception e){
