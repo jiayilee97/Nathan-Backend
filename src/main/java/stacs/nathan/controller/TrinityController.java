@@ -24,9 +24,4 @@ public class TrinityController {
   public void updateUser(@RequestBody ClientRequestDto dto) throws ServerErrorException {
     userService.updateUser(dto);
   }
-
-  @PostMapping("/user/role/update")
-  public void updateUserRole(@RequestBody ClientRequestDto dto) throws ServerErrorException {
-    userService.updateUser(dto);
-  }
 }

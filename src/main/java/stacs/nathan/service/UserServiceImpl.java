@@ -127,11 +127,7 @@ public class UserServiceImpl implements UserService {
     public void createUser(ClientRequestDto dto) throws ServerErrorException {
         LOGGER.debug("Entering createUser().");
         try{
-            User user =  convertToUser(dto, false);
-            if(user.getRole() != null && UserRole.CRO != user.getRole()){
-                blockchainService.createWallet(user);
-            }
-            user.setUuid(CommonUtils.generateRandomUUID());
+            User user =  convertToUser(dto);
             repository.save(user);
         }catch (Exception e){
             LOGGER.error("Exception in createUser().", e);
@@ -142,10 +138,7 @@ public class UserServiceImpl implements UserService {
     public void updateUser(ClientRequestDto dto) throws ServerErrorException {
         LOGGER.debug("Entering updateUser().");
         try{
-            User user =  convertToUser(dto, true);
-            if(user.getRole() != null && UserRole.CRO != user.getRole()){
-                blockchainService.createWallet(user);
-            }
+            User user =  convertToUser(dto);
             repository.save(user);
         }catch (Exception e){
             LOGGER.error("Exception in updateUser().", e);
@@ -153,18 +146,21 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private User convertToUser(ClientRequestDto dto, boolean existingUser) {
-        User user = new User();
-        if(existingUser){
-            user = repository.findByUsernameAndIsVisible(dto.getUsername(), true);
-        }else{
+    private User convertToUser(ClientRequestDto dto) {
+        User user = repository.findByUsernameAndIsVisible(dto.getUsername(), true);
+        if(user == null){
+            user = new User();
             user.setUsername(dto.getUsername());
+            user.setUuid(CommonUtils.generateRandomUUID());
         }
         user.setDisplayName(dto.getDisplayName());
         user.setEmail(dto.getEmail());
         List<String> roles = dto.getRoles();
         if(roles != null && roles.size() > 0){
             user.setRole(UserRole.resolveCode(roles.get(0)));
+        }
+        if(user.getRole() != null && UserRole.CRO != user.getRole()){
+            blockchainService.createWallet(user);
         }
         return user;
     }
