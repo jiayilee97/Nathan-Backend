@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import stacs.nathan.utils.JWTUtils;
+import stacs.nathan.service.JWTService;
 import stacs.nathan.utils.constancs.AwsServiceConstants;
 import stacs.nathan.dto.request.LoggedInUser;
 import javax.servlet.FilterChain;
@@ -26,6 +26,9 @@ import io.jsonwebtoken.SignatureException;
 import org.json.JSONObject;
 import stacs.nathan.utils.enums.UserRole;
 
+import static stacs.nathan.utils.constancs.CommonConstants.ACCESS_TOKEN_HEADER;
+import static stacs.nathan.utils.constancs.CommonConstants.ID_TOKEN_HEADER;
+
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -39,11 +42,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
   private String issuerRole;
 
   @Autowired
-  private JWTUtils jwtUtils;
+  private JWTService jwtService;
 
-  private static String ID_TOKEN_HEADER = "x-id-token";
-  private static String ACCESS_TOKEN_HEADER = "x-access-token";
-  private static String TRINITY_ADMIN = "TRINITY_ADMIN";
+  public static String TRINITY_ADMIN = "TRINITY_ADMIN";
 
   @Override
   protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
@@ -51,7 +52,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     String accessToken = httpServletRequest.getHeader(ACCESS_TOKEN_HEADER);
     boolean trinityOrg = false;
     if(!StringUtils.isEmpty(accessToken)){
-      Claims claims = jwtUtils.decodeJWT(accessToken);
+      Claims claims = jwtService.decodeJWT(accessToken);
       if(issuerName.equals(claims.getIssuer()) && issuerRole.equals(claims.getSubject())){
         trinityOrg = true;
       }
