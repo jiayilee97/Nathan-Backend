@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/sptoken")
+@PreAuthorize("hasAnyAuthority('OPS')")
 public class SPTokenController {
 
     @Autowired
@@ -21,25 +22,21 @@ public class SPTokenController {
     @Autowired
     private UserService userService;
 
-    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/init")
     public CreateSPTokenInitDto initForm(){
         return spTokenService.fetchInitForm();
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
     @PostMapping("/create")
     public void createSPToken(@RequestBody SPTokenRequestDto token) throws ServerErrorException {
         spTokenService.createSPToken(token);
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/fetch-all")
     public List<SPTokenResponseDto> fetchAllSPTokens() throws ServerErrorException {
         return spTokenService.fetchAllTokens();
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/fetch/{tokenCode}")
     public SPTokenResponseDto fetchSPTokenByTokenCode(@PathVariable String tokenCode) throws ServerErrorException {
         return spTokenService.fetchByTokenCode(tokenCode);
@@ -50,19 +47,16 @@ public class SPTokenController {
 //        spTokenService.transferToBurnAddress(tokenCode);
 //    }
 
-    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/executeUnavailableChain")
     public void executeUnavailableChain() {
         spTokenService.executeUnavailableChain();
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/executeUnconfirmedChain")
     public void executeUnconfirmedChain() {
         spTokenService.executeUnconfirmedChain();
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
     @GetMapping("/executeSPTokenMaturity")
     public void executeSPTokenMaturity() throws ServerErrorException {
         spTokenService.checkSPTokenMaturity();

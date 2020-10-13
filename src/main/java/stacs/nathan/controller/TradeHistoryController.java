@@ -16,13 +16,13 @@ public class TradeHistoryController {
     @Autowired
     TradeHistoryService tradeHistoryService;
 
-    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO')  or hasAuthority('RISK')")
+    @PreAuthorize("hasAnyAuthority('OPS', 'CRO', 'RISK')")
     @GetMapping("/fetch-all")
     public List<TradeHistoryResponseDto> fetchTradeHistory(@RequestParam String startDate, @RequestParam String endDate) throws ServerErrorException, ParseException {
         return tradeHistoryService.fetchAllTradeHistory(startDate, endDate);
     }
 
-    @PreAuthorize("hasAuthority('CRO') or hasAuthority('OPS') or hasAuthority('MKT') or hasAuthority('CP')")
+    @PreAuthorize("hasAnyAuthority('CRO', 'OPS', 'MKT', 'CP')")
     @GetMapping("/fetch/{clientId}/{contract}")
     public List<TradeHistoryResponseDto> fetchByClientAndContract(@PathVariable("clientId") String clientId, @PathVariable("contract") String contract) throws ServerErrorException {
         return tradeHistoryService.fetchByClientAndContract(clientId, contract);

@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/risk")
+@PreAuthorize("hasAnyAuthority('OPS', 'CRO', 'RISK')")
 public class InvestorRiskController {
 
   @Autowired
@@ -23,13 +24,11 @@ public class InvestorRiskController {
   @Autowired
   NAVService navService;
 
-  @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO') or hasAuthority('RISK')")
   @GetMapping("/fetch-all")
   public InvestorRiskResponseDto fetchAll() throws ServerErrorException {
     return investorRiskService.fetchAllInvestorRisk();
   }
 
-  @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO')  or hasAuthority('RISK')")
   @GetMapping("/nav/fetch-all")
   public List<NAV> fetchNAVHistory(@RequestParam String startDate, @RequestParam String endDate) throws ServerErrorException {
     return navService.fetchAllNAV(startDate, endDate);

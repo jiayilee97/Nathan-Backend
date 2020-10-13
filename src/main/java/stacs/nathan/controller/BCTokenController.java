@@ -20,61 +20,61 @@ public class BCTokenController {
   @Autowired
   private BCTokenService bcTokenService;
 
-  @PreAuthorize("hasAuthority('OPS')")
+  @PreAuthorize("hasAnyAuthority('OPS')")
   @GetMapping("/init")
   public CreateBCTokenInitDto initForm(){
     return bcTokenService.fetchInitForm();
   }
 
-  @PreAuthorize("hasAuthority('OPS')")
+  @PreAuthorize("hasAnyAuthority('OPS')")
   @PostMapping("/create")
   public void createBCToken(@RequestBody BCTokenRequestDto token) throws ServerErrorException, BadRequestException {
     bcTokenService.createBCToken(token);
   }
 
-  @PreAuthorize("hasAuthority('OPS')")
+  @PreAuthorize("hasAnyAuthority('OPS')")
   @GetMapping("/fetch-all/{issuerAddress}")
   public List<BCTokenResponseDto> fetchAllByIssuerAddress(@PathVariable String issuerAddress) throws ServerErrorException {
     return bcTokenService.fetchAllByIssuerAddress(issuerAddress);
   }
 
-  @PreAuthorize("hasAuthority('OPS')")
+  @PreAuthorize("hasAnyAuthority('OPS')")
   @GetMapping("/fetch/{tokenCode}")
   public BCTokenResponseDto fetchTokenByTokenCode(@PathVariable String tokenCode) throws ServerErrorException {
     return bcTokenService.fetchTokenByTokenCode(tokenCode);
   }
 
-  @PreAuthorize("hasAuthority('OPS')")
+  @PreAuthorize("hasAnyAuthority('OPS')")
   @GetMapping("/executeUnavailableChain")
   public void executeUnavailableChain() {
     bcTokenService.executeUnavailableChain();
   }
 
-  @PreAuthorize("hasAuthority('OPS')")
+  @PreAuthorize("hasAnyAuthority('OPS')")
   @GetMapping("/executeUnconfirmedChain")
   public void executeUnconfirmedChain() {
     bcTokenService.executeUnconfirmedChain();
   }
 
-  @PreAuthorize("hasAuthority('OPS')")
+  @PreAuthorize("hasAnyAuthority('OPS')")
   @PostMapping("/ops-transfer")
   public void transferBCToken(@RequestBody TransferBCTokenRequestDto dto) throws ServerErrorException {
     bcTokenService.opsTransfer(dto);
   }
 
-  @PreAuthorize("hasAuthority('OPS')")
+  @PreAuthorize("hasAnyAuthority('OPS')")
   @PostMapping("/ops-trade")
   public void opsTrade(@RequestBody TransferBCTokenRequestDto dto) throws ServerErrorException {
     bcTokenService.opsTrade(dto);
   }
 
-  @PreAuthorize("hasAuthority('CRO')")
+  @PreAuthorize("hasAnyAuthority('CRO')")
   @PostMapping("/cro-trade")
   public void croTrade(@RequestBody TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
     bcTokenService.croTrade(dto);
   }
 
-  @PreAuthorize("hasAuthority('CRO')")
+  @PreAuthorize("hasAnyAuthority('CRO')")
   @PostMapping("/cro-transfer")
   public void transferBCTokenToOps(@RequestBody TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
     bcTokenService.croTransfer(dto);

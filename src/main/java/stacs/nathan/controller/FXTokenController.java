@@ -22,79 +22,79 @@ public class FXTokenController {
     @Autowired
     private UserService userService;
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAnyAuthority('OPS')")
     @GetMapping("/init")
     public CreateFXTokenInitDto initForm(){
         return fxTokenService.fetchInitForm();
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAnyAuthority('OPS')")
     @PostMapping("/create")
     public void createFXToken(@RequestBody FXTokenRequestDto token) throws ServerErrorException, BadRequestException {
         fxTokenService.createFXToken(token);
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAnyAuthority('OPS')")
     @PostMapping("/close/{tokenCode}")
     public void closeFXToken(@PathVariable String tokenCode) throws ServerErrorException {
         fxTokenService.closeFXToken(tokenCode);
     }
 
-    @PreAuthorize("hasAuthority('CRO') or hasAuthority('OPS') or hasAuthority('MKT') or hasAuthority('CP')")
+    @PreAuthorize("hasAnyAuthority('CRO', 'OPS', 'MKT', 'CP')")
     @GetMapping("/open-positions/{clientId}")
     public List<ClientOpenPositionResponseDto> fetchClientOpenPosition(@PathVariable String clientId) {
         return fxTokenService.fetchClientOpenPosition(clientId);
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAnyAuthority('OPS')")
     @GetMapping("/fetch-all")
     public List<FXTokenResponseDto> fetchAllTokens() {
         return fxTokenService.fetchAllFxTokens(userService.fetchLoginUser());
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAnyAuthority('OPS')")
     @GetMapping("/fetch/{tokenCode}")
     public FXTokenResponseDto fetchToken(@PathVariable String tokenCode) {
         return fxTokenService.fetchTokenById(tokenCode);
     }
 
-    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP')")
+    @PreAuthorize("hasAnyAuthority('OPS', 'CP')")
     @PostMapping("/spotPrice")
     public void enterSpotPrice(@RequestBody FXTokenDataEntryRequestDto dto) throws ServerErrorException {
         fxTokenService.enterSpotPrice(dto);
     }
 
-    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP') or hasAuthority('CRO')")
+    @PreAuthorize("hasAnyAuthority('OPS', 'CP', 'CRO')")
     @GetMapping("/init-spot-price")
     public FxSpotPriceInitDto initSpotPriceForm() {
         return fxTokenService.initSpotPriceForm();
     }
 
-    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP')  or hasAuthority('RISK')")
+    @PreAuthorize("hasAnyAuthority('OPS', 'CP', 'RISK')")
     @GetMapping("/data-entry-history")
     public List<FXTokenDataEntryResponseDto> fetchDataEntryHistory() {
         return fxTokenService.fetchDataEntryHistory();
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAnyAuthority('OPS')")
     @GetMapping("/fetch-matured-knockout")
     public List<FXTokenResponseDto> fetchMaturedOrKnockout() {
         return fxTokenService.fetchMaturedOrKnockout();
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAnyAuthority('OPS')")
     @GetMapping("/executeUnavailableChain")
     public void executeUnavailableChain() {
         fxTokenService.executeUnavailableChain();
     }
 
-    @PreAuthorize("hasAuthority('OPS')")
+    @PreAuthorize("hasAnyAuthority('OPS')")
     @GetMapping("/executeUnconfirmedChain")
     public void executeUnconfirmedChain() {
         fxTokenService.executeUnconfirmedChain();
     }
 
-    @PreAuthorize("hasAuthority('OPS') or hasAuthority('CP') or hasAuthority('CRO')")
+    @PreAuthorize("hasAnyAuthority('OPS', 'CP', 'CRO')")
     @GetMapping("/fetch-all-open")
     public List<FXTokenResponseDto> fetchAllAvailableTokens() {
         return fxTokenService.fetchAvailableFXTokens();

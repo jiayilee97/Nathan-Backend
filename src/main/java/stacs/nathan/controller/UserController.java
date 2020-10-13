@@ -19,42 +19,43 @@ public class UserController {
   @Autowired
   private UserService userService;
 
-  @PreAuthorize("hasAuthority('CRO') or hasAuthority('OPS') or hasAuthority('MKT') or hasAuthority('CP')")
+  @PreAuthorize("hasAnyAuthority('CRO', 'OPS', 'MKT', 'CP')")
   @GetMapping("/fetch/clientSPPositions")
   public List<ClientSPPositionResponseDto> fetchClientSPPositions() {
     return userService.fetchClientSPPositions();
   }
 
+  @PreAuthorize("hasAnyAuthority('CRO', 'OPS', 'MKT', 'CP')")
   @GetMapping("/fetch/loginuser")
   public User fetchLoginUser(){
     return userService.fetchLoginUser();
   }
 
-  @PreAuthorize("hasAuthority('CRO')")
+  @PreAuthorize("hasAnyAuthority('CRO')")
   @PostMapping("/create/client")
   public void createClient(@RequestBody CreateClientRequestDto dto) throws ServerErrorException {
     userService.createClient(dto);
   }
 
-  @PreAuthorize("hasAuthority('CRO') or hasAuthority('OPS')  or hasAuthority('RISK')")
+  @PreAuthorize("hasAnyAuthority('CRO', 'OPS', 'RISK')")
   @GetMapping("/fetch/clients")
   public List<ClientResponseDto> fetchAllClients(){
     return userService.fetchAllClients();
   }
 
-  @PreAuthorize("hasAuthority('CRO') or hasAuthority('RISK')")
+  @PreAuthorize("hasAnyAuthority('CRO', 'RISK')")
   @GetMapping("/fetch/client/{id}")
   public ClientResponseDto fetchByClientId(@PathVariable("id") String clientId){
     return userService.fetchByClientId(clientId);
   }
 
-  @PreAuthorize("hasAuthority('CRO')")
+  @PreAuthorize("hasAnyAuthority('CRO')")
   @GetMapping("/init/client")
   public CreateClientInitDto initForm(){
     return userService.fetchInitForm();
   }
 
-  @PreAuthorize("hasAuthority('CRO')")
+  @PreAuthorize("hasAnyAuthority('CRO')")
   @GetMapping("/fetch/ops-wallet")
   public String fetchOpsWalletAddress() { return userService.fetchOpsWalletAddress(); }
 

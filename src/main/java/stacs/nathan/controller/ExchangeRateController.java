@@ -14,24 +14,22 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/exchange-rate")
+@PreAuthorize("hasAnyAuthority('OPS', 'CRO')")
 public class ExchangeRateController {
 
   @Autowired
   ExchangeRateService exchangeRateService;
 
-  @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO')")
   @RequestMapping("/enter-exchange-rate")
   public void enterExchangeRate(@RequestBody List<ExchangeRateEntryRequestDto> dto) throws ServerErrorException {
     exchangeRateService.enterExchangeRate(dto);
   }
 
-  @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO')")
   @RequestMapping("/fetch-all")
   public List<ExchangeRate> fetchExchangeRate(@RequestParam String startDate, @RequestParam String endDate) throws ServerErrorException {
     return exchangeRateService.fetchExchangeRate(startDate, endDate);
   }
 
-  @PreAuthorize("hasAuthority('OPS') or hasAuthority('CRO')")
   @RequestMapping("/fetch-updated")
   public List<ExchangeRate> fetchLatestExchangeRate() throws ServerErrorException { return exchangeRateService.fetchLatestExchangeRate(); }
 
