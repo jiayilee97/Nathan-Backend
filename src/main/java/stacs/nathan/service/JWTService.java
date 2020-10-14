@@ -5,6 +5,8 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.Cookie;
@@ -62,7 +64,6 @@ public class JWTService {
     String idToken = request.getHeader(ID_TOKEN_HEADER);
     Cookie jwtCookie = new Cookie(ID_TOKEN_HEADER, idToken);
     jwtCookie.setHttpOnly(true);
-    jwtCookie.setSecure(false);
     jwtCookie.setSecure(!env.equalsIgnoreCase(localEvn));
     jwtCookie.setPath("/");
     jwtCookie.setMaxAge(idTokenExpiryInSec);
@@ -73,7 +74,6 @@ public class JWTService {
     String refreshToken = request.getHeader(REFRESH_TOKEN_HEADER);
     Cookie jwtCookie = new Cookie(REFRESH_TOKEN_HEADER, refreshToken);
     jwtCookie.setHttpOnly(true);
-    jwtCookie.setSecure(false);
     jwtCookie.setSecure(!env.equalsIgnoreCase(localEvn));
     jwtCookie.setPath("/");
     jwtCookie.setMaxAge(idTokenExpiryInSec);
@@ -81,9 +81,18 @@ public class JWTService {
   }
 
   public void logout(HttpServletRequest request, HttpServletResponse response) {
-    Cookie jwtCookie = new Cookie(ID_TOKEN_HEADER, null);
+    Cookie jwtCookie = new Cookie(ID_TOKEN_HEADER, "");
+    jwtCookie.setMaxAge(0);
+    jwtCookie.setHttpOnly(true);
+    jwtCookie.setSecure(!env.equalsIgnoreCase(localEvn));
+    jwtCookie.setPath("/");
     response.addCookie(jwtCookie);
-    jwtCookie = new Cookie(REFRESH_TOKEN_HEADER, null);
-    response.addCookie(jwtCookie);
+
+    Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_HEADER, "");
+    refreshTokenCookie.setMaxAge(0);
+    refreshTokenCookie.setHttpOnly(true);
+    refreshTokenCookie.setSecure(!env.equalsIgnoreCase(localEvn));
+    refreshTokenCookie.setPath("/");
+    response.addCookie(refreshTokenCookie);
   }
 }

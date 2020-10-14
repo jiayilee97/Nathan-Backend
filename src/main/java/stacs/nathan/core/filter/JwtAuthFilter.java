@@ -57,6 +57,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         trinityOrg = true;
       }
     }
+
+//    String idTokenFromCookie = null;
+//
+//    if (StringUtils.isEmpty(idTokenHeader)) {
+//      Cookie[] allCookies = httpServletRequest.getCookies();
+//      if (allCookies.length > 0) {
+//        Cookie idTokenCookie =
+//            Arrays.stream(allCookies).filter(x -> x.getName().equals(ID_TOKEN_HEADER))
+//                .findFirst().orElse(null);
+//
+//        if (idTokenCookie != null) {
+//          idTokenFromCookie = idTokenCookie.getValue();
+//        }
+//      }
+//    }
+//
+//    String idToken = StringUtils.isEmpty(idTokenHeader) ? idTokenFromCookie: idTokenHeader;
+
     if (!StringUtils.isEmpty(idToken)) {
       JSONObject json = decode(idToken);
       List<String> loggedInUserOrgs = Arrays.asList(json.getString(AwsServiceConstants.ORGANIZATION).split(","));
