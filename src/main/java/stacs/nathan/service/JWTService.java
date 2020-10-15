@@ -36,8 +36,8 @@ public class JWTService {
 //  @Value("${local.env}")
 //  private String localEvn;
 
-  @Value("${cookie.x_id_token.expiry.sec}")
-  private int idTokenExpiryInSec;
+//  @Value("${cookie.x_id_token.expiry.sec}")
+//  private int idTokenExpiryInSec;
 
   public String generateJWT(){
     SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
