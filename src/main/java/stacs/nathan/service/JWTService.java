@@ -30,11 +30,11 @@ public class JWTService {
   @Value("${issuer.role}")
   private String issuerRole;
 
-  @Value("${app.env}")
-  private String env;
-
-  @Value("${local.env}")
-  private String localEvn;
+//  @Value("${app.env}")
+//  private String env;
+//
+//  @Value("${local.env}")
+//  private String localEvn;
 
   @Value("${cookie.x_id_token.expiry.sec}")
   private int idTokenExpiryInSec;
@@ -60,39 +60,39 @@ public class JWTService {
     return claims;
   }
 
-  public void setIdTokenCookie(HttpServletRequest request, HttpServletResponse response) {
-    String idToken = request.getHeader(ID_TOKEN_HEADER);
-    Cookie jwtCookie = new Cookie(ID_TOKEN_HEADER, idToken);
-    jwtCookie.setHttpOnly(true);
-    jwtCookie.setSecure(!env.equalsIgnoreCase(localEvn));
-    jwtCookie.setPath("/");
-    jwtCookie.setMaxAge(idTokenExpiryInSec);
-    response.addCookie(jwtCookie);
-  }
-
-  public void setRefreshTokenCookie(HttpServletRequest request, HttpServletResponse response) {
-    String refreshToken = request.getHeader(REFRESH_TOKEN_HEADER);
-    Cookie jwtCookie = new Cookie(REFRESH_TOKEN_HEADER, refreshToken);
-    jwtCookie.setHttpOnly(true);
-    jwtCookie.setSecure(!env.equalsIgnoreCase(localEvn));
-    jwtCookie.setPath("/");
-    jwtCookie.setMaxAge(idTokenExpiryInSec);
-    response.addCookie(jwtCookie);
-  }
-
-  public void logout(HttpServletRequest request, HttpServletResponse response) {
-    Cookie jwtCookie = new Cookie(ID_TOKEN_HEADER, "");
-    jwtCookie.setMaxAge(0);
-    jwtCookie.setHttpOnly(true);
-    jwtCookie.setSecure(!env.equalsIgnoreCase(localEvn));
-    jwtCookie.setPath("/");
-    response.addCookie(jwtCookie);
-
-    Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_HEADER, "");
-    refreshTokenCookie.setMaxAge(0);
-    refreshTokenCookie.setHttpOnly(true);
-    refreshTokenCookie.setSecure(!env.equalsIgnoreCase(localEvn));
-    refreshTokenCookie.setPath("/");
-    response.addCookie(refreshTokenCookie);
-  }
+//  public void setIdTokenCookie(HttpServletRequest request, HttpServletResponse response) {
+//    String idToken = request.getHeader(ID_TOKEN_HEADER);
+//    Cookie jwtCookie = new Cookie(ID_TOKEN_HEADER, idToken);
+//    jwtCookie.setHttpOnly(true);
+//    jwtCookie.setSecure(!env.equalsIgnoreCase(localEvn));
+//    jwtCookie.setPath("/");
+//    jwtCookie.setMaxAge(idTokenExpiryInSec);
+//    response.addCookie(jwtCookie);
+//  }
+//
+//  public void setRefreshTokenCookie(HttpServletRequest request, HttpServletResponse response) {
+//    String refreshToken = request.getHeader(REFRESH_TOKEN_HEADER);
+//    Cookie jwtCookie = new Cookie(REFRESH_TOKEN_HEADER, refreshToken);
+//    jwtCookie.setHttpOnly(true);
+//    jwtCookie.setSecure(!env.equalsIgnoreCase(localEvn));
+//    jwtCookie.setPath("/");
+//    jwtCookie.setMaxAge(idTokenExpiryInSec);
+//    response.addCookie(jwtCookie);
+//  }
+//
+//  public void logout(HttpServletRequest request, HttpServletResponse response) {
+//    Cookie jwtCookie = new Cookie(ID_TOKEN_HEADER, "");
+//    jwtCookie.setMaxAge(0);
+//    jwtCookie.setHttpOnly(true);
+//    jwtCookie.setSecure(!env.equalsIgnoreCase(localEvn));
+//    jwtCookie.setPath("/");
+//    response.addCookie(jwtCookie);
+//
+//    Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_HEADER, "");
+//    refreshTokenCookie.setMaxAge(0);
+//    refreshTokenCookie.setHttpOnly(true);
+//    refreshTokenCookie.setSecure(!env.equalsIgnoreCase(localEvn));
+//    refreshTokenCookie.setPath("/");
+//    response.addCookie(refreshTokenCookie);
+//  }
 }

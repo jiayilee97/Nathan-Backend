@@ -17,15 +17,15 @@ public class AuthController {
   @Autowired
   private JWTService jwtService;
 
-  @GetMapping("/login")
-  public void login(HttpServletRequest request, HttpServletResponse response) {
-    jwtService.setIdTokenCookie(request, response);
-    jwtService.setRefreshTokenCookie(request, response);
-  }
-
-  @GetMapping("/logout")
-  public void logout(HttpServletRequest request, HttpServletResponse response) {
-    jwtService.logout(request, response);
-  }
+//  @GetMapping("/login")
+//  public void login(HttpServletRequest request, HttpServletResponse response) {
+//    jwtService.setIdTokenCookie(request, response);
+//    jwtService.setRefreshTokenCookie(request, response);
+//  }
+//
+//  @GetMapping("/logout")
+//  public void logout(HttpServletRequest request, HttpServletResponse response) {
+//    jwtService.logout(request, response);
+//  }
 
 }
