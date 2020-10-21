@@ -24,6 +24,10 @@ public class SPToken extends BaseTokenEntity {
     @Column(name = "client_id", length = 50)
     private String clientId;
 
+//    @OneToOne
+//    @JoinColumn(name = "bc_token_id")
+//    private BaseCurrencyToken bcToken;
+
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "fx_token_id", nullable = true)

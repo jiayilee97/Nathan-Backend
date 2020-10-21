@@ -24,4 +24,7 @@ public interface BCTokenRepository extends JpaRepository<BaseCurrencyToken, Long
 
   BaseCurrencyToken findByTokenCodeAndIsVisible(String tokenCode, Boolean isVisible);
 
+  @Query("SELECT bc.tokenCode from BaseCurrencyToken bc where bc.underlyingCurrency = :underlyingCurrency and bc.isVisible = true")
+  List<String> fetchBCTokenByCurrency(@Param("underlyingCurrency") String underlyingCurrency);
+
 }

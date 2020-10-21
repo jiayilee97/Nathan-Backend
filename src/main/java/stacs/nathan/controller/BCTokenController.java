@@ -33,6 +33,12 @@ public class BCTokenController {
   }
 
   @PreAuthorize("hasAnyAuthority('OPS')")
+  @GetMapping("/fetch-token/{underlyingCurrency}")
+  public List<String> fetchBCTokenByCurrency(@PathVariable String underlyingCurrency) throws ServerErrorException {
+    return bcTokenService.fetchBCTokenByCurrency(underlyingCurrency);
+  }
+
+  @PreAuthorize("hasAnyAuthority('OPS')")
   @GetMapping("/fetch-all/{issuerAddress}")
   public List<BCTokenResponseDto> fetchAllByIssuerAddress(@PathVariable String issuerAddress) throws ServerErrorException {
     return bcTokenService.fetchAllByIssuerAddress(issuerAddress);

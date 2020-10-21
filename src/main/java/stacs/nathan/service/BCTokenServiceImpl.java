@@ -21,14 +21,12 @@ import stacs.nathan.dto.request.LoggedInUser;
 import stacs.nathan.dto.request.TransferBCTokenRequestDto;
 import stacs.nathan.dto.request.TransferBCTokenToOpsRequestDto;
 import stacs.nathan.dto.response.BCTokenResponseDto;
-import stacs.nathan.dto.response.BalanceResponseDto;
 import stacs.nathan.dto.response.CreateBCTokenInitDto;
 import stacs.nathan.entity.*;
 import stacs.nathan.repository.BCTokenRepository;
 import stacs.nathan.repository.TradeHistoryRepository;
 import stacs.nathan.utils.constancs.AuditActionConstants;
 import stacs.nathan.utils.enums.*;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -120,6 +118,16 @@ public class BCTokenServiceImpl implements BCTokenService {
       balance.setTokenCode(token.getTokenCode());
       balance.setBalanceAmount(token.getAmount());
       balanceService.createBalance(balance);
+    }
+  }
+
+  public List<String> fetchBCTokenByCurrency(String underlyingCurrency) throws ServerErrorException {
+    LOGGER.debug("Entering fetchBCTokenByCurrency().");
+    try {
+      return repository.fetchBCTokenByCurrency(underlyingCurrency);
+    } catch (Exception e) {
+      LOGGER.error("Exception in fetchBCTokenByCurrency().", e);
+      throw new ServerErrorException("Exception in fetchBCTokenByCurrency().", e);
     }
   }
 
