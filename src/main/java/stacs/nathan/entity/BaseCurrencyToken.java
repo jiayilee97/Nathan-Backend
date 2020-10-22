@@ -53,7 +53,6 @@ public class BaseCurrencyToken extends BaseTokenEntity {
         this.underlyingCurrency = underlyingCurrency;
     }
 
-
     public int getCurrencyCode() {
         return currencyCode;
     }

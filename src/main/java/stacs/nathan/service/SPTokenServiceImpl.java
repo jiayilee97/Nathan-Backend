@@ -84,11 +84,13 @@ public class SPTokenServiceImpl implements SPTokenService {
       token.setIssuingAddress(loggedInUser.getWalletAddress());
       token.setStatus(SPTokenStatus.CHAIN_UNAVAILABLE);
       List<FixingDate> fixingDates = new ArrayList<>();
-      for(Date fixingDate: dto.getFixingDates()) {
-        FixingDate fx = new FixingDate();
-        fx.setSpToken(token);
-        fx.setFixingDate(fixingDate);
-        fixingDates.add(fx);
+      if(dto.getFixingDates() != null) {
+        for(Date fixingDate: dto.getFixingDates()) {
+          FixingDate fx = new FixingDate();
+          fx.setSpToken(token);
+          fx.setFixingDate(fixingDate);
+          fixingDates.add(fx);
+        }
       }
       repository.save(token);
       fixingDateService.saveFixingDates(fixingDates);
