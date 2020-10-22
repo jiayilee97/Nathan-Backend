@@ -18,10 +18,10 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
   private static final Logger LOGGER = LoggerFactory.getLogger(ExchangeRateServiceImpl.class);
 
   @Autowired
-  ExchangeRateRepository repository;
+  private ExchangeRateRepository repository;
 
   @Autowired
-  InvestorRiskService investorRiskService;
+  private InvestorRiskService investorRiskService;
 
   public void enterExchangeRate(List<ExchangeRateEntryRequestDto> exchangeRateList) throws ServerErrorException {
     LOGGER.debug("Entering enterExchangeRate().");

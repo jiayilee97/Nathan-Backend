@@ -11,7 +11,7 @@ import java.util.List;
 public class CodeValueServiceImpl implements CodeValueService {
 
   @Autowired
-  CodeValueRepository repository;
+  private CodeValueRepository repository;
 
   public List<CodeValue> findByType(CodeType type){
     return repository.findByTypeAndIsVisible(type, true);

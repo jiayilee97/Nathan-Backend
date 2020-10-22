@@ -27,25 +27,25 @@ public class InvestorRiskServiceImpl implements InvestorRiskService {
   private static final Logger LOGGER = LoggerFactory.getLogger(InvestorRiskServiceImpl.class);
 
   @Autowired
-  InvestorRiskRepository repository;
+  private InvestorRiskRepository repository;
 
   @Autowired
-  NAVService navService;
+  private NAVService navService;
 
   @Autowired
-  SPTokenService spTokenService;
+  private SPTokenService spTokenService;
 
   @Autowired
-  ExchangeRateRepository exchangeRateRepository;
+  private ExchangeRateRepository exchangeRateRepository;
 
   @Autowired
-  BalanceRepository balanceRepository;
+  private BalanceRepository balanceRepository;
 
   @Autowired
-  UserRepository userRepository;
+  private UserRepository userRepository;
 
   @Autowired
-  BCTokenRepository bcTokenRepository;
+  private BCTokenRepository bcTokenRepository;
 
   public InvestorRiskResponseDto fetchAllInvestorRisk() throws ServerErrorException {
     LOGGER.debug("Entering fetchAllInvestorRisk().");

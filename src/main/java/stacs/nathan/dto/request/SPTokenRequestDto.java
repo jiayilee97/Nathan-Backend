@@ -2,6 +2,7 @@ package stacs.nathan.dto.request;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class SPTokenRequestDto {
 
@@ -40,6 +41,26 @@ public class SPTokenRequestDto {
     private String counterPartyId;
 
     private String issuingAddress;
+
+    private String settlementCurrency;
+
+    private List<Date> fixingDates;
+
+    public String getSettlementCurrency() {
+        return settlementCurrency;
+    }
+
+    public void setSettlementCurrency(String settlementCurrency) {
+        this.settlementCurrency = settlementCurrency;
+    }
+
+    public List<Date> getFixingDates() {
+        return fixingDates;
+    }
+
+    public void setFixingDates(List<Date> fixingDates) {
+        this.fixingDates = fixingDates;
+    }
 
     public String getClientId() {
         return clientId;

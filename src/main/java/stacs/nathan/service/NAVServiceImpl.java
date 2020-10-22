@@ -17,7 +17,7 @@ public class NAVServiceImpl implements NAVService {
   private static final Logger LOGGER = LoggerFactory.getLogger(NAVServiceImpl.class);
 
   @Autowired
-  NAVRepository repository;
+  private NAVRepository repository;
 
   public NAV fetchCurrentNAV() throws ServerErrorException {
     LOGGER.debug("Entering fetchCurrentNAV().");

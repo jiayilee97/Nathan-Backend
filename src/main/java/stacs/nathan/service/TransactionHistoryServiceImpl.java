@@ -18,7 +18,7 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionHistoryServiceImpl.class);
 
     @Autowired
-    TransactionRepository repository;
+    private TransactionRepository repository;
 
     public void save(TransactionHistory transactionHistory){
         repository.save(transactionHistory);

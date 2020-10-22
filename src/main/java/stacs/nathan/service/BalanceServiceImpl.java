@@ -13,7 +13,7 @@ import java.util.List;
 public class BalanceServiceImpl implements BalanceService {
 
   @Autowired
-  BalanceRepository repository;
+  private BalanceRepository repository;
 
   public void createBalance(Balance balance){
     repository.save(balance);

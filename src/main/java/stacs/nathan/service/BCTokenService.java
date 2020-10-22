@@ -23,6 +23,8 @@ public interface BCTokenService {
 
   BCTokenResponseDto fetchTokenByTokenCode(String tokenCode) throws ServerErrorException;
 
+  BaseCurrencyToken fetchByTokenCode(String tokenCode) throws ServerErrorException;
+
   void executeUnconfirmedChain();
 
   void executeUnavailableChain();

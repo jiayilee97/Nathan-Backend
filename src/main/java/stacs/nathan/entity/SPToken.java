@@ -9,6 +9,7 @@ import stacs.nathan.utils.enums.TenorType;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Audited
@@ -24,9 +25,9 @@ public class SPToken extends BaseTokenEntity {
     @Column(name = "client_id", length = 50)
     private String clientId;
 
-//    @OneToOne
-//    @JoinColumn(name = "bc_token_id")
-//    private BaseCurrencyToken bcToken;
+    @ManyToOne
+    @JoinColumn(name = "bc_token_id")
+    private BaseCurrencyToken bcToken;
 
     @JsonIgnore
     @OneToOne
@@ -264,4 +265,13 @@ public class SPToken extends BaseTokenEntity {
     public void setContractInceptionDate(Date contractInceptionDate) {
         this.contractInceptionDate = contractInceptionDate;
     }
+
+    public BaseCurrencyToken getBcToken() {
+        return bcToken;
+    }
+
+    public void setBcToken(BaseCurrencyToken bcToken) {
+        this.bcToken = bcToken;
+    }
+
 }

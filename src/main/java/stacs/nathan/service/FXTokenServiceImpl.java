@@ -34,37 +34,37 @@ public class FXTokenServiceImpl implements FXTokenService {
   private static final Logger LOGGER = LoggerFactory.getLogger(FXTokenServiceImpl.class);
 
   @Autowired
-  FXTokenRepository repository;
+  private FXTokenRepository repository;
 
   @Autowired
-  FXTokenDataEntryRepository fxTokenDataEntryRepository;
+  private FXTokenDataEntryRepository fxTokenDataEntryRepository;
 
   @Autowired
-  TradeHistoryService tradeHistoryService;
+  private TradeHistoryService tradeHistoryService;
 
   @Autowired
-  TransactionHistoryService transactionHistoryService;
+  private TransactionHistoryService transactionHistoryService;
 
   @Autowired
-  UserService userService;
+  private UserService userService;
 
   @Autowired
-  BlockchainService blockchainService;
+  private BlockchainService blockchainService;
 
   @Autowired
-  BalanceService balanceService;
+  private BalanceService balanceService;
 
   @Autowired
-  SPTokenService spTokenService;
+  private SPTokenService spTokenService;
 
   @Autowired
-  CodeValueService codeValueService;
+  private CodeValueService codeValueService;
 
   @Value("${stacs.burn.address}")
-  String burnAddress;
+  private String burnAddress;
 
   @Value("${stacs.app.address}")
-  String appWalletAddress;
+  private String appWalletAddress;
 
   public CreateFXTokenInitDto fetchInitForm(){
     CreateFXTokenInitDto dto = new CreateFXTokenInitDto();

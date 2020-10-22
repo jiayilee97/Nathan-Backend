@@ -35,31 +35,31 @@ public class BCTokenServiceImpl implements BCTokenService {
   private static final Logger LOGGER = LoggerFactory.getLogger(BCTokenServiceImpl.class);
 
   @Autowired
-  BCTokenRepository repository;
+  private BCTokenRepository repository;
 
   @Autowired
-  UserService userService;
+  private UserService userService;
 
   @Autowired
-  BlockchainService blockchainService;
+  private BlockchainService blockchainService;
 
   @Autowired
-  CodeValueService codeValueService;
+  private CodeValueService codeValueService;
 
   @Autowired
-  BalanceService balanceService;
+  private BalanceService balanceService;
 
   @Autowired
-  TransactionHistoryService transactionHistoryService;
+  private TransactionHistoryService transactionHistoryService;
 
   @Autowired
-  FXTokenService fxTokenService;
+  private FXTokenService fxTokenService;
 
   @Autowired
-  TradeHistoryRepository tradeHistoryRepository;
+  private TradeHistoryRepository tradeHistoryRepository;
 
   @Value("${stacs.app.address}")
-  String appAddress;
+  private String appAddress;
 
   public CreateBCTokenInitDto fetchInitForm(){
     String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
@@ -147,14 +147,23 @@ public class BCTokenServiceImpl implements BCTokenService {
     }
   }
 
+  public BaseCurrencyToken fetchByTokenCode(String tokenCode) throws ServerErrorException {
+    LOGGER.debug("Entering fetchByTokenCode().");
+    try {
+      return repository.findByTokenCode(tokenCode);
+    } catch (Exception e) {
+      LOGGER.error("Exception in fetchByTokenCode().", e);
+      throw new ServerErrorException("Exception in fetchByTokenCode().", e);
+    }
+  }
 
   public BCTokenResponseDto fetchTokenByTokenCode(String tokenCode) throws ServerErrorException {
-    LOGGER.debug("Entering fetchTokenById().");
+    LOGGER.debug("Entering fetchTokenByTokenCode().");
     try {
       return repository.fetchByTokenCode(tokenCode);
     } catch (Exception e) {
-      LOGGER.error("Exception in fetchTokenById().", e);
-      throw new ServerErrorException("Exception in fetchTokenById().", e);
+      LOGGER.error("Exception in fetchTokenByTokenCode().", e);
+      throw new ServerErrorException("Exception in fetchTokenByTokenCode().", e);
     }
   }
 

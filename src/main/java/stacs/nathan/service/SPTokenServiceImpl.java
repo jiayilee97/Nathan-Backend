@@ -24,6 +24,7 @@ import stacs.nathan.repository.*;
 import stacs.nathan.utils.constancs.AuditActionConstants;
 import stacs.nathan.utils.enums.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -33,28 +34,34 @@ public class SPTokenServiceImpl implements SPTokenService {
   private static final Logger LOGGER = LoggerFactory.getLogger(SPTokenServiceImpl.class);
 
   @Autowired
-  SPTokenRepository repository;
+  private SPTokenRepository repository;
 
   @Autowired
-  UserService userService;
+  private UserService userService;
 
   @Autowired
-  BlockchainService blockchainService;
+  private BlockchainService blockchainService;
 
   @Autowired
-  CodeValueService codeValueService;
+  private CodeValueService codeValueService;
 
   @Autowired
-  BalanceService balanceService;
+  private BalanceService balanceService;
 
   @Autowired
-  TransactionHistoryService transactionHistoryService;
+  private TransactionHistoryService transactionHistoryService;
 
   @Autowired
-  FXTokenService fxTokenService;
+  private FXTokenService fxTokenService;
+
+  @Autowired
+  private BCTokenService bcTokenService;
+
+  @Autowired
+  private FixingDateService fixingDateService;
 
   @Value("${stacs.burn.address}")
-  String burnAddress;
+  private String burnAddress;
 
   public void save(SPToken token){
     repository.save(token);
@@ -76,7 +83,15 @@ public class SPTokenServiceImpl implements SPTokenService {
       token.setUser(loggedInUser);
       token.setIssuingAddress(loggedInUser.getWalletAddress());
       token.setStatus(SPTokenStatus.CHAIN_UNAVAILABLE);
+      List<FixingDate> fixingDates = new ArrayList<>();
+      for(Date fixingDate: dto.getFixingDates()) {
+        FixingDate fx = new FixingDate();
+        fx.setSpToken(token);
+        fx.setFixingDate(fixingDate);
+        fixingDates.add(fx);
+      }
       repository.save(token);
+      fixingDateService.saveFixingDates(fixingDates);
       JsonRespBO jsonRespBO = blockchainService.createToken(loggedInUser, loggedInUser.getWalletAddress(), TokenType.SP_TOKEN, dto.getNotionalAmount());
       if (jsonRespBO != null) {
         processAvailableChain(token, jsonRespBO);
@@ -88,7 +103,7 @@ public class SPTokenServiceImpl implements SPTokenService {
     }
   }
 
-  public SPToken convertToSPToken(SPTokenRequestDto dto) {
+  public SPToken convertToSPToken(SPTokenRequestDto dto) throws ServerErrorException {
     SPToken token = new SPToken();
     token.setClientId(dto.getClientId());
     token.setUnderlyingCurrency(dto.getUnderlyingCurrency());
@@ -108,6 +123,9 @@ public class SPTokenServiceImpl implements SPTokenService {
     token.setTenor(dto.getTenor());
     token.setTenorType(TenorType.resolveCode(dto.getTenorType()));
     token.setStatus(SPTokenStatus.ACTIVE);
+    if(dto.getSettlementCurrency() != null) {
+      token.setBcToken(bcTokenService.fetchByTokenCode(dto.getSettlementCurrency()));
+    }
     return token;
   }
 

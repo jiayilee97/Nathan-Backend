@@ -18,10 +18,10 @@ public class RolePagesServiceImpl implements RolePagesService {
   private static final Logger LOGGER = LoggerFactory.getLogger(RolePagesServiceImpl.class);
 
   @Autowired
-  RolePagesRepository repository;
+  private RolePagesRepository repository;
 
   @Autowired
-  UserService userService;
+  private UserService userService;
 
   public UserInfoDto fetchUserInfo() throws ServerErrorException {
     LOGGER.debug("Entering fetchUserInfo().");

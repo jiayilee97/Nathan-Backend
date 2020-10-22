@@ -20,6 +20,8 @@ public interface BCTokenRepository extends JpaRepository<BaseCurrencyToken, Long
       "FROM BaseCurrencyToken bc WHERE bc.tokenCode = :tokenCode and bc.isVisible = true")
   BCTokenResponseDto fetchByTokenCode(@Param("tokenCode") String tokenCode);
 
+  BaseCurrencyToken findByTokenCode(String tokenCode);
+
   List<BaseCurrencyToken> findByStatus(BCTokenStatus status);
 
   BaseCurrencyToken findByTokenCodeAndIsVisible(String tokenCode, Boolean isVisible);

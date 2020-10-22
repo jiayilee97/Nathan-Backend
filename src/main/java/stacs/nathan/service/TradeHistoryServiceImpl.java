@@ -21,13 +21,13 @@ public class TradeHistoryServiceImpl implements TradeHistoryService{
     private static final Logger LOGGER = LoggerFactory.getLogger(TradeHistoryServiceImpl.class);
 
     @Autowired
-    TradeHistoryRepository repository;
+    private TradeHistoryRepository repository;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    SPTokenService spTokenService;
+    private SPTokenService spTokenService;
 
     public void save(TradeHistory tradeHistory) {
         repository.save(tradeHistory);
