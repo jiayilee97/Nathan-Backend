@@ -3,7 +3,6 @@ package stacs.nathan.utils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

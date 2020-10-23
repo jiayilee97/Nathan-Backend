@@ -398,13 +398,10 @@ public class BCTokenServiceImpl implements BCTokenService {
     }
   }
 
-  @Transactional(rollbackFor = ServerErrorException.class)
   @AudibleActionTrail(module = AuditActionConstants.BC_TOKEN_MODULE, action = AuditActionConstants.TRANSFER)
   public AudibleActionImplementation<BaseCurrencyToken> croTrade(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
     LOGGER.debug("Entering croTrade().");
     try {
-      String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-      User loggedInUser = userService.fetchByUsername(username);
       BaseCurrencyToken bcToken = repository.findByTokenCodeAndIsVisible(dto.getBcTokenCode(), true);
       User sender = userService.fetchByWalletAddressAndRole(dto.getSenderAddress(), UserRole.CLIENT);
       User recipient = userService.fetchByWalletAddressAndRole(dto.getRecepientAddress(), UserRole.CLIENT);

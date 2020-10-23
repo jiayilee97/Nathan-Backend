@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.response.TransactionHistoryResponseDto;
 import stacs.nathan.service.TransactionHistoryService;
-import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -21,7 +20,7 @@ public class TransactionHistoryController {
 
     @PreAuthorize("hasAnyAuthority('OPS', 'CRO', 'RISK')")
     @GetMapping("/fetch-all")
-    public List<TransactionHistoryResponseDto> fetchTransactionHistory(@RequestParam String startDate, @RequestParam String endDate) throws ServerErrorException, ParseException {
+    public List<TransactionHistoryResponseDto> fetchTransactionHistory(@RequestParam String startDate, @RequestParam String endDate) throws ServerErrorException {
         return transactionHistoryService.fetchAllTransactionHistory(startDate, endDate);
     }
 }

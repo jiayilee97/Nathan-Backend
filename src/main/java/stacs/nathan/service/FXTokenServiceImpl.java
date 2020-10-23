@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import hashstacs.sdk.response.base.JsonRespBO;
 import hashstacs.sdk.response.blockchain.token.TokenQueryRespBO;
 import hashstacs.sdk.response.blockchain.token.TransferQueryRespBO;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.request.LoggedInUser;
+import stacs.nathan.dto.request.TransferBCTokenToOpsRequestDto;
 import stacs.nathan.dto.response.*;
 import stacs.nathan.entity.*;
 import stacs.nathan.repository.*;
@@ -60,6 +62,12 @@ public class FXTokenServiceImpl implements FXTokenService {
   @Autowired
   private CodeValueService codeValueService;
 
+  @Autowired
+  private FixingDateService fixingDateService;
+
+  @Autowired
+  private BCTokenService bcTokenService;
+
   @Value("${stacs.burn.address}")
   private String burnAddress;
 
@@ -86,10 +94,6 @@ public class FXTokenServiceImpl implements FXTokenService {
 
   public List<FXTokenResponseDto> fetchAvailableFXTokens() {
     return repository.fetchAvailableFXTokens();
-  }
-
-  public String fetchAppWalletAddress() {
-    return appWalletAddress;
   }
 
   public void save(FXToken fxToken) {
@@ -249,7 +253,42 @@ public class FXTokenServiceImpl implements FXTokenService {
     return dto;
   }
 
+  public void processSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException {
+    LOGGER.debug("Entering processSpotPrice().");
+    try {
+      Date entryDate = dto.getEntryDate();
+      User ops = userService.fetchLoginUser();
+      List<SPToken> spTokens = fixingDateService.fetchByFixingDatesAndCurrency(entryDate, DateUtils.addDays(entryDate, 1), dto.getFxCurrency());
+      if(spTokens != null && spTokens.size() > 0) {
+        for(SPToken spToken: spTokens) {
+          processTradeTransfer(spToken, dto, ops);
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.error("Exception in processSpotPrice().", e);
+      throw new ServerErrorException("Exception in processSpotPrice().", e);
+    }
+  }
+
   @Transactional(rollbackFor = ServerErrorException.class)
+  public void processTradeTransfer(SPToken spToken, FXTokenDataEntryRequestDto dto, User ops) throws ServerErrorException {
+    FXToken fxToken = spToken.getFxToken();
+    if(fxToken != null) {
+      dto.setFxTokenCode(spToken.getFxToken().getTokenCode());
+      enterSpotPrice(dto);
+      // transfer bc token from client to OPS
+      User client = userService.fetchUserByClientId(spToken.getClientId());
+      TransferBCTokenToOpsRequestDto transferDto = new TransferBCTokenToOpsRequestDto();
+
+      transferDto.setAmount(spToken.getFixingAmount());
+      transferDto.setSenderAddress(client.getWalletAddress());
+      transferDto.setRecepientAddress(ops.getWalletAddress());
+      transferDto.setBcTokenCode(spToken.getBcToken().getTokenCode());
+      transferDto.setFxTokenCode(fxToken.getTokenCode());
+      bcTokenService.croTrade(transferDto);
+    }
+  }
+
   @AudibleActionTrail(module = AuditActionConstants.SPOT_PRICE_MODULE, action = AuditActionConstants.SUBMIT_SPOT_PRICE)
   public AudibleActionImplementation<FXTokenDataEntry> enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException {
     String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
@@ -318,7 +357,7 @@ public class FXTokenServiceImpl implements FXTokenService {
         tradeHistoryService.save(tradeHistory);
 
         if (remainingAmount.compareTo(BigDecimal.ZERO) < 0) {
-          throw new BadRequestException("Insufficient balance for transfer");
+          throw new BadRequestException("Insufficient FX balance for transfer: " + fxToken.getTokenCode());
         }
         else {
           JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, appWallet.getWalletAddress(), client.getWalletAddress(), fxToken, spToken.getFixingAmount().toBigInteger());

@@ -29,6 +29,8 @@ public interface FXTokenService {
 
     FXTokenResponseDto fetchTokenById(String tokenCode);
 
+    void processSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException;
+
     AudibleActionImplementation<FXTokenDataEntry> enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException;
 
     FxSpotPriceInitDto initSpotPriceForm();
@@ -38,8 +40,6 @@ public interface FXTokenService {
     void executeUnconfirmedChain();
 
     void executeUnavailableChain();
-
-    String fetchAppWalletAddress();
 
     FXToken fetchByTokenCode(String tokenCode);
 

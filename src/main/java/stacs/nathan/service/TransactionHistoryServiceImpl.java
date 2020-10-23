@@ -9,7 +9,6 @@ import stacs.nathan.dto.response.TransactionHistoryResponseDto;
 import stacs.nathan.entity.TransactionHistory;
 import stacs.nathan.repository.TransactionRepository;
 import stacs.nathan.utils.CommonUtils;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
     }
 
     @Override
-    public List<TransactionHistoryResponseDto> fetchAllTransactionHistory(String startDate, String endDate) throws ServerErrorException, ParseException {
+    public List<TransactionHistoryResponseDto> fetchAllTransactionHistory(String startDate, String endDate) throws ServerErrorException {
         LOGGER.debug("Entering fetchAllTransactionHistory().");
         try {
             Date start = CommonUtils.formatDate(startDate, -1);

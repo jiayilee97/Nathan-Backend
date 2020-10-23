@@ -24,5 +24,4 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long
     @Query("select DISTINCT e from ExchangeRate e where e.updatedDate in (select max(updatedDate) from ExchangeRate r where e.currency = r.currency)")
     List<ExchangeRate> fetchUpdatedExchangeRates();
 
-
 }

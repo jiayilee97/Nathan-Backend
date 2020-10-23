@@ -47,10 +47,12 @@ public class SPToken extends BaseTokenEntity {
     @Column(name = "contract_inception_date")
     private Date contractInceptionDate;
 
+    // maximum exposure
     @Column(name = "notional_amount", precision = 15, scale = 2)
     @ColumnDefault("0.0")
     private BigDecimal notionalAmount = BigDecimal.ZERO;
 
+    // notional amount per fixing
     @Column(name = "fixing_amount", precision = 10, scale = 2)
     @ColumnDefault("0.0")
     private BigDecimal fixingAmount = BigDecimal.ZERO;
