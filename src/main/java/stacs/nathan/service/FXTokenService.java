@@ -29,9 +29,9 @@ public interface FXTokenService {
 
     FXTokenResponseDto fetchTokenById(String tokenCode);
 
-    void processSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException;
+    List<String> processSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException;
 
-    AudibleActionImplementation<FXTokenDataEntry> enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException;
+    AudibleActionImplementation<FXTokenDataEntry> enterSpotPrice(FXTokenDataEntryRequestDto dto, List<String> result) throws ServerErrorException;
 
     FxSpotPriceInitDto initSpotPriceForm();
 

@@ -74,11 +74,11 @@ public class BCTokenController {
     bcTokenService.opsTrade(dto);
   }
 
-  @PreAuthorize("hasAnyAuthority('CRO')")
-  @PostMapping("/cro-trade")
-  public void croTrade(@RequestBody TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
-    bcTokenService.croTrade(dto);
-  }
+//  @PreAuthorize("hasAnyAuthority('CRO')")
+//  @PostMapping("/cro-trade")
+//  public void croTrade(@RequestBody TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
+//    bcTokenService.croTrade(dto);
+//  }
 
   @PreAuthorize("hasAnyAuthority('CRO')")
   @PostMapping("/cro-transfer")

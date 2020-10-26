@@ -253,17 +253,24 @@ public class FXTokenServiceImpl implements FXTokenService {
     return dto;
   }
 
-  public void processSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException {
+  public List<String> processSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException {
     LOGGER.debug("Entering processSpotPrice().");
     try {
       Date entryDate = dto.getEntryDate();
       User ops = userService.fetchLoginUser();
+      List<String> result = new ArrayList<>();
       List<SPToken> spTokens = fixingDateService.fetchByFixingDatesAndCurrency(entryDate, DateUtils.addDays(entryDate, 1), dto.getFxCurrency());
       if(spTokens != null && spTokens.size() > 0) {
         for(SPToken spToken: spTokens) {
-          processTradeTransfer(spToken, dto, ops);
+          try {
+            processTradeTransfer(spToken, dto, ops, result);
+          } catch (Exception e) {
+            LOGGER.error("Exception in processSpotPrice(). SPToken: ", spToken.getTokenCode());
+            continue;
+          }
         }
       }
+      return result;
     } catch (Exception e) {
       LOGGER.error("Exception in processSpotPrice().", e);
       throw new ServerErrorException("Exception in processSpotPrice().", e);
@@ -271,26 +278,37 @@ public class FXTokenServiceImpl implements FXTokenService {
   }
 
   @Transactional(rollbackFor = ServerErrorException.class)
-  public void processTradeTransfer(SPToken spToken, FXTokenDataEntryRequestDto dto, User ops) throws ServerErrorException {
-    FXToken fxToken = spToken.getFxToken();
-    if(fxToken != null) {
-      dto.setFxTokenCode(spToken.getFxToken().getTokenCode());
-      enterSpotPrice(dto);
-      // transfer bc token from client to OPS
-      User client = userService.fetchUserByClientId(spToken.getClientId());
-      TransferBCTokenToOpsRequestDto transferDto = new TransferBCTokenToOpsRequestDto();
+  public List<String> processTradeTransfer(SPToken spToken, FXTokenDataEntryRequestDto dto, User ops, List<String> result) throws ServerErrorException {
+    LOGGER.debug("Entering processTradeTransfer().");
+    try {
+      FXToken fxToken = spToken.getFxToken();
+      if(fxToken != null) {
+        dto.setFxTokenCode(spToken.getFxToken().getTokenCode());
 
-      transferDto.setAmount(spToken.getFixingAmount());
-      transferDto.setSenderAddress(client.getWalletAddress());
-      transferDto.setRecepientAddress(ops.getWalletAddress());
-      transferDto.setBcTokenCode(spToken.getBcToken().getTokenCode());
-      transferDto.setFxTokenCode(fxToken.getTokenCode());
-      bcTokenService.croTrade(transferDto);
+        // transfer fx token from OPS to client
+        this.enterSpotPrice(dto, result);
+
+        User client = userService.fetchUserByClientId(spToken.getClientId());
+        TransferBCTokenToOpsRequestDto transferDto = new TransferBCTokenToOpsRequestDto();
+        transferDto.setAmount(spToken.getFixingAmount());
+        transferDto.setSenderAddress(client.getWalletAddress());
+        transferDto.setRecepientAddress(ops.getWalletAddress());
+        transferDto.setBcTokenCode(spToken.getBcToken().getTokenCode());
+        transferDto.setFxTokenCode(fxToken.getTokenCode());
+        // transfer bc token from client to OPS
+        bcTokenService.croTrade(transferDto, result);
+        result.add(" " + fxToken.getTokenCode());
+      }
+    } catch (ServerErrorException e) {
+      LOGGER.error("Exception in processTradeTransfer().", e);
+      throw new ServerErrorException("Exception in processTradeTransfer().", e);
     }
+    return result;
   }
 
   @AudibleActionTrail(module = AuditActionConstants.SPOT_PRICE_MODULE, action = AuditActionConstants.SUBMIT_SPOT_PRICE)
-  public AudibleActionImplementation<FXTokenDataEntry> enterSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException {
+  public AudibleActionImplementation<FXTokenDataEntry> enterSpotPrice(FXTokenDataEntryRequestDto dto, List<String> result) throws ServerErrorException {
+    LOGGER.debug("Entering enterSpotPrice().");
     String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
     User loggedInUser = userService.fetchByUsername(username);
     User appWallet = userService.fetchAppAddress();
@@ -355,9 +373,11 @@ public class FXTokenServiceImpl implements FXTokenService {
         tradeHistory.setSpToken(fxToken.getSpToken());
         tradeHistory.setUser(client);
         tradeHistoryService.save(tradeHistory);
-
         if (remainingAmount.compareTo(BigDecimal.ZERO) < 0) {
-          throw new BadRequestException("Insufficient FX balance for transfer: " + fxToken.getTokenCode());
+          String errorMsg = "Insufficient FX balance for transfer ";
+//          result.add(fxToken.getTokenCode() + " : " + errorMsg);
+          LOGGER.debug(errorMsg + fxToken.getTokenCode());
+          throw new ServerErrorException(errorMsg + fxToken.getTokenCode());
         }
         else {
           JsonRespBO jsonRespBO = blockchainService.transferToken(loggedInUser, appWallet.getWalletAddress(), client.getWalletAddress(), fxToken, spToken.getFixingAmount().toBigInteger());

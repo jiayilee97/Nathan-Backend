@@ -399,7 +399,7 @@ public class BCTokenServiceImpl implements BCTokenService {
   }
 
   @AudibleActionTrail(module = AuditActionConstants.BC_TOKEN_MODULE, action = AuditActionConstants.TRANSFER)
-  public AudibleActionImplementation<BaseCurrencyToken> croTrade(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException {
+  public AudibleActionImplementation<BaseCurrencyToken> croTrade(TransferBCTokenToOpsRequestDto dto, List<String> result) throws ServerErrorException {
     LOGGER.debug("Entering croTrade().");
     try {
       BaseCurrencyToken bcToken = repository.findByTokenCodeAndIsVisible(dto.getBcTokenCode(), true);
@@ -409,51 +409,59 @@ public class BCTokenServiceImpl implements BCTokenService {
         recipient = userService.fetchByWalletAddressAndRole(dto.getRecepientAddress(), UserRole.OPS);
       }
       Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), sender.getId());
-      if (bcTokenBalance != null) {
-        BigDecimal bcRemainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
-        if (bcRemainingAmount.compareTo(BigDecimal.ZERO) > 0) {
-          JsonRespBO jsonRespBO = blockchainService.transferToken(sender, sender.getWalletAddress(), recipient.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
-          String bcTxId = jsonRespBO.getTxId();
-          TransferQueryRespBO bcTxDetail = blockchainService.getTransferDetails(bcTxId);
-          if (bcTxDetail != null) {
-            // Save balance for sender wallet
-            bcTokenBalance.setBalanceAmount(bcRemainingAmount);
-            balanceService.createBalance(bcTokenBalance);
+      if (bcTokenBalance == null) {
+        String errorMsg = "No Digital Cash Token for transfer for client: " + sender.getDisplayName();
+//        result.add(bcToken.getTokenCode() + " : " + errorMsg);
+        LOGGER.debug(errorMsg + bcToken.getTokenCode());
+        throw new ServerErrorException(errorMsg + bcToken.getTokenCode());
+      }
+      BigDecimal bcRemainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
+      if (bcRemainingAmount.compareTo(BigDecimal.ZERO) < 0) {
+        String errorMsg = "Insufficient Digital Cash balance for transfer ";
+//        result.add(bcToken.getTokenCode() + " : " + errorMsg);
+        LOGGER.debug(errorMsg + bcToken.getTokenCode());
+        throw new ServerErrorException(errorMsg + bcToken.getTokenCode());
+      }
+      JsonRespBO jsonRespBO = blockchainService.transferToken(sender, sender.getWalletAddress(), recipient.getWalletAddress(), bcToken, dto.getAmount().toBigInteger());
+      String bcTxId = jsonRespBO.getTxId();
+      TransferQueryRespBO bcTxDetail = blockchainService.getTransferDetails(bcTxId);
+      if (bcTxDetail != null) {
+        // Save balance for sender wallet
+        bcTokenBalance.setBalanceAmount(bcRemainingAmount);
+        balanceService.createBalance(bcTokenBalance);
 
-            // Save balance for receiver wallet
-            // Creates new entry in table if not present
-            Balance receiverBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), recipient.getId());
-            if (receiverBalance == null) {
-              Balance newBalance = new Balance();
-              newBalance.setBalanceAmount(dto.getAmount());
-              newBalance.setTokenCode(dto.getBcTokenCode());
-              newBalance.setTokenType(TokenType.BC_TOKEN);
-              newBalance.setUser(recipient);
-              balanceService.createBalance(newBalance);
-            } else {
-              BigDecimal newAmount = receiverBalance.getBalanceAmount().add(dto.getAmount());
-              receiverBalance.setBalanceAmount(newAmount);
-              balanceService.createBalance(receiverBalance);
-            }
-          }
-
-          TransactionHistory tx = new TransactionHistory();
-          tx.setTokenContractAddress(bcToken.getTokenContractAddress());
-          tx.setAmount(dto.getAmount());
-          tx.setFromAddress(sender.getWalletAddress());
-          tx.setToAddress(recipient.getWalletAddress());
-          tx.setBlockHeight(bcTxDetail.getBlockHeight());
-          tx.setStatus(TransactionStatus.FUND_TRANSFER);
-          tx.setCtxId(bcTxId);
-          tx.setTokenCode(bcToken.getTokenCode());
-          tx.setTokenType(TokenType.BC_TOKEN);
-          tx.setTokenId(bcToken.getId());
-          transactionHistoryService.save(tx);
+        // Save balance for receiver wallet
+        // Creates new entry in table if not present
+        Balance receiverBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), recipient.getId());
+        if (receiverBalance == null) {
+          Balance newBalance = new Balance();
+          newBalance.setBalanceAmount(dto.getAmount());
+          newBalance.setTokenCode(dto.getBcTokenCode());
+          newBalance.setTokenType(TokenType.BC_TOKEN);
+          newBalance.setUser(recipient);
+          balanceService.createBalance(newBalance);
+        } else {
+          BigDecimal newAmount = receiverBalance.getBalanceAmount().add(dto.getAmount());
+          receiverBalance.setBalanceAmount(newAmount);
+          balanceService.createBalance(receiverBalance);
         }
       }
+
+      TransactionHistory tx = new TransactionHistory();
+      tx.setTokenContractAddress(bcToken.getTokenContractAddress());
+      tx.setAmount(dto.getAmount());
+      tx.setFromAddress(sender.getWalletAddress());
+      tx.setToAddress(recipient.getWalletAddress());
+      tx.setBlockHeight(bcTxDetail.getBlockHeight());
+      tx.setStatus(TransactionStatus.FUND_TRANSFER);
+      tx.setCtxId(bcTxId);
+      tx.setTokenCode(bcToken.getTokenCode());
+      tx.setTokenType(TokenType.BC_TOKEN);
+      tx.setTokenId(bcToken.getId());
+      transactionHistoryService.save(tx);
       return new AudibleActionImplementation<>(bcToken, bcToken.getTokenCode(), dto.getAmount());
 
-    }  catch (Exception e){
+    }  catch (ServerErrorException e){
       LOGGER.error("Exception in croTrade().", e);
       throw new ServerErrorException("Exception in croTrade().", e);
     }

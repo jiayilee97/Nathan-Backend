@@ -8,8 +8,6 @@ import stacs.nathan.dto.response.ClientOpenPositionResponseDto;
 import stacs.nathan.dto.response.FXTokenResponseDto;
 import stacs.nathan.entity.FXToken;
 import stacs.nathan.utils.enums.FXTokenStatus;
-import stacs.nathan.utils.enums.FxCurrency;
-
 import java.util.List;
 
 @Repository

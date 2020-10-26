@@ -28,7 +28,9 @@ public class UserController {
   @PreAuthorize("hasAnyAuthority('CRO', 'OPS', 'MKT', 'CP')")
   @GetMapping("/fetch/loginuser")
   public User fetchLoginUser(){
-    return userService.fetchLoginUser();
+    User user = userService.fetchLoginUser();
+    user.setPrivateKey(null);
+    return user;
   }
 
   @PreAuthorize("hasAnyAuthority('CRO')")

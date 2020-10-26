@@ -10,6 +10,10 @@ import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.response.*;
 import stacs.nathan.service.FXTokenService;
 import stacs.nathan.service.UserService;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -59,9 +63,15 @@ public class FXTokenController {
     }
 
     @PreAuthorize("hasAnyAuthority('OPS', 'CP')")
-    @PostMapping("/spotPrice")
+    @PostMapping("/spotPricetest")
     public void enterSpotPrice(@RequestBody FXTokenDataEntryRequestDto dto) throws ServerErrorException {
-        fxTokenService.enterSpotPrice(dto);
+        fxTokenService.enterSpotPrice(dto, new ArrayList<>());
+    }
+
+    @PreAuthorize("hasAnyAuthority('OPS', 'CP')")
+    @PostMapping("/spotPrice")
+    public List<String> processSpotPrice(@RequestBody FXTokenDataEntryRequestDto dto) throws ServerErrorException {
+        return fxTokenService.processSpotPrice(dto);
     }
 
     @PreAuthorize("hasAnyAuthority('OPS', 'CP', 'CRO')")

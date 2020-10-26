@@ -1,7 +1,5 @@
 package stacs.nathan.dto.request;
 
-import stacs.nathan.entity.FXToken;
-
 import java.math.BigDecimal;
 import java.util.Date;
 

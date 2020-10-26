@@ -9,7 +9,6 @@ import stacs.nathan.dto.response.ClientSPPositionResponseDto;
 import stacs.nathan.dto.response.CreateClientInitDto;
 import stacs.nathan.entity.User;
 import stacs.nathan.utils.enums.UserRole;
-
 import java.util.List;
 
 public interface UserService {
