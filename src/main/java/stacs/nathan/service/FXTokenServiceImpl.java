@@ -253,30 +253,6 @@ public class FXTokenServiceImpl implements FXTokenService {
     return dto;
   }
 
-  public List<String> processSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException {
-    LOGGER.debug("Entering processSpotPrice().");
-    try {
-      Date entryDate = dto.getEntryDate();
-      User ops = userService.fetchLoginUser();
-      List<String> result = new ArrayList<>();
-      List<SPToken> spTokens = fixingDateService.fetchByFixingDatesAndCurrency(entryDate, DateUtils.addDays(entryDate, 1), dto.getFxCurrency());
-      if(spTokens != null && spTokens.size() > 0) {
-        for(SPToken spToken: spTokens) {
-          try {
-            processTradeTransfer(spToken, dto, ops, result);
-          } catch (Exception e) {
-            LOGGER.error("Exception in processSpotPrice(). SPToken: ", spToken.getTokenCode());
-            continue;
-          }
-        }
-      }
-      return result;
-    } catch (Exception e) {
-      LOGGER.error("Exception in processSpotPrice().", e);
-      throw new ServerErrorException("Exception in processSpotPrice().", e);
-    }
-  }
-
   @Transactional(rollbackFor = ServerErrorException.class)
   public List<String> processTradeTransfer(SPToken spToken, FXTokenDataEntryRequestDto dto, User ops, List<String> result) throws ServerErrorException {
     LOGGER.debug("Entering processTradeTransfer().");
@@ -286,7 +262,7 @@ public class FXTokenServiceImpl implements FXTokenService {
         dto.setFxTokenCode(spToken.getFxToken().getTokenCode());
 
         // transfer fx token from OPS to client
-        this.enterSpotPrice(dto, result);
+        transferFxToken(dto, result);
 
         User client = userService.fetchUserByClientId(spToken.getClientId());
         TransferBCTokenToOpsRequestDto transferDto = new TransferBCTokenToOpsRequestDto();
@@ -295,8 +271,9 @@ public class FXTokenServiceImpl implements FXTokenService {
         transferDto.setRecepientAddress(ops.getWalletAddress());
         transferDto.setBcTokenCode(spToken.getBcToken().getTokenCode());
         transferDto.setFxTokenCode(fxToken.getTokenCode());
+
         // transfer bc token from client to OPS
-        bcTokenService.croTrade(transferDto, result);
+        bcTokenService.transferBCToken(transferDto, result);
         result.add(" " + fxToken.getTokenCode());
       }
     } catch (ServerErrorException e) {
@@ -307,7 +284,7 @@ public class FXTokenServiceImpl implements FXTokenService {
   }
 
   @AudibleActionTrail(module = AuditActionConstants.SPOT_PRICE_MODULE, action = AuditActionConstants.SUBMIT_SPOT_PRICE)
-  public AudibleActionImplementation<FXTokenDataEntry> enterSpotPrice(FXTokenDataEntryRequestDto dto, List<String> result) throws ServerErrorException {
+  public AudibleActionImplementation<FXTokenDataEntry> transferFxToken(FXTokenDataEntryRequestDto dto, List<String> result) throws ServerErrorException {
     LOGGER.debug("Entering enterSpotPrice().");
     String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
     User loggedInUser = userService.fetchByUsername(username);

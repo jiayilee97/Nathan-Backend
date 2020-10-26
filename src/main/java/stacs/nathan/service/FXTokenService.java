@@ -8,6 +8,7 @@ import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.response.*;
 import stacs.nathan.entity.FXToken;
 import stacs.nathan.entity.FXTokenDataEntry;
+import stacs.nathan.entity.SPToken;
 import stacs.nathan.entity.User;
 import java.util.List;
 
@@ -29,9 +30,7 @@ public interface FXTokenService {
 
     FXTokenResponseDto fetchTokenById(String tokenCode);
 
-    List<String> processSpotPrice(FXTokenDataEntryRequestDto dto) throws ServerErrorException;
-
-    AudibleActionImplementation<FXTokenDataEntry> enterSpotPrice(FXTokenDataEntryRequestDto dto, List<String> result) throws ServerErrorException;
+    List<String> processTradeTransfer(SPToken spToken, FXTokenDataEntryRequestDto dto, User ops, List<String> result) throws ServerErrorException;
 
     FxSpotPriceInitDto initSpotPriceForm();
 

@@ -399,7 +399,7 @@ public class BCTokenServiceImpl implements BCTokenService {
   }
 
   @AudibleActionTrail(module = AuditActionConstants.BC_TOKEN_MODULE, action = AuditActionConstants.TRANSFER)
-  public AudibleActionImplementation<BaseCurrencyToken> croTrade(TransferBCTokenToOpsRequestDto dto, List<String> result) throws ServerErrorException {
+  public AudibleActionImplementation<BaseCurrencyToken> transferBCToken(TransferBCTokenToOpsRequestDto dto, List<String> result) throws ServerErrorException {
     LOGGER.debug("Entering croTrade().");
     try {
       BaseCurrencyToken bcToken = repository.findByTokenCodeAndIsVisible(dto.getBcTokenCode(), true);

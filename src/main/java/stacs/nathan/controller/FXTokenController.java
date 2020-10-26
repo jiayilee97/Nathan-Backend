@@ -9,6 +9,7 @@ import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.response.*;
 import stacs.nathan.service.FXTokenService;
+import stacs.nathan.service.SpotPriceService;
 import stacs.nathan.service.UserService;
 
 import java.math.BigDecimal;
@@ -25,6 +26,9 @@ public class FXTokenController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SpotPriceService spotPriceService;
 
     @PreAuthorize("hasAnyAuthority('OPS')")
     @GetMapping("/init")
@@ -62,16 +66,16 @@ public class FXTokenController {
         return fxTokenService.fetchTokenById(tokenCode);
     }
 
-    @PreAuthorize("hasAnyAuthority('OPS', 'CP')")
-    @PostMapping("/spotPricetest")
-    public void enterSpotPrice(@RequestBody FXTokenDataEntryRequestDto dto) throws ServerErrorException {
-        fxTokenService.enterSpotPrice(dto, new ArrayList<>());
-    }
+//    @PreAuthorize("hasAnyAuthority('OPS', 'CP')")
+//    @PostMapping("/spotPrice")
+//    public void enterSpotPrice(@RequestBody FXTokenDataEntryRequestDto dto) throws ServerErrorException {
+//        fxTokenService.enterSpotPrice(dto, new ArrayList<>());
+//    }
 
     @PreAuthorize("hasAnyAuthority('OPS', 'CP')")
     @PostMapping("/spotPrice")
     public List<String> processSpotPrice(@RequestBody FXTokenDataEntryRequestDto dto) throws ServerErrorException {
-        return fxTokenService.processSpotPrice(dto);
+        return spotPriceService.processSpotPrice(dto);
     }
 
     @PreAuthorize("hasAnyAuthority('OPS', 'CP', 'CRO')")

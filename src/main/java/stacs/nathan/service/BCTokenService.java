@@ -33,7 +33,7 @@ public interface BCTokenService {
 
   AudibleActionImplementation<BaseCurrencyToken> opsTrade(TransferBCTokenRequestDto dto) throws ServerErrorException;
 
-  AudibleActionImplementation<BaseCurrencyToken> croTrade(TransferBCTokenToOpsRequestDto dto, List<String> result) throws ServerErrorException;
+  AudibleActionImplementation<BaseCurrencyToken> transferBCToken(TransferBCTokenToOpsRequestDto dto, List<String> result) throws ServerErrorException;
 
   AudibleActionImplementation<BaseCurrencyToken> croTransfer(TransferBCTokenToOpsRequestDto dto) throws ServerErrorException;
 
