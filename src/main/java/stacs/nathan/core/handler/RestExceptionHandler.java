@@ -1,5 +1,7 @@
 package stacs.nathan.core.handler;
 
+import com.google.common.base.Throwables;
+import org.apache.tomcat.util.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -32,7 +34,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ServerErrorException.class, Exception.class})
     protected ResponseEntity<Object> handleServerErrorException(Exception ex) {
         LOGGER.error("Exception {}", ex);
-        return new ResponseEntity<>(new RestErrorResponse("Something went wrong!", HttpStatus.INTERNAL_SERVER_ERROR),
+        return new ResponseEntity<>(new RestErrorResponse("Something went wrong! Root Cause: " + Throwables.getRootCause(ex), HttpStatus.INTERNAL_SERVER_ERROR),
             HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
