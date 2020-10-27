@@ -7,7 +7,6 @@ import stacs.nathan.dto.request.FXTokenDataEntryRequestDto;
 import stacs.nathan.dto.request.FXTokenRequestDto;
 import stacs.nathan.dto.response.*;
 import stacs.nathan.entity.FXToken;
-import stacs.nathan.entity.FXTokenDataEntry;
 import stacs.nathan.entity.SPToken;
 import stacs.nathan.entity.User;
 import java.util.List;

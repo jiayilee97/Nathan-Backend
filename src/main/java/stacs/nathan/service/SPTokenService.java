@@ -20,6 +20,8 @@ public interface SPTokenService {
 
   List<SPToken> fetchTokensByStatus(SPTokenStatus status);
 
+  List<SPToken> fetchAvailableTokens(SPTokenStatus status);
+
   List<SPTokenResponseDto> fetchAllOpenPositions(User user);
 
   List<SPTokenResponseDto> fetchAllClosedPositions(User user);

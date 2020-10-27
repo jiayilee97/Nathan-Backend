@@ -5,7 +5,6 @@ import com.google.gson.JsonParser;
 import hashstacs.sdk.response.base.JsonRespBO;
 import hashstacs.sdk.response.blockchain.token.TokenQueryRespBO;
 import hashstacs.sdk.response.blockchain.token.TransferQueryRespBO;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,11 +82,12 @@ public class FXTokenServiceImpl implements FXTokenService {
   }
 
   public List<SPTokenResponseDto> fetchAvailableTokens(User user) {
-    List<SPToken> response = spTokenService.fetchTokensByStatus(SPTokenStatus.ACTIVE);
-    response.removeIf(obj -> obj.getFxToken() != null);
+    List<SPToken> response = spTokenService.fetchAvailableTokens(SPTokenStatus.ACTIVE);
     List<SPTokenResponseDto> responseDtoList = new ArrayList<>();
-    for (SPToken spToken : response) {
-      responseDtoList.add(new SPTokenResponseDto(spToken));
+    if(response != null && response.size() > 0) {
+      for (SPToken spToken : response) {
+        responseDtoList.add(new SPTokenResponseDto(spToken));
+      }
     }
     return responseDtoList;
   }
