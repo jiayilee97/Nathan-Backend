@@ -410,15 +410,15 @@ public class BCTokenServiceImpl implements BCTokenService {
       }
       Balance bcTokenBalance = balanceService.fetchBalanceByTokenCodeAndId(dto.getBcTokenCode(), sender.getId());
       if (bcTokenBalance == null) {
-        String errorMsg = "No Digital Cash Token for transfer for client: " + sender.getDisplayName();
-//        result.add(bcToken.getTokenCode() + " : " + errorMsg);
+        String errorMsg = " Insufficient Digital Cash Token " + dto.getBcTokenCode() + " in " + sender.getDisplayName() + " Digital Wallet ";
+        result.add(errorMsg);
         LOGGER.debug(errorMsg + bcToken.getTokenCode());
         throw new ServerErrorException(errorMsg + bcToken.getTokenCode());
       }
       BigDecimal bcRemainingAmount = bcTokenBalance.getBalanceAmount().subtract(dto.getAmount());
       if (bcRemainingAmount.compareTo(BigDecimal.ZERO) < 0) {
         String errorMsg = "Insufficient Digital Cash balance for transfer ";
-//        result.add(bcToken.getTokenCode() + " : " + errorMsg);
+        result.add(bcToken.getTokenCode() + " : " + errorMsg);
         LOGGER.debug(errorMsg + bcToken.getTokenCode());
         throw new ServerErrorException(errorMsg + bcToken.getTokenCode());
       }
