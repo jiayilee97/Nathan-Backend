@@ -274,7 +274,7 @@ public class FXTokenServiceImpl implements FXTokenService {
 
         // transfer bc token from client to OPS
         bcTokenService.transferBCToken(transferDto, result);
-        result.add(" " + fxToken.getTokenCode());
+        result.add(fxToken.getTokenCode() + " : success ");
       }
     } catch (ServerErrorException e) {
       LOGGER.error("Exception in processTradeTransfer().", e);
@@ -351,8 +351,8 @@ public class FXTokenServiceImpl implements FXTokenService {
         tradeHistory.setUser(client);
         tradeHistoryService.save(tradeHistory);
         if (remainingAmount.compareTo(BigDecimal.ZERO) < 0) {
-          String errorMsg = "Insufficient FX balance for transfer ";
-//          result.add(fxToken.getTokenCode() + " : " + errorMsg);
+          String errorMsg = "Insufficient FX Token " + fxToken.getTokenCode() + " ";
+          result.add(fxToken.getTokenCode() + " : " + errorMsg);
           LOGGER.debug(errorMsg + fxToken.getTokenCode());
           throw new ServerErrorException(errorMsg + fxToken.getTokenCode());
         }
