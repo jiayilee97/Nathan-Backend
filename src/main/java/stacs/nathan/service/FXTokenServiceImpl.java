@@ -263,17 +263,21 @@ public class FXTokenServiceImpl implements FXTokenService {
 
         // transfer fx token from OPS to client
         transferFxToken(dto, result);
+        fxToken = spToken.getFxToken();
 
-        User client = userService.fetchUserByClientId(spToken.getClientId());
-        TransferBCTokenToOpsRequestDto transferDto = new TransferBCTokenToOpsRequestDto();
-        transferDto.setAmount(spToken.getFixingAmount());
-        transferDto.setSenderAddress(client.getWalletAddress());
-        transferDto.setRecepientAddress(ops.getWalletAddress());
-        transferDto.setBcTokenCode(spToken.getBcToken().getTokenCode());
-        transferDto.setFxTokenCode(fxToken.getTokenCode());
+        if(!FXTokenStatus.KNOCK_OUT.equals(fxToken.getStatus())) {
+          User client = userService.fetchUserByClientId(spToken.getClientId());
+          TransferBCTokenToOpsRequestDto transferDto = new TransferBCTokenToOpsRequestDto();
+          transferDto.setAmount(spToken.getFixingAmount());
+          transferDto.setSenderAddress(client.getWalletAddress());
+          transferDto.setRecepientAddress(ops.getWalletAddress());
+          transferDto.setBcTokenCode(spToken.getBcToken().getTokenCode());
+          transferDto.setFxTokenCode(fxToken.getTokenCode());
 
-        // transfer bc token from client to OPS
-        bcTokenService.transferBCToken(transferDto, result);
+          // transfer bc token from client to OPS
+          bcTokenService.transferBCToken(transferDto, result);
+        }
+
         result.add(" " + fxToken.getTokenCode());
       }
     } catch (ServerErrorException e) {
