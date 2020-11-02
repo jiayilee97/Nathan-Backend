@@ -265,7 +265,7 @@ public class FXTokenServiceImpl implements FXTokenService {
         transferFxToken(dto, result);
         fxToken = spToken.getFxToken();
 
-        if(!FXTokenStatus.KNOCK_OUT.equals(fxToken.getStatus())) {
+        if (!FXTokenStatus.KNOCK_OUT.equals(fxToken.getStatus())) {
           User client = userService.fetchUserByClientId(spToken.getClientId());
           TransferBCTokenToOpsRequestDto transferDto = new TransferBCTokenToOpsRequestDto();
           transferDto.setAmount(spToken.getFixingAmount());
@@ -277,8 +277,7 @@ public class FXTokenServiceImpl implements FXTokenService {
           // transfer bc token from client to OPS
           bcTokenService.transferBCToken(transferDto, result);
         }
-
-        result.add(" " + fxToken.getTokenCode());
+        result.add(fxToken.getTokenCode() + " : success ");
       }
     } catch (ServerErrorException e) {
       LOGGER.error("Exception in processTradeTransfer().", e);
