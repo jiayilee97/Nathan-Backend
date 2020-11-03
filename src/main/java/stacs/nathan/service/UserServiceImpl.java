@@ -167,9 +167,14 @@ public class UserServiceImpl implements UserService {
         String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         User loggedInUser = fetchByUsername(username);
         if (UserRole.MASTER.equals(loggedInUser.getRole())) {
-            return repository.fetchUserByRole(userRole);
+            List<User> users = repository.fetchUserByRole(userRole);
+            if(users != null && users.size() > 0) {
+                return users.get(0);
+            }
+            return new User();
+        } else {
+            return repository.fetchIdByWalletAddressAndRole(walletAddress, userRole);
         }
-        return repository.fetchIdByWalletAddressAndRole(walletAddress, userRole);
     }
 
     public User fetchAppAddress() {
