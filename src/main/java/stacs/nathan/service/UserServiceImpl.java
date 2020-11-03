@@ -164,13 +164,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public User fetchByWalletAddressAndRole(String walletAddress, UserRole userRole) {
-        String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        User loggedInUser = fetchByUsername(username);
-        if (UserRole.MASTER.equals(loggedInUser.getRole())) {
-            return repository.fetchIdByWalletAddressAndRole(walletAddress, UserRole.MASTER);
-        } else {
-            return repository.fetchIdByWalletAddressAndRole(walletAddress, userRole);
-        }
+        return repository.fetchIdByWalletAddressAndRole(walletAddress, userRole);
     }
 
     public User fetchAppAddress() {
