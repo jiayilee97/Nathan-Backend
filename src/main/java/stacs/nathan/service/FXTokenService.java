@@ -15,7 +15,7 @@ public interface FXTokenService {
 
     CreateFXTokenInitDto fetchInitForm();
 
-    List<SPTokenResponseDto> fetchAvailableTokens(User user);
+    List<String> fetchAvailableTokens(User user);
 
     void save(FXToken fxToken);
 

@@ -22,6 +22,8 @@ public interface SPTokenService {
 
   List<SPToken> fetchAvailableTokens(SPTokenStatus status);
 
+  List<String> fetchAvailableTokenCodes(SPTokenStatus status);
+
   List<SPTokenResponseDto> fetchAllOpenPositions(User user);
 
   List<SPTokenResponseDto> fetchAllClosedPositions(User user);

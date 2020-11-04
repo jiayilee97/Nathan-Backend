@@ -139,6 +139,9 @@ public class SPTokenServiceImpl implements SPTokenService {
     return repository.fetchAvailableTokens(status);
   }
 
+  public List<String> fetchAvailableTokenCodes(SPTokenStatus status) {
+    return repository.fetchAvailableTokenCodes(status);
+  }
 
   public List<SPTokenResponseDto> fetchAllTokens() {
     return repository.fetchAllTokens();

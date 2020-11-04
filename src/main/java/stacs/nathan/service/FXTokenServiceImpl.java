@@ -82,15 +82,8 @@ public class FXTokenServiceImpl implements FXTokenService {
     return dto;
   }
 
-  public List<SPTokenResponseDto> fetchAvailableTokens(User user) {
-    List<SPToken> response = spTokenService.fetchAvailableTokens(SPTokenStatus.ACTIVE);
-    List<SPTokenResponseDto> responseDtoList = new ArrayList<>();
-    if(response != null && response.size() > 0) {
-      for (SPToken spToken : response) {
-        responseDtoList.add(new SPTokenResponseDto(spToken));
-      }
-    }
-    return responseDtoList;
+  public List<String> fetchAvailableTokens(User user) {
+    return spTokenService.fetchAvailableTokenCodes(SPTokenStatus.ACTIVE);
   }
 
   public List<FXTokenResponseDto> fetchAvailableFXTokens() {

@@ -5,17 +5,17 @@ import java.util.List;
 
 public class CreateFXTokenInitDto {
 
-  List<SPTokenResponseDto> availableSPToken;
+  List<String> availableSPToken;
 
   String appWalletAddress;
 
   List<CodeValue> currency;
 
-  public List<SPTokenResponseDto> getAvailableSPToken() {
+  public List<String> getAvailableSPToken() {
     return availableSPToken;
   }
 
-  public void setAvailableSPToken(List<SPTokenResponseDto> availableSPToken) {
+  public void setAvailableSPToken(List<String> availableSPToken) {
     this.availableSPToken = availableSPToken;
   }
 
