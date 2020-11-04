@@ -31,9 +31,6 @@ public class FixingDateServiceImpl implements FixingDateService {
   public List<SPToken> fetchByFixingDatesAndCurrency(Date startDate, Date endDate, String currency) throws ServerErrorException {
     LOGGER.debug("Entering fetchByFixingDatesAndCurrency().");
     try {
-      if(currency != null) {
-        currency = currency.split("/")[0];
-      }
       return repository.findByFixingDate(startDate, endDate, currency);
     } catch (Exception e){
       LOGGER.error("Exception in fetchByFixingDatesAndCurrency().", e);

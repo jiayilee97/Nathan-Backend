@@ -16,7 +16,7 @@ public interface FixingDateRepository extends JpaRepository<FixingDate, Long> {
       "WHERE fd.fixingDate >=:startDate AND fd.fixingDate <:endDate AND " +
       "fd.spToken.status = 'ACTIVE' AND " +
       "fd.fixingDate <:endDate AND fd.isVisible = true AND " +
-      "fd.spToken IS NOT NULL AND fd.spToken.fxToken.fxCurrency =:currency")
+      "fd.spToken IS NOT NULL AND fd.spToken.underlyingCurrency =:currency")
   List<SPToken> findByFixingDate(@Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("currency") String currency);
 
 }
