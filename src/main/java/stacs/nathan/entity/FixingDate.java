@@ -18,6 +18,9 @@ public class FixingDate extends BaseEntity {
   @Column(name = "fixing_date")
   private Date fixingDate;
 
+  @Column(name = "status", nullable = false, columnDefinition="boolean DEFAULT true")
+  private boolean status = true;
+
   public SPToken getSpToken() {
     return spToken;
   }
@@ -32,5 +35,13 @@ public class FixingDate extends BaseEntity {
 
   public void setFixingDate(Date fixingDate) {
     this.fixingDate = fixingDate;
+  }
+
+  public boolean isStatus() {
+    return status;
+  }
+
+  public void setStatus(boolean status) {
+    this.status = status;
   }
 }

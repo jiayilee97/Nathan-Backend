@@ -27,6 +27,7 @@ import stacs.nathan.utils.constancs.AuditActionConstants;
 import stacs.nathan.utils.enums.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -277,6 +278,9 @@ public class FXTokenServiceImpl implements FXTokenService {
           // transfer bc token from client to OPS
           bcTokenService.transferBCToken(transferDto, result);
         }
+        FixingDate fixingDate = fixingDateService.fetchByFixingDatesAndSPToken(dto.getEntryDate(), spToken);
+        fixingDate.setStatus(false);
+        fixingDateService.saveFixingDates(Arrays.asList(fixingDate));
         result.add(fxToken.getTokenCode() + " : success ");
       }
     } catch (ServerErrorException e) {

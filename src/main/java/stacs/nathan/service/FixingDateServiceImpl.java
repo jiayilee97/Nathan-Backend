@@ -28,6 +28,16 @@ public class FixingDateServiceImpl implements FixingDateService {
     }
   }
 
+  public FixingDate fetchByFixingDatesAndSPToken(Date fixingDate, SPToken spToken) throws ServerErrorException {
+    LOGGER.debug("Entering fetchByFixingDatesAndSPToken().");
+    try {
+      return repository.findByFixingDateAndSpToken(fixingDate, spToken);
+    } catch (Exception e){
+      LOGGER.error("Exception in fetchByFixingDatesAndSPToken().", e);
+      throw new ServerErrorException("Exception in fetchByFixingDatesAndSPToken().", e);
+    }
+  }
+
   public List<SPToken> fetchByFixingDatesAndCurrency(Date startDate, Date endDate, String currency) throws ServerErrorException {
     LOGGER.debug("Entering fetchByFixingDatesAndCurrency().");
     try {

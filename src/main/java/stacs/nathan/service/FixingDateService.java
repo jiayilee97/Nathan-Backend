@@ -12,4 +12,5 @@ public interface FixingDateService {
 
   List<SPToken> fetchByFixingDatesAndCurrency(Date startDate, Date endDate, String currency) throws ServerErrorException;
 
+  FixingDate fetchByFixingDatesAndSPToken(Date fixingDate, SPToken spToken) throws ServerErrorException;
 }
