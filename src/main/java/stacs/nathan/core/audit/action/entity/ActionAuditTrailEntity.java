@@ -19,7 +19,7 @@ public class ActionAuditTrailEntity extends BaseEntity {
   @Column(name = "token_code", length = 50)
   private String tokenCode;
 
-  @Column(precision = 10, scale = 2)
+  @Column(precision = 15, scale = 2)
   @ColumnDefault("0.0")
   private BigDecimal amount = BigDecimal.ZERO;
 
