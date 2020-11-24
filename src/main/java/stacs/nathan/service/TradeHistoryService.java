@@ -4,6 +4,7 @@ import stacs.nathan.core.exception.ServerErrorException;
 import stacs.nathan.dto.response.TradeHistoryResponseDto;
 import stacs.nathan.entity.TradeHistory;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 public interface TradeHistoryService {
