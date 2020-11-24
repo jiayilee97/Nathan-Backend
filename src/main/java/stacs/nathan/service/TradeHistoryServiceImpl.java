@@ -13,6 +13,7 @@ import stacs.nathan.entity.TradeHistory;
 import stacs.nathan.entity.User;
 import stacs.nathan.repository.TradeHistoryRepository;
 import stacs.nathan.utils.CommonUtils;
+
 import java.util.Date;
 import java.util.List;
 
@@ -37,8 +38,8 @@ public class TradeHistoryServiceImpl implements TradeHistoryService{
         LOGGER.debug("Entering fetchAllTradeHistory().");
         try{
             String username = ((LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-            Date start = CommonUtils.formatDate(startDate, -1);
-            Date end = CommonUtils.formatDate(endDate, 1);
+            Date start = CommonUtils.formatDateFromUTC(startDate,0);
+            Date end = CommonUtils.formatDateFromUTC(endDate,1);
             return repository.findAllByDateRange(start, end);
         } catch (Exception e){
             LOGGER.error("Exception in fetchAllTradeHistory().", e);

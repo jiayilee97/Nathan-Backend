@@ -27,8 +27,8 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
     public List<TransactionHistoryResponseDto> fetchAllTransactionHistory(String startDate, String endDate) throws ServerErrorException {
         LOGGER.debug("Entering fetchAllTransactionHistory().");
         try {
-            Date start = CommonUtils.formatDate(startDate, -1);
-            Date end = CommonUtils.formatDate(endDate, 1);
+            Date start = CommonUtils.formatDateFromUTC(startDate,0);
+            Date end = CommonUtils.formatDateFromUTC(endDate,1);
             return repository.findAllByCreatedBy(start, end);
         } catch (Exception e){
             LOGGER.error("Exception in fetchAllTransactionHistory().", e);
