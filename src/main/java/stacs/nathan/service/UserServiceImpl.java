@@ -22,6 +22,7 @@ import stacs.nathan.entity.User;
 import stacs.nathan.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -171,8 +172,17 @@ public class UserServiceImpl implements UserService {
         return repository.fetchAppAddress(UserRole.APP);
     }
 
-    public String fetchOpsWalletAddress() {
-        User ops = repository.findByRoleAndIsVisible(UserRole.OPS, true).get(0);
-        return ops.getWalletAddress();
+//    public String fetchOpsWalletAddress() {
+//        User ops = repository.findByRoleAndIsVisible(UserRole.OPS, true).get(0);
+//        return ops.getWalletAddress();
+//    }
+
+    public List<String> fetchOpsWalletAddress() {
+        List<User> ops = repository.findByRoleAndIsVisible(UserRole.OPS, true);
+        List<String> opsWalletAddress = new ArrayList<>();
+        for(User user: ops) {
+            opsWalletAddress.add(user.getDisplayName() + " - " + user.getWalletAddress());
+        }
+        return opsWalletAddress;
     }
 }

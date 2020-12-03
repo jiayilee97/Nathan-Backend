@@ -41,6 +41,6 @@ public interface UserService {
 
     User fetchAppAddress();
 
-    String fetchOpsWalletAddress();
+    List<String>  fetchOpsWalletAddress();
 
 }

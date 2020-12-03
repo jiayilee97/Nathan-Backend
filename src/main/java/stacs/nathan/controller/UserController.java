@@ -59,6 +59,6 @@ public class UserController {
 
   @PreAuthorize("hasAnyAuthority('CRO')")
   @GetMapping("/fetch/ops-wallet")
-  public String fetchOpsWalletAddress() { return userService.fetchOpsWalletAddress(); }
+  public List<String>  fetchOpsWalletAddress() { return userService.fetchOpsWalletAddress(); }
 
 }
