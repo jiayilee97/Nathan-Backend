@@ -1,0 +1,31 @@
+version: 0.2
+
+env:
+  parameter-store:
+    IMAGE_REPO_NAME: "IMAGE_REPO_NAME_NATHAN_DEV"
+    IMAGE_TAG: "IMAGE_TAG"
+    AWS_ACCOUNT_ID: "STACS_AWS_ACCOUNT_ID"
+    AWS_ACCESS_KEY_ID: "STACS_AWS_ACCESS_KEY_ID"
+    AWS_DEFAULT_REGION: "STACS_AWS_DEFAULT_REGION"
+    AWS_SECRET_ACCESS_KEY: "STACS_AWS_SECRET_ACCESS_KEY"
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"nathan-api-docker-dev","imageUri":"028866886609.dkr.ecr.ap-southeast-1.amazonaws.com/nathan-api-docker-dev:latest"}]' > imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json
